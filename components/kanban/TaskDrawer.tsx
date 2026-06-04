@@ -9,8 +9,11 @@ import {
   Tag,
   FileText,
   Link2,
+  MessageSquare,
 } from "lucide-react";
 import type { KanbanColumn, KanbanTask } from "@/db/schema";
+import { CollabRoom, CommentThread } from "@/lib/collab";
+import { buildRoomId } from "@/lib/collab/types";
 
 const PRIORITIES = [
   { value: "low", label: "Low", color: "#64748b" },
@@ -63,6 +66,7 @@ interface Props {
       completed: boolean;
     }>
   ) => void;
+  canEdit?: boolean;
 }
 
 export default function TaskDrawer({
@@ -72,6 +76,7 @@ export default function TaskDrawer({
   onClose,
   onCreate,
   onUpdate,
+  canEdit = true,
 }: Props) {
   const isEditing = !!task;
   const titleRef = useRef<HTMLInputElement>(null);
@@ -97,6 +102,7 @@ export default function TaskDrawer({
 
   const handleSubmit = () => {
     if (!title.trim()) return;
+    if (!canEdit) return;
 
     if (isEditing && task) {
       onUpdate(task.id, {
@@ -174,6 +180,7 @@ export default function TaskDrawer({
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSubmit();
               }}
+              readOnly={!canEdit}
             />
           </div>
 
@@ -189,6 +196,7 @@ export default function TaskDrawer({
               placeholder="Add a description..."
               className="kb-drawer-textarea"
               rows={3}
+              readOnly={!canEdit}
             />
           </div>
 
@@ -312,20 +320,41 @@ export default function TaskDrawer({
               </label>
             </div>
           )}
+
+          {/* Discussion */}
+          {isEditing && task && (
+            <>
+              <div className="kb-drawer-divider" />
+              <div className="kb-drawer-field">
+                <label className="kb-drawer-label">
+                  <MessageSquare size={14} />
+                  Discussion
+                </label>
+                <CollabRoom
+                  roomId={buildRoomId("task", task.id)}
+                  key={`thread-${task.id}`}
+                >
+                  <CommentThread taskId={task.id} />
+                </CollabRoom>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Footer */}
         <div className="kb-drawer-footer">
           <button className="kb-btn kb-btn--ghost" onClick={onClose}>
-            Cancel
+            {canEdit ? "Cancel" : "Close"}
           </button>
-          <button
-            className="kb-btn kb-btn--primary"
-            onClick={handleSubmit}
-            disabled={!title.trim()}
-          >
-            {isEditing ? "Save Changes" : "Create Task"}
-          </button>
+          {canEdit && (
+            <button
+              className="kb-btn kb-btn--primary"
+              onClick={handleSubmit}
+              disabled={!title.trim()}
+            >
+              {isEditing ? "Save Changes" : "Create Task"}
+            </button>
+          )}
         </div>
       </div>
     </>

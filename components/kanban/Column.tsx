@@ -20,6 +20,7 @@ interface Props {
   onDelete: () => void;
   onToggleComplete: (id: number, completed: boolean) => void;
   onDeleteTask: (id: number) => void;
+  canEdit?: boolean;
 }
 
 export default function Column({
@@ -31,6 +32,7 @@ export default function Column({
   onDelete,
   onToggleComplete,
   onDeleteTask,
+  canEdit = true,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -45,6 +47,7 @@ export default function Column({
     isDragging,
   } = useSortable({
     id: `col-${column.id}`,
+    disabled: !canEdit,
   });
 
   const style = {
@@ -98,40 +101,44 @@ export default function Column({
           <span className="kb-column-count">{tasks.length}</span>
         </div>
         <div className="kb-column-header-right">
-          <button className="kb-column-add-btn" onClick={onAddTask} title="Add task">
-            <Plus size={14} />
-          </button>
-          <div className="kb-column-menu-wrap">
-            <button
-              className="kb-column-menu-btn"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <MoreHorizontal size={14} />
+          {canEdit && (
+            <button className="kb-column-add-btn" onClick={onAddTask} title="Add task">
+              <Plus size={14} />
             </button>
-            {menuOpen && (
-              <div className="kb-column-menu">
-                <button
-                  onClick={() => {
-                    setEditing(true);
-                    setMenuOpen(false);
-                  }}
-                >
-                  <Pencil size={13} />
-                  Rename
-                </button>
-                <button
-                  className="kb-column-menu-danger"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onDelete();
-                  }}
-                >
-                  <Trash2 size={13} />
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
+          )}
+          {canEdit && (
+            <div className="kb-column-menu-wrap">
+              <button
+                className="kb-column-menu-btn"
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                <MoreHorizontal size={14} />
+              </button>
+              {menuOpen && (
+                <div className="kb-column-menu">
+                  <button
+                    onClick={() => {
+                      setEditing(true);
+                      setMenuOpen(false);
+                    }}
+                  >
+                    <Pencil size={13} />
+                    Rename
+                  </button>
+                  <button
+                    className="kb-column-menu-danger"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onDelete();
+                    }}
+                  >
+                    <Trash2 size={13} />
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -150,6 +157,7 @@ export default function Column({
                 onToggleComplete(task.id, completed)
               }
               onDelete={() => onDeleteTask(task.id)}
+              canEdit={canEdit}
             />
           ))}
         </SortableContext>

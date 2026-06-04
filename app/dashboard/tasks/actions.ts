@@ -2,9 +2,18 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
-import { kanbanBoards, kanbanColumns, kanbanTasks, calendarTasks } from "@/db/schema";
+import {
+  kanbanBoards,
+  kanbanColumns,
+  kanbanTasks,
+  calendarTasks,
+  boardCollaborators,
+  users,
+} from "@/db/schema";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { canAccessBoard, assertCanAccessBoard } from "@/lib/board-access";
+import { isCollabRole, type CollabRole } from "@/lib/collab/permissions";
 
 /* ═══════════════════════════════════════════════
    Board Templates
@@ -35,6 +44,27 @@ export async function getBoards() {
   return boards;
 }
 
+export async function getMyRoleForBoard(
+  boardId: number
+): Promise<CollabRole | null> {
+  const access = await canAccessBoard(boardId, "viewer");
+  return access?.role ?? null;
+}
+
+export async function getBoardAccess(
+  boardId: number
+): Promise<{ role: CollabRole | null; totalCollaborators: number }> {
+  const access = await canAccessBoard(boardId, "viewer");
+  const totalRows = await db
+    .select({ id: boardCollaborators.id })
+    .from(boardCollaborators)
+    .where(eq(boardCollaborators.boardId, boardId));
+  return {
+    role: access?.role ?? null,
+    totalCollaborators: totalRows.length,
+  };
+}
+
 export async function createBoard(data: {
   name: string;
   color: string;
@@ -51,6 +81,19 @@ export async function createBoard(data: {
       color: data.color,
     })
     .returning();
+
+  // Auto-insert the creator as the owner of the board
+  const localUser = await db.query.users.findFirst({
+    where: eq(users.clerkUserId, userId),
+  });
+  await db.insert(boardCollaborators).values({
+    boardId: board.id,
+    userId: localUser?.id ?? null,
+    email: localUser?.email ?? "",
+    role: "owner",
+    invitedByClerkUserId: userId,
+    acceptedAt: localUser ? new Date() : null,
+  });
 
   // Create template columns
   const cols = BOARD_TEMPLATES[data.template] || BOARD_TEMPLATES["blank"];

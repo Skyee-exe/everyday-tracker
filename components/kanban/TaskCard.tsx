@@ -12,6 +12,12 @@ import {
   Trash2,
 } from "lucide-react";
 import type { KanbanTask } from "@/db/schema";
+import {
+  CollabRoom,
+  CommentCountBadge,
+  LazyOnVisible,
+} from "@/lib/collab";
+import { buildRoomId } from "@/lib/collab/types";
 
 const PRIORITY_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   low: { label: "Low", color: "#64748b", bg: "rgba(100,116,139,0.1)" },
@@ -53,6 +59,7 @@ interface Props {
   onEdit: () => void;
   onToggleComplete: (completed: boolean) => void;
   onDelete: () => void;
+  canEdit?: boolean;
 }
 
 export default function TaskCard({
@@ -61,6 +68,7 @@ export default function TaskCard({
   onEdit,
   onToggleComplete,
   onDelete,
+  canEdit = true,
 }: Props) {
   const {
     attributes,
@@ -71,7 +79,7 @@ export default function TaskCard({
     isDragging,
   } = useSortable({
     id: String(task.id),
-    disabled: isDragOverlay,
+    disabled: isDragOverlay || !canEdit,
   });
 
   const style = {
@@ -126,16 +134,18 @@ export default function TaskCard({
           <span className={`kb-task-title${task.completed ? " kb-task-title--done" : ""}`}>
             {task.title}
           </span>
-          <button
-            className="kb-task-delete-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            title="Delete task"
-          >
-            <Trash2 size={12} />
-          </button>
+          {canEdit && (
+            <button
+              className="kb-task-delete-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              title="Delete task"
+            >
+              <Trash2 size={12} />
+            </button>
+          )}
         </div>
 
         {/* Meta row */}
@@ -186,6 +196,34 @@ export default function TaskCard({
               📝
             </span>
           )}
+          <span className="kb-task-comment-wrap">
+            <LazyOnVisible
+              fallback={
+                <span
+                  className="kb-task-comment-count kb-task-comment-count--loading"
+                  title="Loading comments…"
+                >
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                  </svg>
+                </span>
+              }
+            >
+              <CollabRoom roomId={buildRoomId("task", task.id)}>
+                <CommentCountBadge />
+              </CollabRoom>
+            </LazyOnVisible>
+          </span>
         </div>
       </div>
     </div>
