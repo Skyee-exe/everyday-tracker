@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=Outfit:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* ══════════════════════════════════════════════════════
    Everyday Tracker — Premium SaaS Theme
@@ -6459,3 +6460,71 @@
   background: rgba(15, 23, 42, 0.05);
   color: hsl(222 30% 12%);
 }
+
+/* ------------------------------------------------------
+   LIVEBLOCKS UI OVERRIDES
+   ------------------------------------------------------ */
+:root {
+  --lb-z-index: 99999;
+}
+
+.lb-composer-action[data-action="emoji"],
+.lb-composer-action[aria-label*="emoji" i],
+.lb-composer-action[title*="emoji" i],
+.lb-button[data-action="react"],
+.lb-button[aria-label*="React" i],
+.lb-button[aria-label*="react" i],
+.lb-reaction,
+button:has(> svg.lb-icon-emoji) {
+  display: none !important;
+}
+
+/* AGGRESSIVE EMOJI & ACTIONS REMOVAL */
+.lb-composer-action:first-child,
+.lb-composer-action[aria-label*="emoji" i],
+.lb-composer-action:has(svg.lb-icon-emoji),
+button:has(.lb-icon-emoji),
+[data-action="emoji"],
+.lb-comment-actions,
+.lb-action {
+  display: none !important;
+}
+
+.collab-thread-composer button[type="button"] {
+  display: none !important;
+}
+
+/* Tiptap Core Styles (Required for proper editor mechanics) */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #cbd5e1;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  font-style: italic;
+}
+ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+ul[data-type="taskList"] li > label {
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  user-select: none;
+  margin-top: 0.35rem;
+}
+ul[data-type="taskList"] li > div {
+  flex: 1 1 auto;
+}
+.tiptap:focus {
+  outline: none;
+}
+
+

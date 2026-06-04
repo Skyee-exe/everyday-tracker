@@ -2,7 +2,8 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useUser } from "@clerk/nextjs";
-import { RoomProvider, useSelf, useUpdateMyPresence } from "./liveblocks.config";
+import { LiveblocksProvider, RoomProvider } from "@liveblocks/react";
+import { useSelf, useUpdateMyPresence } from "./liveblocks.config";
 import type { Presence } from "./types";
 
 function PresenceSeeder() {
@@ -26,7 +27,7 @@ function PresenceSeeder() {
       name,
       email,
       avatar,
-      viewingTaskId: myPresence?.viewingTaskId ?? null,
+      viewingTaskId: (myPresence?.viewingTaskId as number | null) ?? null,
     };
     updateMyPresence(next);
     setSeeded(true);
@@ -46,12 +47,26 @@ export function CollabRoom({
 }) {
   if (!roomId) return <>{fallback}</>;
   return (
-    <RoomProvider
-      id={roomId}
-      initialPresence={{ name: "", email: "", viewingTaskId: null }}
+    <LiveblocksProvider 
+      authEndpoint="/api/liveblocks/auth"
+      resolveUsers={async ({ userIds }) => {
+        try {
+          const searchParams = new URLSearchParams();
+          userIds.forEach((id) => searchParams.append("userIds", id));
+          const response = await fetch(`/api/liveblocks/users?${searchParams}`);
+          return await response.json();
+        } catch {
+          return [];
+        }
+      }}
     >
-      <PresenceSeeder />
-      {children}
-    </RoomProvider>
+      <RoomProvider
+        id={roomId}
+        initialPresence={{ name: "", email: "", viewingTaskId: null }}
+      >
+        <PresenceSeeder />
+        {children}
+      </RoomProvider>
+    </LiveblocksProvider>
   );
 }

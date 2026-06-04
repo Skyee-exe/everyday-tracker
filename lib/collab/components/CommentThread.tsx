@@ -38,7 +38,7 @@ function ThreadListInner({
       ) : (
         list.map((thread) => (
           <div key={thread.id} className="collab-thread-card">
-            <Thread thread={thread} />
+            <Thread thread={thread} showReactions={false} showActions={false} />
           </div>
         ))
       )}

@@ -1,0 +1,90 @@
+"use server";
+
+import { db, notes } from "@/db";
+import { eq, and } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+
+export async function getNotes() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  return db.select().from(notes).where(eq(notes.clerkUserId, userId));
+}
+
+export async function createNote(templateData?: { title: string; content: any }) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  const [note] = await db
+    .insert(notes)
+    .values({
+      clerkUserId: userId,
+      title: templateData?.title || "Untitled",
+      content: templateData?.content || null,
+    })
+    .returning();
+  revalidatePath("/dashboard/notes");
+  return note;
+}
+
+export async function updateNote(id: number, data: Partial<typeof notes.$inferInsert>) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  const [updated] = await db
+    .update(notes)
+    .set({ ...data, updatedAt: new Date() })
+    .where(and(eq(notes.id, id), eq(notes.clerkUserId, userId)))
+    .returning();
+  revalidatePath("/dashboard/notes");
+  return updated;
+}
+
+export async function duplicateNote(id: number) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  const [existing] = await db.select().from(notes).where(and(eq(notes.id, id), eq(notes.clerkUserId, userId)));
+  if (!existing) throw new Error("Not found");
+  
+  const [note] = await db
+    .insert(notes)
+    .values({
+      clerkUserId: userId,
+      title: `${existing.title} (Copy)`,
+      content: existing.content,
+      icon: existing.icon,
+      color: existing.color,
+    })
+    .returning();
+  revalidatePath("/dashboard/notes");
+  return note;
+}
+
+export async function moveToTrash(id: number) {
+  return updateNote(id, { isTrash: true, isPinned: false, isFavorite: false });
+}
+
+export async function restoreNote(id: number) {
+  return updateNote(id, { isTrash: false });
+}
+
+export async function emptyTrash() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  await db.delete(notes).where(and(eq(notes.clerkUserId, userId), eq(notes.isTrash, true)));
+  revalidatePath("/dashboard/notes");
+}
+
+export async function togglePin(id: number, isPinned: boolean) {
+  return updateNote(id, { isPinned });
+}
+
+export async function toggleFavorite(id: number, isFavorite: boolean) {
+  return updateNote(id, { isFavorite });
+}
+
+export async function updateColor(id: number, color: string | null) {
+  return updateNote(id, { color });
+}
+
+export async function updateIcon(id: number, icon: string | null) {
+  return updateNote(id, { icon });
+}
