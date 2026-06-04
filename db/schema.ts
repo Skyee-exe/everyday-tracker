@@ -7,6 +7,7 @@ export const users = pgTable("users", {
   imageUrl: text("image_url"),
   email: text("email").notNull().unique(),
   lastSignedInAt: timestamp("last_signed_in_at"),
+  hasOnboardedPages: boolean("has_onboarded_pages").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -149,3 +150,41 @@ export const whiteboards = pgTable("whiteboards", {
 
 export type Whiteboard = typeof whiteboards.$inferSelect;
 export type NewWhiteboard = typeof whiteboards.$inferInsert;
+
+/* Pages & Spaces */
+export const spaces = pgTable("spaces", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  color: text("color").notNull().default("#2563eb"),
+  isFavorite: boolean("is_favorite").notNull().default(false),
+  isArchived: boolean("is_archived").notNull().default(false),
+  lastOpenedAt: timestamp("last_opened_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type Space = typeof spaces.$inferSelect;
+export type NewSpace = typeof spaces.$inferInsert;
+
+export const spacePages = pgTable("space_pages", {
+  id: serial("id").primaryKey(),
+  spaceId: integer("space_id")
+    .references(() => spaces.id, { onDelete: "cascade" })
+    .notNull(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  title: text("title").notNull().default("Untitled page"),
+  type: text("type").notNull().default("Blank Page"),
+  summary: text("summary"),
+  content: jsonb("content"),
+  isFavorite: boolean("is_favorite").notNull().default(false),
+  isArchived: boolean("is_archived").notNull().default(false),
+  linkedTaskCount: integer("linked_task_count").notNull().default(0),
+  lastOpenedAt: timestamp("last_opened_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type SpacePage = typeof spacePages.$inferSelect;
+export type NewSpacePage = typeof spacePages.$inferInsert;
