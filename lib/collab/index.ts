@@ -1,6 +1,4 @@
 export {
-  liveblocksClient,
-  RoomProvider,
   useRoom,
   useOthers,
   useSelf,

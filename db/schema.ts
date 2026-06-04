@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean, integer, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, integer, uniqueIndex, jsonb } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -112,3 +112,27 @@ export const boardCollaborators = pgTable(
 
 export type BoardCollaborator = typeof boardCollaborators.$inferSelect;
 export type NewBoardCollaborator = typeof boardCollaborators.$inferInsert;
+
+/* ── Notes ── */
+export const notes = pgTable("notes", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  title: text("title").notNull().default("Untitled"),
+  content: jsonb("content"),
+  icon: text("icon"),
+  color: text("color"),
+  folderId: integer("folder_id"),
+  isFavorite: boolean("is_favorite").notNull().default(false),
+  isPinned: boolean("is_pinned").notNull().default(false),
+  isTrash: boolean("is_trash").notNull().default(false),
+  linkedTaskId: integer("linked_task_id"),
+  linkedBoardId: integer("linked_board_id"),
+  linkedCalendarTaskId: integer("linked_calendar_task_id"),
+  lastOpenedAt: timestamp("last_opened_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type Note = typeof notes.$inferSelect;
+export type NewNote = typeof notes.$inferInsert;
+

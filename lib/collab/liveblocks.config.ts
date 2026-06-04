@@ -4,18 +4,14 @@ import { createClient } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
 import type { Presence } from "./types";
 
-export const liveblocksClient = createClient({
-  authEndpoint: "/api/liveblocks/auth",
-});
-
 export type ThreadMetadata = {
   taskId?: number;
   boardId?: number;
   resolved?: boolean;
 };
 
-export const {
-  RoomProvider,
+// In Liveblocks v3, we export standard hooks directly from the package
+export {
   useRoom,
   useOthers,
   useSelf,
@@ -27,4 +23,4 @@ export const {
   useCreateThread,
   useEditComment,
   useDeleteComment,
-} = createRoomContext<Presence, never, never, ThreadMetadata>(liveblocksClient);
+} from "@liveblocks/react";
