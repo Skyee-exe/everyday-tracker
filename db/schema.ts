@@ -36,3 +36,56 @@ export const calendarTasks = pgTable("calendar_tasks", {
 
 export type CalendarTask = typeof calendarTasks.$inferSelect;
 export type NewCalendarTask = typeof calendarTasks.$inferInsert;
+
+/* ── Kanban Boards ── */
+export const kanbanBoards = pgTable("kanban_boards", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  name: text("name").notNull(),
+  color: text("color").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type KanbanBoard = typeof kanbanBoards.$inferSelect;
+export type NewKanbanBoard = typeof kanbanBoards.$inferInsert;
+
+/* ── Kanban Columns ── */
+export const kanbanColumns = pgTable("kanban_columns", {
+  id: serial("id").primaryKey(),
+  boardId: integer("board_id")
+    .references(() => kanbanBoards.id, { onDelete: "cascade" })
+    .notNull(),
+  name: text("name").notNull(),
+  position: integer("position").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type KanbanColumn = typeof kanbanColumns.$inferSelect;
+export type NewKanbanColumn = typeof kanbanColumns.$inferInsert;
+
+/* ── Kanban Tasks ── */
+export const kanbanTasks = pgTable("kanban_tasks", {
+  id: serial("id").primaryKey(),
+  boardId: integer("board_id")
+    .references(() => kanbanBoards.id, { onDelete: "cascade" })
+    .notNull(),
+  columnId: integer("column_id")
+    .references(() => kanbanColumns.id, { onDelete: "cascade" })
+    .notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  priority: text("priority").notNull().default("medium"),
+  category: text("category").default("work"),
+  dueDate: timestamp("due_date"),
+  estimatedDuration: integer("estimated_duration").default(60),
+  position: integer("position").notNull(),
+  completed: boolean("completed").default(false),
+  linkedCalendarTaskId: integer("linked_calendar_task_id"),
+  linkedNoteId: integer("linked_note_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type KanbanTask = typeof kanbanTasks.$inferSelect;
+export type NewKanbanTask = typeof kanbanTasks.$inferInsert;
