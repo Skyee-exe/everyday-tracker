@@ -136,3 +136,16 @@ export const notes = pgTable("notes", {
 export type Note = typeof notes.$inferSelect;
 export type NewNote = typeof notes.$inferInsert;
 
+/* ── Whiteboards ── */
+export const whiteboards = pgTable("whiteboards", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  name: text("name").notNull().default("Untitled whiteboard"),
+  color: text("color").notNull().default("#2563eb"),
+  scene: jsonb("scene"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type Whiteboard = typeof whiteboards.$inferSelect;
+export type NewWhiteboard = typeof whiteboards.$inferInsert;
