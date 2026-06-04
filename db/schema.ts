@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean, integer } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, integer, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -89,3 +89,26 @@ export const kanbanTasks = pgTable("kanban_tasks", {
 
 export type KanbanTask = typeof kanbanTasks.$inferSelect;
 export type NewKanbanTask = typeof kanbanTasks.$inferInsert;
+
+/* ── Board Collaborators ── */
+export const boardCollaborators = pgTable(
+  "board_collaborators",
+  {
+    id: serial("id").primaryKey(),
+    boardId: integer("board_id")
+      .references(() => kanbanBoards.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    email: text("email").notNull(),
+    role: text("role").notNull().default("editor"),
+    invitedByClerkUserId: text("invited_by_clerk_user_id").notNull(),
+    acceptedAt: timestamp("accepted_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqBoardEmail: uniqueIndex("uniq_board_collaborator_email").on(t.boardId, t.email),
+  })
+);
+
+export type BoardCollaborator = typeof boardCollaborators.$inferSelect;
+export type NewBoardCollaborator = typeof boardCollaborators.$inferInsert;

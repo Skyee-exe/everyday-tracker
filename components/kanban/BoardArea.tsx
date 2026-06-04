@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useUser } from "@clerk/nextjs";
 import {
   DndContext,
   DragOverlay,
@@ -32,6 +33,15 @@ import {
   BarChart3,
 } from "lucide-react";
 import type { KanbanBoard, KanbanColumn, KanbanTask } from "@/db/schema";
+import {
+  CollabRoom,
+  CollaborationButton,
+  CollaborationPanel,
+  PresenceAvatars,
+  PresenceBanner,
+} from "@/lib/collab";
+import { buildRoomId } from "@/lib/collab/types";
+import type { CollabRole } from "@/lib/collab/permissions";
 
 const PRIORITIES = ["low", "medium", "high", "critical"];
 const CATEGORIES = ["work", "personal", "health", "learning", "finance", "urgent"];
@@ -74,6 +84,9 @@ interface Props {
   onMoveTask: (updates: { id: number; columnId: number; position: number }[]) => void;
   onToggleComplete: (id: number, completed: boolean) => void;
   onDeleteTask: (id: number) => void;
+  myRole: CollabRole | null;
+  totalCollaborators?: number;
+  canEdit?: boolean;
 }
 
 export default function BoardArea({
@@ -99,15 +112,22 @@ export default function BoardArea({
   onMoveTask,
   onToggleComplete,
   onDeleteTask,
+  myRole,
+  totalCollaborators,
+  canEdit = true,
 }: Props) {
   const [activeTask, setActiveTask] = useState<KanbanTask | null>(null);
   const [activeColId, setActiveColId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [addingColumn, setAddingColumn] = useState(false);
   const [newColName, setNewColName] = useState("");
+  const [collabOpen, setCollabOpen] = useState(false);
+  const { user } = useUser();
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
     useSensor(KeyboardSensor)
   );
 
@@ -223,8 +243,11 @@ export default function BoardArea({
   const hasActiveFilters =
     filterPriority || filterCategory || filterSpecial || searchQuery;
 
+  const boardRoomId = buildRoomId("board", board.id);
+
   return (
-    <div className="kb-board-area">
+    <CollabRoom roomId={boardRoomId}>
+      <div className="kb-board-area">
       {/* ── Board Header ── */}
       <div className="kb-board-header">
         <div className="kb-board-header-top">
@@ -234,6 +257,14 @@ export default function BoardArea({
               style={{ background: board.color }}
             />
             <h1 className="kb-board-title">{board.name}</h1>
+            <div className="kb-board-collab-cluster">
+              <PresenceAvatars
+                totalCollaboratorCount={totalCollaborators}
+                max={4}
+                size={28}
+              />
+              <CollaborationButton onClick={() => setCollabOpen(true)} />
+            </div>
           </div>
           <div className="kb-board-actions">
             <div className="kb-search-bar">
@@ -261,6 +292,8 @@ export default function BoardArea({
             <button
               className="kb-btn kb-btn--primary"
               onClick={() => onOpenDrawer()}
+              disabled={!canEdit}
+              title={canEdit ? "Create a new task" : "Viewers can't create tasks"}
             >
               <Plus size={15} />
               New Task
@@ -372,6 +405,8 @@ export default function BoardArea({
         )}
       </div>
 
+        <PresenceBanner entityName="board" />
+
       {/* ── Columns ── */}
       {loading ? (
         <div className="kb-columns-skeleton">
@@ -414,11 +449,13 @@ export default function BoardArea({
                   }}
                   onToggleComplete={onToggleComplete}
                   onDeleteTask={onDeleteTask}
+                  canEdit={canEdit}
                 />
               ))}
             </SortableContext>
 
             {/* Add Column Button */}
+            {canEdit && (
             <div className="kb-add-col-wrap">
               {addingColumn ? (
                 <div className="kb-add-col-form">
@@ -474,6 +511,7 @@ export default function BoardArea({
                 </button>
               )}
             </div>
+            )}
           </div>
 
           <DragOverlay>
@@ -489,6 +527,16 @@ export default function BoardArea({
           </DragOverlay>
         </DndContext>
       )}
-    </div>
+
+      <CollaborationPanel
+        open={collabOpen}
+        onClose={() => setCollabOpen(false)}
+        boardId={board.id}
+        boardName={board.name}
+        myRole={myRole}
+        currentUserEmail={user?.emailAddresses?.[0]?.emailAddress ?? null}
+      />
+      </div>
+    </CollabRoom>
   );
 }

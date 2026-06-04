@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useUser } from "@clerk/nextjs";
 import BoardSidebar from "./BoardSidebar";
 import BoardArea from "./BoardArea";
 import CreateBoardDialog from "./CreateBoardDialog";
@@ -18,8 +19,11 @@ import {
   createColumn,
   updateColumn,
   deleteColumn as deleteColumnAction,
+  getMyRoleForBoard,
+  getBoardAccess,
 } from "@/app/dashboard/tasks/actions";
 import type { KanbanBoard, KanbanColumn, KanbanTask } from "@/db/schema";
+import { meetsRole, type CollabRole } from "@/lib/collab/permissions";
 
 export default function KanbanWorkspace({
   initialBoards,
@@ -37,6 +41,9 @@ export default function KanbanWorkspace({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<KanbanTask | null>(null);
   const [drawerColumnId, setDrawerColumnId] = useState<number | null>(null);
+  const [myRole, setMyRole] = useState<CollabRole | null>(null);
+  const [totalCollaborators, setTotalCollaborators] = useState<number>(0);
+  const { user } = useUser();
 
   /* ── Filters & Search ── */
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,17 +52,22 @@ export default function KanbanWorkspace({
   const [filterSpecial, setFilterSpecial] = useState<string | null>(null);
 
   const activeBoard = boards.find((b) => b.id === activeBoardId) ?? null;
+  const canEdit = myRole !== null && meetsRole(myRole, "editor");
+  const currentUserEmail = user?.emailAddresses?.[0]?.emailAddress ?? null;
 
   /* ── Load columns + tasks when board changes ── */
   const loadBoardData = useCallback(async (boardId: number) => {
     setLoading(true);
     try {
-      const [cols, tsks] = await Promise.all([
+      const [cols, tsks, access] = await Promise.all([
         getColumns(boardId),
         getTasks(boardId),
+        getBoardAccess(boardId),
       ]);
       setColumns(cols);
       setTasks(tsks);
+      setMyRole(access.role);
+      setTotalCollaborators(access.totalCollaborators);
     } catch (e) {
       console.error("Failed to load board data", e);
     }
@@ -279,6 +291,9 @@ export default function KanbanWorkspace({
               handleUpdateTask(id, { completed })
             }
             onDeleteTask={handleDeleteTask}
+            myRole={myRole}
+            totalCollaborators={totalCollaborators}
+            canEdit={canEdit}
           />
         ) : (
           <div className="kb-empty-state">
@@ -322,6 +337,7 @@ export default function KanbanWorkspace({
           }}
           onCreate={handleCreateTask}
           onUpdate={handleUpdateTask}
+          canEdit={canEdit}
         />
       )}
     </div>
