@@ -602,22 +602,22 @@ export default function AiTemplateBuilder({
   return (
     <main className="ait-workspace">
       <style>{`
-        .ait-workspace { min-height: 100vh; padding: 28px; background: hsl(216 20% 97%); color: hsl(222 30% 12%); }
+        .ait-workspace { min-height: 100vh; padding: 28px; background: var(--background); color: var(--foreground); }
         .ait-shell { width: min(1320px, 100%); margin: 0 auto; display: grid; grid-template-columns: minmax(320px, 420px) minmax(0, 1fr); gap: 18px; }
-        .ait-panel, .ait-preview, .ait-card, .ait-empty { background: #fff; border: 1px solid hsl(214 20% 90%); border-radius: 8px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
+        .ait-panel, .ait-preview, .ait-card, .ait-empty { background: var(--card); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
         .ait-panel { padding: 18px; }
         .ait-kicker { display: inline-flex; align-items: center; gap: 7px; color: #0ea5e9; font-size: .75rem; font-weight: 800; text-transform: uppercase; }
         .ait-panel h1 { margin: 8px 0 6px; font-family: var(--font-display); font-size: 1.85rem; line-height: 1.05; }
-        .ait-panel p { margin: 0; color: hsl(222 12% 48%); font-size: .9rem; line-height: 1.45; }
+        .ait-panel p { margin: 0; color: var(--muted-foreground); font-size: .9rem; line-height: 1.45; }
         .ait-prompt { display: grid; gap: 10px; margin-top: 18px; }
-        .ait-prompt textarea { min-height: 110px; resize: vertical; border: 1px solid hsl(214 20% 86%); border-radius: 8px; padding: 12px; font: inherit; font-size: .9rem; outline: none; color: hsl(222 22% 16%); }
+        .ait-prompt textarea { min-height: 110px; resize: vertical; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font: inherit; font-size: .9rem; outline: none; color: var(--foreground); background: var(--background); }
         .ait-prompt textarea:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, .12); }
         .ait-btn { min-height: 36px; border-radius: 8px; border: 1px solid transparent; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font: inherit; font-size: .825rem; font-weight: 750; cursor: pointer; white-space: nowrap; transition: all 150ms; }
         .ait-btn:disabled { opacity: .55; cursor: not-allowed; }
         .ait-btn--primary { color: #fff; background: linear-gradient(135deg, #2563eb, #0891b2); box-shadow: 0 1px 3px rgba(37, 99, 235, .26); }
         .ait-btn--primary:hover:not(:disabled) { opacity: 0.95; transform: translateY(-0.5px); }
-        .ait-btn--ghost { color: hsl(222 18% 24%); background: #fff; border-color: hsl(214 20% 88%); }
-        .ait-btn--ghost:hover:not(:disabled) { background: hsl(210 20% 98%); border-color: hsl(214 20% 80%); }
+        .ait-btn--ghost { color: var(--foreground); background: var(--card); border-color: var(--border); }
+        .ait-btn--ghost:hover:not(:disabled) { background: var(--sb-hover-bg); border-color: var(--border); }
         .ait-btn--pinned { color: #16a34a; background: hsl(142 76% 96%); border-color: hsl(142 60% 86%); }
         .ait-btn--pinned:hover:not(:disabled) { background: hsl(142 76% 93%); }
         .ait-limit { margin-top: 12px; padding: 10px; border-radius: 8px; background: rgba(217, 119, 6, .09); color: #92400e; font-size: .8rem; font-weight: 650; }
@@ -625,60 +625,60 @@ export default function AiTemplateBuilder({
         .ait-created { margin-top: 22px; }
         .ait-created-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
         .ait-created-head h2 { margin: 0; font-family: var(--font-display); font-size: 1.05rem; }
-        .ait-count { color: hsl(222 10% 52%); font-size: .75rem; font-weight: 750; }
+        .ait-count { color: var(--muted-foreground); font-size: .75rem; font-weight: 750; }
         .ait-card-list { display: grid; gap: 10px; }
         .ait-card { padding: 12px; display: grid; gap: 10px; border-left: 4px solid var(--app-color); transition: transform 150ms; }
         .ait-card:hover { transform: scale(1.005); }
         .ait-card-main { width: 100%; border: none; background: transparent; padding: 0; display: flex; align-items: flex-start; gap: 10px; text-align: left; cursor: pointer; }
         .ait-app-icon, .ait-preview-icon { width: 40px; height: 40px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: var(--app-color); background: color-mix(in srgb, var(--app-color) 11%, white); flex-shrink: 0; }
-        .ait-card h3 { margin: 0; color: hsl(222 24% 16%); font-size: .96rem; line-height: 1.25; }
-        .ait-card p { margin: 4px 0 0; color: hsl(222 12% 48%); font-size: .8rem; line-height: 1.4; }
-        .ait-card-meta { display: flex; flex-wrap: wrap; gap: 6px; color: hsl(222 10% 52%); font-size: .72rem; font-weight: 700; border-top: 1px dashed hsl(214 20% 92%); padding-top: 6px; }
-        .ait-card-actions { display: flex; flex-wrap: wrap; gap: 7px; border-top: 1px solid hsl(214 20% 94%); padding-top: 8px; }
-        .ait-icon-btn { width: 34px; height: 34px; border: 1px solid hsl(214 20% 88%); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: #fff; color: hsl(222 12% 44%); cursor: pointer; transition: all 150ms; }
+        .ait-card h3 { margin: 0; color: var(--foreground); font-size: .96rem; line-height: 1.25; }
+        .ait-card p { margin: 4px 0 0; color: var(--muted-foreground); font-size: .8rem; line-height: 1.4; }
+        .ait-card-meta { display: flex; flex-wrap: wrap; gap: 6px; color: var(--muted-foreground); font-size: .72rem; font-weight: 700; border-top: 1px dashed var(--border); padding-top: 6px; }
+        .ait-card-actions { display: flex; flex-wrap: wrap; gap: 7px; border-top: 1px solid var(--border); padding-top: 8px; }
+        .ait-icon-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: var(--card); color: var(--foreground); cursor: pointer; transition: all 150ms; }
         .ait-icon-btn:hover { color: #dc2626; background: rgba(220, 38, 38, .08); border-color: rgba(220, 38, 38, .2); }
-        .ait-empty { padding: 28px; min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: hsl(222 12% 48%); }
-        .ait-empty h2 { margin: 0; color: hsl(222 30% 12%); font-family: var(--font-display); font-size: 1.15rem; }
+        .ait-empty { padding: 28px; min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: var(--muted-foreground); }
+        .ait-empty h2 { margin: 0; color: var(--foreground); font-family: var(--font-display); font-size: 1.15rem; }
         
         .ait-preview { padding: 22px; min-height: calc(100vh - 56px); border-top: 4px solid var(--app-color); }
-        .ait-preview--standalone { min-height: calc(100vh - 100px); max-width: 1300px; margin: 0 auto; border: 1px solid hsl(214 20% 90%); border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+        .ait-preview--standalone { min-height: calc(100vh - 100px); max-width: 1300px; margin: 0 auto; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
         
-        .ait-preview-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid hsl(214 20% 92%); padding-bottom: 14px; }
+        .ait-preview-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
         .ait-preview-title { display: flex; align-items: center; gap: 12px; min-width: 0; }
         .ait-preview h2 { margin: 0; font-family: var(--font-display); font-size: 1.55rem; line-height: 1.1; }
-        .ait-preview p { margin: 4px 0 0; color: hsl(222 12% 48%); font-size: .875rem; }
+        .ait-preview p { margin: 4px 0 0; color: var(--muted-foreground); font-size: .875rem; }
         .ait-tag { padding: 5px 9px; border-radius: 999px; color: var(--app-color); background: color-mix(in srgb, var(--app-color) 10%, white); font-size: .72rem; font-weight: 800; }
         .ait-render-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 18px; align-items: start; }
-        .ait-form-panel, .ait-mini-section { border: 1px solid hsl(214 20% 90%); border-radius: 8px; background: hsl(216 24% 99%); padding: 16px; }
-        .ait-form-panel h3, .ait-mini-section h3 { margin: 0; font-family: var(--font-display); font-size: 1rem; color: hsl(222 28% 18%); border-bottom: 1px solid hsl(214 20% 92%); padding-bottom: 8px; }
+        .ait-form-panel, .ait-mini-section { border: 1px solid var(--border); border-radius: 8px; background: var(--background); padding: 16px; }
+        .ait-form-panel h3, .ait-mini-section h3 { margin: 0; font-family: var(--font-display); font-size: 1rem; color: var(--foreground); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .ait-fields, .ait-action-stack, .ait-section-grid { display: grid; gap: 12px; }
         .ait-fields { margin-top: 12px; }
         .ait-field { display: grid; gap: 6px; color: hsl(222 12% 42%); font-size: .72rem; font-weight: 800; text-transform: uppercase; }
-        .ait-field input:not([type="checkbox"]), .ait-field select, .ait-inline-fields input { height: 36px; border: 1px solid hsl(214 20% 86%); border-radius: 8px; background: #fff; padding: 0 10px; font: inherit; font-size: .82rem; outline: none; text-transform: none; }
+        .ait-field input:not([type="checkbox"]), .ait-field select, .ait-inline-fields input { height: 36px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground); padding: 0 10px; font: inherit; font-size: .82rem; outline: none; text-transform: none; }
         .ait-field input:focus, .ait-field select:focus, .ait-inline-fields input:focus { border-color: var(--app-color); }
-        .ait-field input[type="checkbox"] { width: 18px; height: 18px; border-radius: 4px; border: 1px solid hsl(214 20% 86%); cursor: pointer; }
+        .ait-field input[type="checkbox"] { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border); background: var(--card); cursor: pointer; }
         .ait-action-stack { margin-top: 12px; }
         .ait-section-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .ait-mini-head { margin-bottom: 12px; }
-        .ait-mini-head p { margin: 4px 0 0; color: hsl(222 10% 50%); font-size: 0.78rem; }
+        .ait-mini-head p { margin: 4px 0 0; color: var(--muted-foreground); font-size: 0.78rem; }
         .ait-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .ait-stat { padding: 10px; border-radius: 8px; background: #fff; border: 1px solid hsl(214 20% 90%); }
-        .ait-stat span { display: block; color: hsl(222 10% 52%); font-size: .72rem; font-weight: 700; }
+        .ait-stat { padding: 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--border); }
+        .ait-stat span { display: block; color: var(--muted-foreground); font-size: .72rem; font-weight: 700; }
         .ait-stat strong { display: block; margin-top: 4px; color: var(--app-color); font-size: 1.25rem; }
         .ait-progress-list, .ait-checks, .ait-inline-fields { display: grid; gap: 9px; margin-top: 12px; }
-        .ait-progress-row { display: grid; gap: 5px; color: hsl(222 14% 38%); font-size: .8rem; font-weight: 700; }
-        .ait-progress-row div { height: 8px; border-radius: 999px; background: hsl(214 24% 92%); overflow: hidden; }
+        .ait-progress-row { display: grid; gap: 5px; color: var(--foreground); font-size: .8rem; font-weight: 700; }
+        .ait-progress-row div { height: 8px; border-radius: 999px; background: var(--muted); overflow: hidden; }
         .ait-progress-row i { display: block; height: 100%; border-radius: inherit; background: var(--app-color); transition: width 200ms; }
         .ait-table { overflow-x: auto; margin-top: 12px; }
-        .ait-table-row { min-width: 420px; display: flex; gap: 12px; min-height: 34px; align-items: center; border-bottom: 1px solid hsl(214 20% 91%); color: hsl(222 14% 38%); font-size: .78rem; padding: 4px 6px; }
-        .ait-table-row--head { color: hsl(222 8% 58%); font-weight: 800; text-transform: uppercase; font-size: .68rem; background: hsl(210 10% 97%); border-radius: 4px; margin-bottom: 4px; }
+        .ait-table-row { min-width: 420px; display: flex; gap: 12px; min-height: 34px; align-items: center; border-bottom: 1px solid var(--border); color: var(--foreground); font-size: .78rem; padding: 4px 6px; }
+        .ait-table-row--head { color: var(--muted-foreground); font-weight: 800; text-transform: uppercase; font-size: .68rem; background: var(--background); border-radius: 4px; margin-bottom: 4px; }
         .ait-table-row > span { flex: 1; min-width: 0; }
-        .ait-checks label { display: flex; align-items: center; gap: 8px; color: hsl(222 16% 28%); font-size: .84rem; font-weight: 650; }
-        .ait-checks input[type="checkbox"] { width: 15px; height: 15px; border-radius: 4px; border: 1px solid hsl(214 20% 86%); }
-        .ait-bars { height: 150px; display: flex; align-items: end; gap: 10px; padding-top: 10px; border-bottom: 1px solid hsl(214 20% 90%); margin-top: 12px; }
+        .ait-checks label { display: flex; align-items: center; gap: 8px; color: var(--foreground); font-size: .84rem; font-weight: 650; }
+        .ait-checks input[type="checkbox"] { width: 15px; height: 15px; border-radius: 4px; border: 1px solid var(--border); background: var(--card); }
+        .ait-bars { height: 150px; display: flex; align-items: end; gap: 10px; padding-top: 10px; border-bottom: 1px solid var(--border); margin-top: 12px; }
         .ait-bars span { flex: 1; min-width: 26px; border-radius: 7px 7px 0 0; background: linear-gradient(180deg, var(--app-color), color-mix(in srgb, var(--app-color) 45%, white)); transition: height 250ms; }
         .ait-chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-        .ait-chip-row button { border: 1px solid hsl(214 20% 88%); border-radius: 999px; padding: 6px 10px; background: #fff; color: hsl(222 14% 38%); font-weight: 700; font-size: .78rem; }
+        .ait-chip-row button { border: 1px solid var(--border); border-radius: 999px; padding: 6px 10px; background: var(--card); color: var(--foreground); font-weight: 700; font-size: .78rem; }
         @media (max-width: 1200px) { .ait-shell, .ait-render-grid { grid-template-columns: 1fr; } .ait-preview { min-height: auto; } }
         @media (max-width: 760px) { .ait-workspace { padding: 18px; } .ait-panel h1 { font-size: 1.5rem; } .ait-section-grid, .ait-stats { grid-template-columns: 1fr; } .ait-preview-head { flex-direction: column; } }
       `}</style>
@@ -726,7 +726,7 @@ export default function AiTemplateBuilder({
                           <h3>{app.appName}</h3>
                           <p>{app.description}</p>
                         </span>
-                        <ChevronRight size={16} className="text-slate-400 hover:text-slate-900" />
+                        <ChevronRight size={16} className="text-muted-foreground hover:text-foreground" />
                       </button>
                       <div className="ait-card-meta">
                         <span>{app.appJson.appType}</span>

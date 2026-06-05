@@ -125,7 +125,7 @@ export default function NotesSidebar({
       key={n.id}
       onClick={() => onSelectNote(n.id)}
       className={`group relative flex items-center gap-3 p-2 mx-3 mb-1 rounded-lg cursor-pointer transition-colors overflow-hidden ${
-        selectedNoteId === n.id ? "bg-blue-50/80" : "hover:bg-slate-100/60"
+        selectedNoteId === n.id ? "bg-accent/80 text-foreground" : "hover:bg-muted/60 text-muted-foreground"
       }`}
     >
       {n.color && n.color !== "transparent" && (
@@ -146,7 +146,7 @@ export default function NotesSidebar({
             <span>{formatDistanceToNow(new Date(n.updatedAt), { addSuffix: true })}</span>
           </div>
           {n.category && (
-            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 font-medium text-[9px] uppercase tracking-wider">
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium text-[9px] uppercase tracking-wider">
               {n.category}
             </span>
           )}
@@ -165,33 +165,33 @@ export default function NotesSidebar({
 
       {menuOpenId === n.id && (
         <div
-          className="fixed z-50 w-48 bg-white border border-slate-200 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95"
+          className="fixed z-50 w-48 bg-card border border-border rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95"
           style={{ top: menuPos.top, left: menuPos.left }}
           onClick={(e) => e.stopPropagation()}
         >
           {!n.isTrash ? (
             <>
               <button
-                className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors"
+                className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted rounded-md transition-colors"
                 onClick={async () => { await toggleFavorite(n.id, !n.isFavorite); setMenuOpenId(null); onMutate(); }}
               >
                 <Star size={14} className="text-slate-400" />
                 {n.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
               </button>
               <button
-                className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors"
+                className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted rounded-md transition-colors"
                 onClick={async () => { await togglePin(n.id, !n.isPinned); setMenuOpenId(null); onMutate(); }}
               >
                 <Pin size={14} className="text-slate-400" />
                 {n.isPinned ? "Unpin Note" : "Pin Note"}
               </button>
               <button
-                className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors"
+                className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted rounded-md transition-colors"
                 onClick={async () => { const newNote = await duplicateNote(n.id); if (newNote) onSelectNote(newNote.id); setMenuOpenId(null); onMutate(); }}
               >
                 <Copy size={14} className="text-slate-400" /> Duplicate
               </button>
-              <div className="h-px bg-slate-100 my-1 mx-1" />
+              <div className="h-px bg-border my-1 mx-1" />
               <div className="px-2 py-1.5">
                 <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
                   <Tag size={11} /> Color
@@ -200,7 +200,7 @@ export default function NotesSidebar({
                   {NOTE_COLORS.map((c) => (
                     <button
                       key={c}
-                      className="w-5 h-5 rounded-full border border-slate-200 flex items-center justify-center transition-transform hover:scale-110"
+                      className="w-5 h-5 rounded-full border border-border flex items-center justify-center transition-transform hover:scale-110"
                       style={{ backgroundColor: c === "transparent" ? "#f8fafc" : c }}
                       onClick={async () => { await updateColor(n.id, c); setMenuOpenId(null); onMutate(); }}
                     >
@@ -209,7 +209,7 @@ export default function NotesSidebar({
                   ))}
                 </div>
               </div>
-              <div className="h-px bg-slate-100 my-1 mx-1" />
+              <div className="h-px bg-border my-1 mx-1" />
               <button
                 className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
                 onClick={async () => { await moveToTrash(n.id); if (selectedNoteId === n.id) onSelectNote(null); setMenuOpenId(null); onMutate(); }}
@@ -219,7 +219,7 @@ export default function NotesSidebar({
             </>
           ) : (
             <button
-              className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors"
+              className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] font-medium text-foreground hover:bg-muted rounded-md transition-colors"
               onClick={async () => { await restoreNote(n.id); setMenuOpenId(null); onMutate(); }}
             >
               <RotateCcw size={14} className="text-slate-400" /> Restore Note
@@ -231,7 +231,7 @@ export default function NotesSidebar({
   );
 
   return (
-    <div className="w-[280px] h-full border-r border-slate-200 bg-slate-50/50 flex flex-col flex-shrink-0">
+    <div className="w-[280px] h-full border-r border-border bg-muted/30 flex flex-col flex-shrink-0">
       <div className="p-4 pb-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-bold text-slate-800 tracking-tight">Notes</h2>
@@ -243,10 +243,10 @@ export default function NotesSidebar({
               <Plus size={16} />
             </button>
             {showTemplates && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-200 shadow-xl rounded-xl p-1 z-50 animate-in fade-in slide-in-from-top-2">
+              <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border shadow-xl rounded-xl p-1 z-50 animate-in fade-in slide-in-from-top-2">
                 <div className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">New Note</div>
                 {TEMPLATES.map((t) => (
-                  <button key={t.label} className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors" onClick={() => handleCreateFromTemplate(t)}>
+                  <button key={t.label} className="w-full text-left px-3 py-2 text-[13px] font-medium text-foreground hover:bg-muted rounded-md transition-colors" onClick={() => handleCreateFromTemplate(t)}>
                     {t.label}
                   </button>
                 ))}
@@ -256,7 +256,7 @@ export default function NotesSidebar({
         </div>
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input type="text" placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-sm" />
+          <input type="text" placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-card border border-border rounded-md outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-sm" />
         </div>
         {categories && categories.length > 0 && (
           <div className="mt-2 flex gap-1 overflow-x-auto pb-1 scrollbar-none">
@@ -265,7 +265,7 @@ export default function NotesSidebar({
               className={`flex-shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-full border transition-colors ${
                 !filterCategory
                   ? "bg-slate-800 text-white border-slate-800"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                  : "bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground"
               }`}
             >
               All
@@ -277,7 +277,7 @@ export default function NotesSidebar({
                 className={`flex-shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-full border transition-colors flex items-center gap-1.5 ${
                   filterCategory === c.name
                     ? "text-white border-transparent"
-                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                    : "bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground"
                 }`}
                 style={{ backgroundColor: filterCategory === c.name ? c.color : undefined }}
               >
@@ -319,8 +319,8 @@ export default function NotesSidebar({
       </div>
 
       {trashNotes.length > 0 && !search && (
-        <div className="border-t border-slate-200/60 p-2 flex-shrink-0 bg-slate-50">
-          <button onClick={() => setShowTrash(!showTrash)} className="w-full flex items-center gap-2 px-3 py-2 text-[12px] font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors">
+        <div className="border-t border-border p-2 flex-shrink-0 bg-muted/50">
+          <button onClick={() => setShowTrash(!showTrash)} className="w-full flex items-center gap-2 px-3 py-2 text-[12px] font-semibold text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors">
             <Trash2 size={14} /> Trash ({trashNotes.length})
           </button>
           {showTrash && (

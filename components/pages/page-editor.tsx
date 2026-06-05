@@ -177,54 +177,54 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
 
   if (!editor) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white h-full">
-        <div className="w-8 h-8 rounded-full bg-slate-100 animate-pulse" />
+      <div className="flex-1 flex items-center justify-center bg-background h-full">
+        <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-white flex-1 min-w-0 relative">
+    <div className="flex flex-col h-full bg-background flex-1 min-w-0 relative">
       {/* Editor Top Toolbar */}
-      <div className="flex items-center justify-between px-6 h-14 border-b border-slate-100 flex-shrink-0 bg-white/90 backdrop-blur-md sticky top-0 z-10">
+      <div className="flex items-center justify-between px-6 h-14 border-b border-border flex-shrink-0 bg-background/90 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <button
             onClick={onClose}
-            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-50 border border-slate-200/60 text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-accent border border-border text-muted-foreground hover:text-foreground transition-colors"
             title="Back to workspace"
           >
             <ArrowLeft size={16} />
           </button>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 select-none">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground select-none">
             <span>{spaceName}</span>
             <span>/</span>
-            <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50 text-[10px] text-slate-500 uppercase tracking-wider">{page.type}</span>
+            <span className="bg-muted px-2 py-0.5 rounded border border-border text-[10px] text-muted-foreground uppercase tracking-wider">{page.type}</span>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={handleShare}
-            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-50 border border-slate-200/60 text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-accent border border-border text-muted-foreground hover:text-foreground transition-colors"
             title="Share page link"
           >
             <Share2 size={14} />
           </button>
           <button
             onClick={handleExport}
-            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-50 border border-slate-200/60 text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-accent border border-border text-muted-foreground hover:text-foreground transition-colors"
             title="Export page to Markdown"
           >
             <Download size={14} />
           </button>
-          <div className="h-4 w-px bg-slate-200/80 mx-1" />
+          <div className="h-4 w-px bg-border mx-1" />
           <button
             type="button"
             onClick={isRecording ? stopRecording : startRecording}
             disabled={recordingStatus === "requesting" || recordingStatus === "connecting" || recordingStatus === "stopping"}
             className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold transition-colors ${
               isRecording
-                ? "border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100"
-                : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                ? "border-rose-200 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950/40"
+                : "border-border bg-card text-muted-foreground hover:border-primary hover:bg-accent hover:text-foreground"
             } disabled:cursor-not-allowed disabled:opacity-60`}
           >
             <span className={`relative flex h-3.5 w-3.5 items-center justify-center ${isRecording ? "text-rose-600" : ""}`}>
@@ -235,7 +235,7 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
             </span>
             {isRecording ? "Stop" : recordingStatus === "requesting" || recordingStatus === "connecting" ? "Listening..." : "Speak to Page"}
           </button>
-          <div className="flex items-center gap-1.5 w-18 justify-end text-xs font-medium text-slate-400">
+          <div className="flex items-center gap-1.5 w-18 justify-end text-xs font-medium text-muted-foreground">
             {saveStatus === "saving" && <><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> Saving...</>}
             {saveStatus === "saved" && <><Check size={12} className="text-green-500" /> Saved</>}
           </div>
@@ -243,14 +243,14 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
       </div>
 
       {/* Editor Content Area */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted">
         <div className="max-w-[760px] mx-auto px-6 py-8 pb-32">
           {/* Audio Live Preview */}
           {(liveTranscript || speechError) && (
             <div className={`mb-6 rounded-lg border px-4 py-3 text-sm shadow-sm ${
               speechError
-                ? "border-rose-100 bg-rose-50 text-rose-700"
-                : "border-blue-100 bg-blue-50/70 text-slate-700"
+                ? "border-rose-200 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300"
+                : "border-blue-200 bg-blue-50/50 dark:bg-blue-950/20 text-foreground"
             }`}>
               {liveTranscript ? (
                 <div className="flex items-start gap-3">
@@ -268,30 +268,30 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
 
           {/* Page Title */}
           <div className="mb-6 flex items-center gap-2">
-            <span className="text-2xl text-slate-400 select-none">📄</span>
+            <span className="text-2xl text-muted-foreground select-none">📄</span>
             <input
               type="text"
               value={title}
               onChange={handleTitleChange}
               onKeyDown={handleTitleKeyDown}
-              className="text-3xl font-extrabold text-slate-800 bg-transparent border-none outline-none w-full placeholder:text-slate-300 font-display tracking-tight"
+              className="text-3xl font-extrabold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground font-display tracking-tight"
               placeholder="Untitled Page"
             />
           </div>
 
-          <BubbleMenu editor={editor} className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-[0_8px_30px_rgb(0,0,0,0.12)] gap-0.5">
-            <button onClick={() => editor.chain().focus().toggleBold().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("bold") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Bold size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleItalic().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("italic") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Italic size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleUnderline().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("underline") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><UnderlineIcon size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleStrike().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("strike") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Strikethrough size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleHighlight().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("highlight") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Highlighter size={14} /></button>
-            <div className="w-px h-4 bg-slate-200 mx-1" />
+          <BubbleMenu editor={editor} className="flex items-center bg-card border border-border rounded-lg p-1 shadow-[0_8px_30px_rgba(0,0,0,0.15)] gap-0.5">
+            <button onClick={() => editor.chain().focus().toggleBold().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("bold") ? "bg-accent text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}><Bold size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleItalic().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("italic") ? "bg-accent text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}><Italic size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleUnderline().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("underline") ? "bg-accent text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}><UnderlineIcon size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleStrike().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("strike") ? "bg-accent text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}><Strikethrough size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleHighlight().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("highlight") ? "bg-accent text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}><Highlighter size={14} /></button>
+            <div className="w-px h-4 bg-border mx-1" />
             <LinkButton editor={editor} />
-            <div className="w-px h-4 bg-slate-200 mx-1" />
+            <div className="w-px h-4 bg-border mx-1" />
             <AiRefineMenu editor={editor} />
           </BubbleMenu>
 
-          <EditorContent editor={editor} className="prose prose-slate prose-lg max-w-none prose-headings:font-display prose-headings:tracking-tight prose-a:text-blue-600 prose-p:leading-relaxed prose-pre:bg-slate-50 prose-pre:text-slate-800 prose-pre:border prose-pre:border-slate-200 focus:outline-none" />
+          <EditorContent editor={editor} className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-headings:font-display prose-headings:tracking-tight prose-a:text-primary prose-p:leading-relaxed prose-pre:bg-muted prose-pre:text-foreground prose-pre:border prose-pre:border-border focus:outline-none" />
         </div>
       </div>
 
@@ -315,7 +315,7 @@ function LinkButton({ editor }: { editor: any }) {
   }, [editor]);
 
   return (
-    <button onClick={setLink} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("link") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><LinkIcon size={14} /></button>
+    <button onClick={setLink} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("link") ? "bg-accent text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}><LinkIcon size={14} /></button>
   );
 }
 
@@ -348,15 +348,15 @@ function AiRefineMenu({ editor }: { editor: any }) {
 
   return (
     <div className="relative flex items-center" ref={ref}>
-      <button onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} disabled={loading} className="flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-bold text-purple-600 hover:bg-purple-50 rounded-md transition-colors whitespace-nowrap ml-1">
+      <button onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }} disabled={loading} className="flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/20 rounded-md transition-colors whitespace-nowrap ml-1">
         <Wand2 size={13} className={loading ? "animate-spin" : ""} />
         {loading ? "Refining..." : "AI Refine"}
       </button>
 
       {isOpen && (
-        <div className="absolute top-[calc(100%+6px)] left-0 w-40 bg-white border border-slate-200 shadow-xl rounded-xl p-1 z-50 animate-in fade-in zoom-in-95">
+        <div className="absolute top-[calc(100%+6px)] left-0 w-40 bg-card border border-border shadow-xl rounded-xl p-1 z-50 animate-in fade-in zoom-in-95">
           {options.map((opt) => (
-            <button key={opt} onClick={(e) => { e.stopPropagation(); handleAiAction(opt); }} className="w-full text-left px-3 py-1.5 text-[13px] font-medium text-slate-700 hover:bg-purple-50 hover:text-purple-700 rounded-md transition-colors">
+            <button key={opt} onClick={(e) => { e.stopPropagation(); handleAiAction(opt); }} className="w-full text-left px-3 py-1.5 text-[13px] font-medium text-foreground hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-700 dark:hover:text-purple-400 rounded-md transition-colors">
               {opt}
             </button>
           ))}

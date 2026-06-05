@@ -339,7 +339,7 @@ export default function PagesWorkspace({
           cursor: pointer;
         }
         .ps-page-row:hover {
-          background-color: #f8fafc !important;
+          background-color: var(--sb-hover-bg) !important;
           padding-left: 18px !important;
         }
         .ps-page-row--active {
@@ -365,7 +365,7 @@ export default function PagesWorkspace({
           gap: 6px;
         }
         .ps-breadcrumb button:hover {
-          color: #0f172a !important;
+          color: var(--foreground) !important;
           transform: translateX(-3px);
         }
 
@@ -395,7 +395,7 @@ export default function PagesWorkspace({
         .ps-sheet-backdrop {
           animation: fadeInBackdrop 0.3s ease-out forwards;
           backdrop-filter: blur(5px) !important;
-          background: rgba(15, 23, 42, 0.3) !important;
+          background: rgba(0, 0, 0, 0.5) !important;
         }
         @keyframes fadeInBackdrop {
           from {
@@ -598,7 +598,7 @@ export default function PagesWorkspace({
       ) : (
         <main className="ps-main ps-main--detail animate-slide-in-right">
           {openedPageId && currentPages.some((p) => p.id === openedPageId) ? (
-            <div className="flex-1 flex flex-col h-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-white animate-fade-in-up">
+            <div className="flex-1 flex flex-col h-full overflow-hidden rounded-xl border border-border shadow-sm bg-card text-card-foreground animate-fade-in-up">
               {(() => {
                 const page = currentPages.find((p) => p.id === openedPageId);
                 if (!page) return null;

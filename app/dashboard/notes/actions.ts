@@ -1,10 +1,11 @@
 "use server";
 
 import { db, notes, userCategories } from "@/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { createNotification } from "@/app/dashboard/notifications/actions";
+import { getActiveWorkspacePlan } from "@/app/dashboard/workspaces/actions";
 
 export async function getNotes() {
   const { userId } = await auth();
@@ -25,6 +26,18 @@ export async function getNotesCategories() {
 export async function createNote(templateData?: { title: string; content: any }) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+
+  const plan = await getActiveWorkspacePlan(userId);
+  if (plan === "Free") {
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(notes)
+      .where(and(eq(notes.clerkUserId, userId), eq(notes.isTrash, false)));
+    if (Number(count) >= 10) {
+      throw new Error("Free plan is limited to 10 notes. Upgrade to Pro for unlimited notes.");
+    }
+  }
+
   const [note] = await db
     .insert(notes)
     .values({
@@ -76,6 +89,17 @@ export async function duplicateNote(id: number) {
   if (!userId) throw new Error("Unauthorized");
   const [existing] = await db.select().from(notes).where(and(eq(notes.id, id), eq(notes.clerkUserId, userId)));
   if (!existing) throw new Error("Not found");
+
+  const plan = await getActiveWorkspacePlan(userId);
+  if (plan === "Free") {
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(notes)
+      .where(and(eq(notes.clerkUserId, userId), eq(notes.isTrash, false)));
+    if (Number(count) >= 10) {
+      throw new Error("Free plan is limited to 10 notes. Upgrade to Pro for unlimited notes.");
+    }
+  }
   
   const [note] = await db
     .insert(notes)

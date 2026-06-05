@@ -268,23 +268,23 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
       <div 
         style={{ 
           position: "fixed", top: 0, right: 0, bottom: 0, width: "100%", maxWidth: 440, 
-          background: "#fff", zIndex: 301, display: "flex", flexDirection: "column",
-          boxShadow: "-8px 0 32px rgba(0,0,0,0.08)", borderLeft: "1px solid hsl(214 20% 90%)",
+          background: "var(--card)", zIndex: 301, display: "flex", flexDirection: "column",
+          boxShadow: "-8px 0 32px rgba(0,0,0,0.08)", borderLeft: "1px solid var(--border)",
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid hsl(214 20% 92%)" }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 700, color: "hsl(222 22% 12%)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid var(--border)" }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 700, color: "var(--foreground)" }}>
             {initialTask ? "Edit Task" : "New Task"}
           </span>
           <div style={{ display: "flex", gap: 8 }}>
             {initialTask && onDelete && (
-              <button type="button" onClick={() => { onDelete(initialTask.id); onClose(); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "transparent", color: "hsl(222 10% 60%)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => { e.currentTarget.style.color = "#dc2626"; e.currentTarget.style.background = "hsl(0 80% 96%)"; }} onMouseLeave={e => { e.currentTarget.style.color = "hsl(222 10% 60%)"; e.currentTarget.style.background = "transparent"; }}>
+              <button type="button" onClick={() => { onDelete(initialTask.id); onClose(); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "transparent", color: "var(--muted-foreground)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => { e.currentTarget.style.color = "#dc2626"; e.currentTarget.style.background = "rgba(220,38,38,0.15)"; }} onMouseLeave={e => { e.currentTarget.style.color = "var(--muted-foreground)"; e.currentTarget.style.background = "transparent"; }}>
                 <Trash2 size={16} />
               </button>
             )}
-            <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "hsl(214 24% 94%)", color: "hsl(222 14% 40%)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "hsl(214 30% 90%)"} onMouseLeave={e => e.currentTarget.style.background = "hsl(214 24% 94%)"}>
+            <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "var(--background)", color: "var(--muted-foreground)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "var(--accent)"} onMouseLeave={e => e.currentTarget.style.background = "var(--accent)"}>
               <PanelRightClose size={16} />
             </button>
           </div>
@@ -299,14 +299,14 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
                 autoFocus required
                 value={title} onChange={(e) => setTitle(e.target.value)}
                 placeholder="What needs to be done?"
-                style={{ width: "100%", padding: 0, border: "none", fontFamily: "var(--font-sans)", fontSize: "1.4rem", fontWeight: 600, color: "hsl(222 22% 12%)", background: "transparent", outline: "none" }}
+                style={{ width: "100%", padding: 0, border: "none", fontFamily: "var(--font-sans)", fontSize: "1.4rem", fontWeight: 600, color: "var(--foreground)", background: "transparent", outline: "none" }}
               />
             </div>
 
             {/* Type toggle */}
-            <div style={{ display: "flex", background: "hsl(214 24% 92%)", borderRadius: 10, padding: 4, gap: 4, width: "fit-content" }}>
+            <div style={{ display: "flex", background: "var(--muted)", borderRadius: 10, padding: 4, gap: 4, width: "fit-content" }}>
               {(["task", "reminder"] as const).map((t) => (
-                <button key={t} type="button" onClick={() => setType(t)} style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: type === t ? "#fff" : "transparent", color: type === t ? "hsl(222 22% 14%)" : "hsl(222 12% 50%)", fontFamily: "var(--font-sans)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", boxShadow: type === t ? "0 1px 4px rgba(0,0,0,0.1)" : "none", display: "flex", alignItems: "center", gap: 6, transition: "all 150ms" }}>
+                <button key={t} type="button" onClick={() => setType(t)} style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: type === t ? "var(--card)" : "transparent", color: type === t ? "var(--foreground)" : "var(--muted-foreground)", fontFamily: "var(--font-sans)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", boxShadow: type === t ? "0 1px 4px rgba(0,0,0,0.1)" : "none", display: "flex", alignItems: "center", gap: 6, transition: "all 150ms" }}>
                   {t === "task" ? <CheckSquare size={14} /> : <Bell size={14} />}
                   {t === "task" ? "Task" : "Reminder"}
                 </button>
@@ -316,35 +316,35 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
             {/* Scheduling */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div>
-                <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 6 }}>Date</label>
+                <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", display: "block", marginBottom: 6 }}>Date</label>
                 <input type="date" value={dateStr} onChange={(e) => setDateStr(e.target.value)}
-                  style={{ width: "100%", padding: "10px 14px", border: "1px solid hsl(214 20% 88%)", borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "hsl(222 22% 12%)", background: "hsl(216 20% 98%)", outline: "none", boxSizing: "border-box", cursor: "pointer" }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "#fff"; }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = "hsl(214 20% 88%)"; e.currentTarget.style.background = "hsl(216 20% 98%)"; }}
+                  style={{ width: "100%", padding: "10px 14px", border: "1px solid var(--border)", borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--foreground)", background: "var(--background)", outline: "none", boxSizing: "border-box", cursor: "pointer" }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "var(--card)"; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--background)"; }}
                 />
               </div>
               <div>
-                <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 6 }}>Time</label>
+                <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", display: "block", marginBottom: 6 }}>Time</label>
                 <input type="time" value={timeStr} onChange={(e) => setTimeStr(e.target.value)} disabled={!dateStr}
-                  style={{ width: "100%", padding: "10px 14px", border: "1px solid hsl(214 20% 88%)", borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "hsl(222 22% 12%)", background: dateStr ? "hsl(216 20% 98%)" : "hsl(214 20% 94%)", outline: "none", boxSizing: "border-box", cursor: dateStr ? "pointer" : "not-allowed", opacity: dateStr ? 1 : 0.6 }}
-                  onFocus={(e) => { if (dateStr) { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "#fff"; } }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = "hsl(214 20% 88%)"; e.currentTarget.style.background = "hsl(216 20% 98%)"; }}
+                  style={{ width: "100%", padding: "10px 14px", border: "1px solid var(--border)", borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--foreground)", background: dateStr ? "var(--background)" : "var(--border)", outline: "none", boxSizing: "border-box", cursor: dateStr ? "pointer" : "not-allowed", opacity: dateStr ? 1 : 0.6 }}
+                  onFocus={(e) => { if (dateStr) { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "var(--card)"; } }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--background)"; }}
                 />
               </div>
             </div>
 
             {/* Category */}
             <div>
-              <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 8 }}>Category</label>
+              <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", display: "block", marginBottom: 8 }}>Category</label>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                 {(type === "task" ? CALENDAR_CATEGORIES : REMINDER_CATEGORIES).map((cat) => {
                   const CatIcon = cat.Icon;
                   const sel = category === cat.id;
                   return (
                     <button key={cat.id} type="button" onClick={() => setCategory(cat.id as CategoryId)}
-                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 10, border: sel ? `2px solid ${cat.color}` : "2px solid transparent", background: sel ? cat.bg : "hsl(214 24% 96%)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.8rem", fontWeight: 600, color: sel ? cat.color : "hsl(222 14% 36%)", transition: "all 150ms" }}
-                      onMouseEnter={e => { if (!sel) e.currentTarget.style.background = "hsl(214 24% 92%)"; }}
-                      onMouseLeave={e => { if (!sel) e.currentTarget.style.background = "hsl(214 24% 96%)"; }}
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 10, border: sel ? `2px solid ${cat.color}` : "2px solid transparent", background: sel ? cat.bg : "var(--muted)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.8rem", fontWeight: 600, color: sel ? cat.color : "var(--muted-foreground)", transition: "all 150ms" }}
+                      onMouseEnter={e => { if (!sel) e.currentTarget.style.background = "var(--accent)"; }}
+                      onMouseLeave={e => { if (!sel) e.currentTarget.style.background = "var(--muted)"; }}
                     >
                       <span style={{ width: 8, height: 8, borderRadius: "50%", background: cat.color, flexShrink: 0, display: "inline-block" }} />
                       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat.label}</span>
@@ -361,17 +361,17 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
 
             {/* Advanced Section */}
             {showAdvanced && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8, borderTop: "1px dashed hsl(214 20% 90%)", animation: "cal-fade-in 200ms ease-out" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8, borderTop: "1px dashed var(--border)", animation: "cal-fade-in 200ms ease-out" }}>
                 
                 {/* Priority */}
                 <div>
-                  <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 8 }}>Priority</label>
+                  <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", display: "block", marginBottom: 8 }}>Priority</label>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {PRIORITIES.map((pri) => {
                       const sel = priority === pri.id;
                       return (
                         <button key={pri.id} type="button" onClick={() => setPriority(pri.id as PriorityId)}
-                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, border: sel ? `2px solid ${pri.color}` : "2px solid hsl(214 20% 92%)", background: sel ? `${pri.color}15` : "transparent", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: sel ? pri.color : "hsl(222 14% 36%)", transition: "all 150ms" }}
+                          style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, border: sel ? `2px solid ${pri.color}` : "2px solid var(--border)", background: sel ? `${pri.color}15` : "transparent", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: sel ? pri.color : "var(--muted-foreground)", transition: "all 150ms" }}
                         >
                           <Flag size={12} strokeWidth={sel ? 3 : 2} />
                           {pri.label}
@@ -383,29 +383,29 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
 
                 {/* Duration */}
                 <div>
-                  <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 8 }}>Duration (minutes)</label>
+                  <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", display: "block", marginBottom: 8 }}>Duration (minutes)</label>
                   <div style={{ display: "flex", gap: 8 }}>
                     {[15, 30, 60, 120].map(dur => (
                       <button key={dur} type="button" onClick={() => setDuration(dur)}
-                        style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid hsl(214 20% 88%)", background: duration === dur ? "#2563eb" : "#fff", color: duration === dur ? "#fff" : "hsl(222 14% 36%)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}
+                        style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid var(--border)", background: duration === dur ? "#2563eb" : "var(--card)", color: duration === dur ? "#fff" : "var(--muted-foreground)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}
                       >
                         {dur}m
                       </button>
                     ))}
-                    <input type="number" value={duration} onChange={(e) => setDuration(parseInt(e.target.value) || 60)} style={{ width: 80, padding: "6px 12px", borderRadius: 8, border: "1px solid hsl(214 20% 88%)", fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 22% 12%)", outline: "none" }} />
+                    <input type="number" value={duration} onChange={(e) => setDuration(parseInt(e.target.value) || 60)} style={{ width: 80, padding: "6px 12px", borderRadius: 8, border: "1px solid var(--border)", fontSize: "0.75rem", fontWeight: 600, color: "var(--foreground)", outline: "none" }} />
                   </div>
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 6 }}>Description</label>
+                  <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", display: "block", marginBottom: 6 }}>Description</label>
                   <textarea
                     rows={3}
                     value={description} onChange={(e) => setDescription(e.target.value)}
                     placeholder="Add notes, links, or context..."
-                    style={{ width: "100%", padding: "10px 14px", border: "1px solid hsl(214 20% 88%)", borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "hsl(222 22% 12%)", background: "hsl(216 20% 98%)", outline: "none", resize: "vertical", minHeight: 80, lineHeight: 1.5, boxSizing: "border-box" }}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "#fff"; }}
-                    onBlur={(e) => { e.currentTarget.style.borderColor = "hsl(214 20% 88%)"; e.currentTarget.style.background = "hsl(216 20% 98%)"; }}
+                    style={{ width: "100%", padding: "10px 14px", border: "1px solid var(--border)", borderRadius: 10, fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--foreground)", background: "var(--background)", outline: "none", resize: "vertical", minHeight: 80, lineHeight: 1.5, boxSizing: "border-box" }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "var(--card)"; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--background)"; }}
                   />
                 </div>
 
@@ -415,18 +415,18 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
           </div>
 
           {/* Footer */}
-          <div style={{ padding: "16px 24px", borderTop: "1px solid hsl(214 20% 92%)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "hsl(214 30% 98%)" }}>
+          <div style={{ padding: "16px 24px", borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--muted)" }}>
             <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
               <input type="checkbox" checked={reminder} onChange={(e) => setReminder(e.target.checked)} style={{ width: 16, height: 16, cursor: "pointer" }} />
-              <span style={{ fontSize: "0.8rem", fontWeight: 500, color: "hsl(222 14% 36%)" }}>Set reminder</span>
+              <span style={{ fontSize: "0.8rem", fontWeight: 500, color: "var(--muted-foreground)" }}>Set reminder</span>
             </label>
             <div style={{ display: "flex", gap: 8 }}>
               <button type="button" onClick={onClose}
-                style={{ padding: "10px 16px", borderRadius: 10, border: "1px solid hsl(214 20% 88%)", background: "#fff", color: "hsl(222 14% 40%)", fontFamily: "var(--font-sans)", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer" }}>
+                style={{ padding: "10px 16px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--card)", color: "var(--muted-foreground)", fontFamily: "var(--font-sans)", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer" }}>
                 Cancel
               </button>
               <button type="submit" disabled={!title.trim() || saving}
-                style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: title.trim() ? "#2563eb" : "hsl(214 20% 88%)", color: "#fff", fontFamily: "var(--font-sans)", fontSize: "0.85rem", fontWeight: 600, cursor: title.trim() ? "pointer" : "not-allowed", boxShadow: title.trim() ? "0 4px 12px rgba(37,99,235,0.25)" : "none", display: "flex", alignItems: "center", gap: 8, transition: "all 150ms" }}>
+                style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: title.trim() ? "#2563eb" : "var(--border)", color: "#fff", fontFamily: "var(--font-sans)", fontSize: "0.85rem", fontWeight: 600, cursor: title.trim() ? "pointer" : "not-allowed", boxShadow: title.trim() ? "0 4px 12px rgba(37,99,235,0.25)" : "none", display: "flex", alignItems: "center", gap: 8, transition: "all 150ms" }}>
                 {saving ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Check size={16} strokeWidth={2.5} />}
                 {initialTask ? "Save Changes" : !dateStr ? "Save Draft" : "Schedule"}
               </button>
@@ -452,9 +452,9 @@ function TaskChip({ task, onDragStart, onClick }: { task: CalendarTask; onDragSt
       onDragStart={(e) => onDragStart(e, task.id)}
       onClick={(e) => { e.stopPropagation(); onClick?.(); }}
       title={`${task.title} (${pri.label} Priority)`}
-      style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 8px", borderRadius: 6, background: "hsl(214 30% 98%)", border: `1px solid ${task.completed ? "hsl(214 20% 90%)" : "hsl(214 20% 90%)"}`, color: "hsl(222 22% 14%)", fontSize: "0.7rem", fontWeight: 600, cursor: "grab", userSelect: "none", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", opacity: task.completed ? 0.5 : 1, textDecoration: task.completed ? "line-through" : "none", transition: "all 150ms" }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "hsl(214 20% 80%)"; e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = "hsl(214 30% 98%)"; e.currentTarget.style.borderColor = "hsl(214 20% 90%)"; e.currentTarget.style.boxShadow = "none"; }}
+      style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 8px", borderRadius: 6, background: "var(--muted)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "0.7rem", fontWeight: 600, cursor: "grab", userSelect: "none", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", opacity: task.completed ? 0.5 : 1, textDecoration: task.completed ? "line-through" : "none", transition: "all 150ms" }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--card)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = "var(--muted)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
         {task.priority === "critical" && <AlertCircle size={10} color={pri.color} strokeWidth={3} />}
@@ -462,7 +462,7 @@ function TaskChip({ task, onDragStart, onClick }: { task: CalendarTask; onDragSt
         <span style={{ width: 6, height: 6, borderRadius: "50%", background: cat.color, display: "inline-block" }} />
       </div>
       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{task.title}</span>
-      {task.startAt && <span style={{ color: "hsl(222 10% 50%)", fontSize: "0.6rem", fontWeight: 500 }}>{formatTime(new Date(task.startAt))}</span>}
+      {task.startAt && <span style={{ color: "var(--muted-foreground)", fontSize: "0.6rem", fontWeight: 500 }}>{formatTime(new Date(task.startAt))}</span>}
     </div>
   );
 }
@@ -481,7 +481,7 @@ function MonthGrid({ year, month, tasks, onCellClick, onDragStart, onDrop, onTas
       {/* DOW header */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8, marginBottom: 8 }}>
         {DAYS_OF_WEEK.map((d) => (
-          <div key={d} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "hsl(222 14% 40%)", padding: "4px 0" }}>{d}</div>
+          <div key={d} style={{ textAlign: "center", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--muted-foreground)", padding: "4px 0" }}>{d}</div>
         ))}
       </div>
       {/* Day grid */}
@@ -511,18 +511,18 @@ function MonthGrid({ year, month, tasks, onCellClick, onDragStart, onDrop, onTas
               onDrop={(e) => { e.preventDefault(); setDropTarget(null); onDrop(ds); }}
               style={{
                 minHeight: 120,
-                border: isDropTarget ? "2px solid #2563eb" : isToday ? "2px solid #2563eb" : "1px solid hsl(214 20% 88%)",
+                border: isDropTarget ? "2px solid var(--primary)" : isToday ? "2px solid var(--primary)" : "1px solid var(--border)",
                 borderLeft: hasOverdue && !isDropTarget && !isToday ? "3px solid #ef4444" : undefined,
                 borderRadius: 12, padding: "8px", cursor: "pointer",
                 display: "flex", flexDirection: "column", gap: 4, position: "relative",
                 opacity: isCurrMonth ? 1 : 0.4,
-                background: isDropTarget ? "hsl(221 90% 97%)" : isToday ? "hsl(221 90% 99%)" : allCompleted ? "hsl(142 60% 99%)" : "#fff",
+                background: isDropTarget ? "var(--accent)" : isToday ? "var(--accent)" : allCompleted ? "var(--accent)" : "var(--card)",
                 boxShadow: isDropTarget ? "0 0 0 4px rgba(37,99,235,0.15)" : "0 1px 2px rgba(0,0,0,0.02)",
                 transition: "all 150ms",
                 overflow: "hidden"
               }}
-              onMouseEnter={e => { if(!isDropTarget && !isToday) e.currentTarget.style.borderColor = "hsl(214 20% 80%)"; }}
-              onMouseLeave={e => { if(!isDropTarget && !isToday) e.currentTarget.style.borderColor = "hsl(214 20% 88%)"; }}
+              onMouseEnter={e => { if(!isDropTarget && !isToday) e.currentTarget.style.borderColor = "var(--border)"; }}
+              onMouseLeave={e => { if(!isDropTarget && !isToday) e.currentTarget.style.borderColor = "var(--border)"; }}
             >
               {/* Density Bar */}
               {density > 0 && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "#2563eb", opacity, pointerEvents: "none" }} />}
@@ -532,7 +532,7 @@ function MonthGrid({ year, month, tasks, onCellClick, onDragStart, onDrop, onTas
                 <span style={{
                   display: "inline-flex", alignItems: "center", justifyContent: "center",
                   width: 24, height: 24, borderRadius: "50%", fontSize: "0.8rem", fontWeight: 700,
-                  color: isToday ? "#fff" : "hsl(222 22% 22%)",
+                  color: isToday ? "#fff" : "var(--foreground)",
                   background: isToday ? "#2563eb" : "transparent",
                   boxShadow: isToday ? "0 2px 6px rgba(37,99,235,0.3)" : "none",
                 }}>{day.getDate()}</span>
@@ -542,7 +542,7 @@ function MonthGrid({ year, month, tasks, onCellClick, onDragStart, onDrop, onTas
               {/* Chips */}
               <div style={{ display: "flex", flexDirection: "column", gap: 3, flex: 1 }}>
                 {shown.map((t) => <TaskChip key={t.id} task={t} onDragStart={onDragStart} onClick={() => onTaskClick(t)} />)}
-                {overflow > 0 && <div style={{ fontSize: "0.65rem", color: "hsl(222 14% 40%)", fontWeight: 600, padding: "2px 6px", background: "hsl(214 24% 96%)", borderRadius: 4, width: "fit-content" }}>+{overflow} more</div>}
+                {overflow > 0 && <div style={{ fontSize: "0.65rem", color: "var(--muted-foreground)", fontWeight: 600, padding: "2px 6px", background: "var(--background)", borderRadius: 4, width: "fit-content" }}>+{overflow} more</div>}
               </div>
             </div>
           );
@@ -576,28 +576,28 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
       <div style={{ minWidth: 800, fontFamily: "var(--font-sans)", position: "relative" }}>
 
         {/* Week header row */}
-        <div style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", borderBottom: "1px solid hsl(214 20% 90%)", background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 10 }}>
-          <div style={{ borderRight: "1px solid hsl(214 20% 90%)", padding: "8px" }} />
+        <div style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", borderBottom: "1px solid var(--border)", background: "var(--card)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 10 }}>
+          <div style={{ borderRight: "1px solid var(--border)", padding: "8px" }} />
           {weekDays.map((day, i) => {
             const ds = toDateStr(day);
             const isToday = ds === today;
             return (
               <div key={i} onClick={() => onSlotClick(ds, 9)}
-                style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "12px 8px", borderLeft: i === 0 ? "none" : "1px solid hsl(214 20% 94%)", cursor: "pointer", background: isToday ? "hsl(221 90% 99%)" : "transparent" }}>
-                <span style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: isToday ? "#2563eb" : "hsl(222 14% 40%)" }}>{DAYS_OF_WEEK[day.getDay()]}</span>
-                <span style={{ width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem", fontWeight: 700, color: isToday ? "#fff" : "hsl(222 22% 14%)", background: isToday ? "#2563eb" : "transparent", marginTop: 4, boxShadow: isToday ? "0 2px 8px rgba(37,99,235,0.3)" : "none" }}>{day.getDate()}</span>
+                style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "12px 8px", borderLeft: i === 0 ? "none" : "1px solid var(--border)", cursor: "pointer", background: isToday ? "var(--accent)" : "transparent" }}>
+                <span style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: isToday ? "#2563eb" : "var(--muted-foreground)" }}>{DAYS_OF_WEEK[day.getDay()]}</span>
+                <span style={{ width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem", fontWeight: 700, color: isToday ? "#fff" : "var(--foreground)", background: isToday ? "#2563eb" : "transparent", marginTop: 4, boxShadow: isToday ? "0 2px 8px rgba(37,99,235,0.3)" : "none" }}>{day.getDate()}</span>
               </div>
             );
           })}
         </div>
 
         {/* Body — time + columns */}
-        <div style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", background: "#fff" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", background: "var(--card)" }}>
           
           {/* Time labels (Sticky left) */}
-          <div style={{ display: "flex", flexDirection: "column", borderRight: "1px solid hsl(214 20% 90%)", background: "#fff", position: "sticky", left: 0, zIndex: 5 }}>
+          <div style={{ display: "flex", flexDirection: "column", borderRight: "1px solid var(--border)", background: "var(--card)", position: "sticky", left: 0, zIndex: 5 }}>
             {HOURS.map((h) => (
-              <div key={h} style={{ height: SLOT_H, display: "flex", alignItems: "flex-start", justifyContent: "flex-end", padding: "8px 12px 0 0", fontSize: "0.65rem", fontWeight: 600, color: "hsl(222 14% 50%)" }}>
+              <div key={h} style={{ height: SLOT_H, display: "flex", alignItems: "flex-start", justifyContent: "flex-end", padding: "8px 12px 0 0", fontSize: "0.65rem", fontWeight: 600, color: "var(--muted-foreground)" }}>
                 {formatHour(h)}
               </div>
             ))}
@@ -610,7 +610,7 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
             const dayTasks = tasksForDay(ds);
             
             return (
-              <div key={dayIdx} style={{ borderLeft: dayIdx === 0 ? "none" : "1px solid hsl(214 20% 94%)", display: "flex", flexDirection: "column", position: "relative", background: isToday ? "hsl(221 90% 99.5%)" : "#fff" }}>
+              <div key={dayIdx} style={{ borderLeft: dayIdx === 0 ? "none" : "1px solid var(--border)", display: "flex", flexDirection: "column", position: "relative", background: isToday ? "var(--accent)" : "var(--card)" }}>
                 
                 {/* Now line */}
                 {isToday && (
@@ -625,7 +625,7 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
                   const isDrop  = dropTarget === slotKey;
                   return (
                     <div key={h}
-                      style={{ height: SLOT_H, borderBottom: "1px solid hsl(214 14% 96%)", background: isDrop ? "hsl(221 90% 96%)" : "transparent", cursor: "pointer" }}
+                      style={{ height: SLOT_H, borderBottom: "1px solid var(--border)", background: isDrop ? "var(--accent)" : "transparent", cursor: "pointer" }}
                       onClick={() => onSlotClick(ds, h)}
                       onDragOver={(e) => { e.preventDefault(); setDropTarget(slotKey); }}
                       onDragLeave={() => setDropTarget(null)}
@@ -656,7 +656,7 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
                       style={{ 
                         position: "absolute", left: 4, right: 8, top, height: `calc(${height}px - 2px)`, 
                         borderRadius: 8, padding: "6px 10px", background: cat.bg, borderLeft: `3px solid ${cat.color}`,
-                        color: "hsl(222 22% 14%)", cursor: "grab", zIndex: 2, 
+                        color: "var(--foreground)", cursor: "grab", zIndex: 2, 
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)", overflow: "hidden",
                         opacity: t.completed ? 0.5 : 1, transition: "all 150ms",
                         border: `1px solid ${cat.color}30`, borderLeftWidth: 3
@@ -666,7 +666,7 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
                     >
                       <div style={{ fontSize: "0.7rem", fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textDecoration: t.completed ? "line-through" : "none" }}>{t.title}</div>
                       {height >= 40 && (
-                        <div style={{ fontSize: "0.65rem", fontWeight: 500, color: "hsl(222 14% 40%)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                        <div style={{ fontSize: "0.65rem", fontWeight: 500, color: "var(--muted-foreground)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
                           {formatTime(startDate)} 
                           {t.priority === "critical" && <span style={{ color: pri.color, fontWeight: 700 }}>• Urgent</span>}
                         </div>
@@ -701,20 +701,20 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
 
   if (collapsed) {
     return (
-      <div style={{ width: 64, minWidth: 64, background: "#fff", borderLeft: "1px solid hsl(214 20% 90%)", display: "flex", flexDirection: "column", alignItems: "center", padding: "16px 0", position: "relative", zIndex: 20 }}>
-        <button onClick={() => setCollapsed(false)} style={{ width: 40, height: 40, borderRadius: 10, border: "none", background: "hsl(214 24% 96%)", color: "hsl(222 14% 40%)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} title="Expand Sidebar">
+      <div style={{ width: 64, minWidth: 64, background: "var(--card)", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column", alignItems: "center", padding: "16px 0", position: "relative", zIndex: 20 }}>
+        <button onClick={() => setCollapsed(false)} style={{ width: 40, height: 40, borderRadius: 10, border: "none", background: "var(--background)", color: "var(--muted-foreground)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} title="Expand Sidebar">
           <PanelRightOpen size={18} />
         </button>
         
         <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 24, alignItems: "center" }}>
-          <div title={`Today's Agenda: ${todayTasks.length}`} style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 10, background: "hsl(221 90% 97%)", color: "#2563eb" }}>
+          <div title={`Today's Agenda: ${todayTasks.length}`} style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 10, background: "var(--accent)", color: "#2563eb" }}>
             <ListTodo size={18} />
             {todayTasks.length > 0 && <span style={{ position: "absolute", top: -4, right: -4, background: "#2563eb", color: "#fff", fontSize: "0.6rem", fontWeight: 700, width: 18, height: 18, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{todayTasks.length}</span>}
           </div>
           
-          <div title={`Drafts: ${drafts.length}`} style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 10, background: "hsl(214 24% 96%)", color: "hsl(222 14% 40%)" }}>
+          <div title={`Drafts: ${drafts.length}`} style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 10, background: "var(--background)", color: "var(--muted-foreground)" }}>
             <CalendarDays size={18} />
-            {drafts.length > 0 && <span style={{ position: "absolute", top: -4, right: -4, background: "hsl(222 14% 40%)", color: "#fff", fontSize: "0.6rem", fontWeight: 700, width: 18, height: 18, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{drafts.length}</span>}
+            {drafts.length > 0 && <span style={{ position: "absolute", top: -4, right: -4, background: "var(--muted-foreground)", color: "#fff", fontSize: "0.6rem", fontWeight: 700, width: 18, height: 18, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{drafts.length}</span>}
           </div>
         </div>
       </div>
@@ -722,11 +722,11 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
   }
 
   return (
-    <div style={{ width: 340, minWidth: 340, background: "#fff", borderLeft: "1px solid hsl(214 20% 90%)", display: "flex", flexDirection: "column", position: "relative", zIndex: 20 }}>
+    <div style={{ width: 340, minWidth: 340, background: "var(--card)", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column", position: "relative", zIndex: 20 }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid hsl(214 20% 92%)" }}>
-        <span style={{ fontFamily: "var(--font-display)", fontSize: "1rem", fontWeight: 700, color: "hsl(222 22% 12%)" }}>Command Center</span>
-        <button onClick={() => setCollapsed(true)} style={{ width: 28, height: 28, borderRadius: 8, border: "none", background: "transparent", color: "hsl(222 14% 50%)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.background = "hsl(214 24% 94%)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid var(--border)" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontSize: "1rem", fontWeight: 700, color: "var(--foreground)" }}>Command Center</span>
+        <button onClick={() => setCollapsed(true)} style={{ width: 28, height: 28, borderRadius: 8, border: "none", background: "transparent", color: "var(--muted-foreground)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.background = "var(--accent)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
           <PanelRightClose size={16} />
         </button>
       </div>
@@ -735,14 +735,14 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
         
         {/* Quick Capture */}
         <div>
-          <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "hsl(222 14% 40%)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>Quick Capture</div>
+          <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>Quick Capture</div>
           <form onSubmit={(e) => { e.preventDefault(); if (captureText.trim()) { onQuickCapture(captureText); setCaptureText(""); } }}>
             <input 
               value={captureText} onChange={e => setCaptureText(e.target.value)}
               placeholder="e.g., Team meeting tomorrow 4pm" 
-              style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid hsl(214 20% 88%)", background: "hsl(216 20% 98%)", fontSize: "0.85rem", color: "hsl(222 22% 14%)", outline: "none" }}
-              onFocus={e => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.1)"; }}
-              onBlur={e => { e.currentTarget.style.borderColor = "hsl(214 20% 88%)"; e.currentTarget.style.background = "hsl(216 20% 98%)"; e.currentTarget.style.boxShadow = "none"; }}
+              style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--background)", fontSize: "0.85rem", color: "var(--foreground)", outline: "none" }}
+              onFocus={e => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "var(--card)"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.1)"; }}
+              onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--background)"; e.currentTarget.style.boxShadow = "none"; }}
             />
           </form>
         </div>
@@ -754,8 +754,8 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
               <Sparkles size={14} /> AI Insights
             </div>
             <div style={{ padding: "12px 16px", borderRadius: 10, background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", display: "flex", flexDirection: "column", gap: 8 }}>
-              {overdueTasks.length > 0 && <span style={{ fontSize: "0.8rem", color: "hsl(222 22% 22%)", fontWeight: 500 }}>You have {overdueTasks.length} overdue task{overdueTasks.length > 1 ? "s" : ""}. Consider rescheduling them.</span>}
-              {todayTasks.length > 5 && <span style={{ fontSize: "0.8rem", color: "hsl(222 22% 22%)", fontWeight: 500 }}>Your agenda is heavy today ({todayTasks.length} tasks). Want to move some to tomorrow?</span>}
+              {overdueTasks.length > 0 && <span style={{ fontSize: "0.8rem", color: "var(--foreground)", fontWeight: 500 }}>You have {overdueTasks.length} overdue task{overdueTasks.length > 1 ? "s" : ""}. Consider rescheduling them.</span>}
+              {todayTasks.length > 5 && <span style={{ fontSize: "0.8rem", color: "var(--foreground)", fontWeight: 500 }}>Your agenda is heavy today ({todayTasks.length} tasks). Want to move some to tomorrow?</span>}
             </div>
           </div>
         )}
@@ -763,21 +763,21 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
         {/* Today's Agenda */}
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "hsl(222 14% 40%)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Today's Agenda</div>
-            <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "#2563eb", background: "hsl(221 90% 96%)", padding: "2px 8px", borderRadius: 10 }}>{todayTasks.length} pending</span>
+            <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Today's Agenda</div>
+            <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "#2563eb", background: "var(--accent)", padding: "2px 8px", borderRadius: 10 }}>{todayTasks.length} pending</span>
           </div>
           {todayTasks.length === 0 ? (
-            <div style={{ padding: "16px", borderRadius: 10, border: "1px dashed hsl(214 20% 86%)", textAlign: "center", fontSize: "0.8rem", color: "hsl(222 14% 50%)" }}>No tasks scheduled for today.</div>
+            <div style={{ padding: "16px", borderRadius: 10, border: "1px dashed var(--border)", textAlign: "center", fontSize: "0.8rem", color: "var(--muted-foreground)" }}>No tasks scheduled for today.</div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {todayTasks.slice(0, 5).map(t => {
                 const cat = getCat(t.category);
                 return (
-                  <div key={t.id} onClick={() => onTaskClick(t)} style={{ padding: "10px 12px", borderRadius: 8, background: "#fff", border: "1px solid hsl(214 20% 90%)", display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", transition: "all 150ms", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }} onMouseEnter={e => e.currentTarget.style.borderColor = "hsl(214 20% 80%)"}>
+                  <div key={t.id} onClick={() => onTaskClick(t)} style={{ padding: "10px 12px", borderRadius: 8, background: "var(--card)", border: "1px solid var(--border)", display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", transition: "all 150ms", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }} onMouseEnter={e => e.currentTarget.style.borderColor = "var(--border)"}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: cat.color, marginTop: 4, flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "hsl(222 22% 14%)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.title}</div>
-                      <div style={{ fontSize: "0.7rem", color: "hsl(222 14% 50%)", marginTop: 2 }}>{formatTime(new Date(t.startAt!))} • {t.durationMinutes}m</div>
+                      <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.title}</div>
+                      <div style={{ fontSize: "0.7rem", color: "var(--muted-foreground)", marginTop: 2 }}>{formatTime(new Date(t.startAt!))} • {t.durationMinutes}m</div>
                     </div>
                   </div>
                 )
@@ -790,33 +790,33 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
         {/* Drafts Dropzone */}
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "hsl(222 14% 40%)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Unscheduled Drafts</div>
-            <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "hsl(222 14% 50%)", background: "hsl(214 24% 94%)", padding: "2px 8px", borderRadius: 10 }}>{drafts.length} total</span>
+            <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Unscheduled Drafts</div>
+            <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--muted-foreground)", background: "var(--background)", padding: "2px 8px", borderRadius: 10 }}>{drafts.length} total</span>
           </div>
           
           <div
             onDragOver={(e) => { e.preventDefault(); setDropActive(true); }}
             onDragLeave={() => setDropActive(false)}
             onDrop={(e) => { e.preventDefault(); setDropActive(false); onDropToDraft(); }}
-            style={{ minHeight: 100, borderRadius: 10, border: dropActive ? "2px dashed #2563eb" : "2px dashed hsl(214 20% 86%)", background: dropActive ? "hsl(221 90% 98%)" : "transparent", padding: 8, transition: "all 200ms", display: "flex", flexDirection: "column", gap: 8 }}
+            style={{ minHeight: 100, borderRadius: 10, border: dropActive ? "2px dashed #2563eb" : "2px dashed var(--border)", background: dropActive ? "var(--accent)" : "transparent", padding: 8, transition: "all 200ms", display: "flex", flexDirection: "column", gap: 8 }}
           >
             {drafts.length === 0 ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "20px 10px", gap: 8 }}>
-                <CalendarDays size={20} color="hsl(222 14% 60%)" />
-                <span style={{ fontSize: "0.75rem", color: "hsl(222 14% 60%)" }}>Drag tasks here to unschedule</span>
+                <CalendarDays size={20} color="var(--muted-foreground)" />
+                <span style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>Drag tasks here to unschedule</span>
               </div>
             ) : (
               drafts.map((t) => {
                 const cat = getCat(t.category);
                 return (
                   <div key={t.id} draggable onDragStart={(e) => onDragStart(e, t.id)} onClick={() => onTaskClick(t)}
-                    style={{ background: "#fff", border: "1px solid hsl(214 20% 90%)", borderRadius: 8, padding: "10px", cursor: "grab", display: "flex", alignItems: "flex-start", gap: 8, position: "relative", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+                    style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, padding: "10px", cursor: "grab", display: "flex", alignItems: "flex-start", gap: 8, position: "relative", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
                   >
                     <span style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: cat.color }} />
-                    <GripVertical size={14} style={{ color: "hsl(222 14% 60%)", flexShrink: 0, marginTop: 1, marginLeft: 2 }} />
+                    <GripVertical size={14} style={{ color: "var(--muted-foreground)", flexShrink: 0, marginTop: 1, marginLeft: 2 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "hsl(222 22% 14%)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.title}</div>
-                      <div style={{ fontSize: "0.7rem", color: "hsl(222 14% 50%)", marginTop: 2 }}>{cat.label} • {t.durationMinutes}m</div>
+                      <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.title}</div>
+                      <div style={{ fontSize: "0.7rem", color: "var(--muted-foreground)", marginTop: 2 }}>{cat.label} • {t.durationMinutes}m</div>
                     </div>
                   </div>
                 );
@@ -980,30 +980,30 @@ export default function CalendarPage() {
 
   return (
     <>
-      <div style={{ position: "fixed", inset: 0, paddingLeft: "var(--sb-width, 220px)", display: "flex", background: "hsl(216 20% 98%)", fontFamily: "var(--font-sans)", zIndex: 1, transition: "padding-left var(--dur, 200ms) var(--ease-std)" }}>
+      <div style={{ position: "fixed", inset: 0, paddingLeft: "var(--sb-width, 220px)", display: "flex", background: "var(--background)", fontFamily: "var(--font-sans)", zIndex: 1, transition: "padding-left var(--dur, 200ms) var(--ease-std)" }}>
 
         {/* ── Left: Calendar Workspace ── */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", overflow: "hidden", background: "#fff", margin: 16, borderRadius: 16, boxShadow: "0 4px 20px rgba(0,0,0,0.03)", border: "1px solid hsl(214 20% 92%)" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--card)", margin: 16, borderRadius: 16, boxShadow: "0 4px 20px rgba(0,0,0,0.03)", border: "1px solid var(--border)" }}>
 
           {/* Header */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid hsl(214 20% 92%)", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(12px)", zIndex: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid var(--border)", background: "var(--card)", backdropFilter: "blur(12px)", zIndex: 10 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <button onClick={prevPeriod} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid hsl(214 20% 90%)", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "hsl(214 30% 96%)"} onMouseLeave={e => e.currentTarget.style.background = "#fff"}><ChevronLeft size={16} /></button>
-                <button onClick={nextPeriod} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid hsl(214 20% 90%)", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "hsl(214 30% 96%)"} onMouseLeave={e => e.currentTarget.style.background = "#fff"}><ChevronRight size={16} /></button>
+                <button onClick={prevPeriod} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid var(--border)", background: "var(--card)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "var(--accent)"} onMouseLeave={e => e.currentTarget.style.background = "var(--card)"}><ChevronLeft size={16} /></button>
+                <button onClick={nextPeriod} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid var(--border)", background: "var(--card)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "var(--accent)"} onMouseLeave={e => e.currentTarget.style.background = "var(--card)"}><ChevronRight size={16} /></button>
               </div>
-              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 700, color: "hsl(222 30% 12%)", letterSpacing: "-0.02em", minWidth: 180 }}>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.02em", minWidth: 180 }}>
                 {view === "month" ? monthLabel : weekLabel}
               </span>
-              <button onClick={goToday} style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid hsl(214 20% 90%)", background: "#fff", color: "hsl(222 14% 30%)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "hsl(214 30% 96%)"} onMouseLeave={e => e.currentTarget.style.background = "#fff"}>Today</button>
+              <button onClick={goToday} style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--card)", color: "var(--foreground)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", transition: "all 150ms" }} onMouseEnter={e => e.currentTarget.style.background = "var(--accent)"} onMouseLeave={e => e.currentTarget.style.background = "var(--card)"}>Today</button>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {/* View Toggle */}
-              <div style={{ display: "flex", background: "hsl(214 24% 94%)", borderRadius: 10, padding: 4, gap: 2 }}>
+              <div style={{ display: "flex", background: "var(--background)", borderRadius: 10, padding: 4, gap: 2 }}>
                 {(["month", "week"] as const).map((v) => (
                   <button key={v} onClick={() => { setView(v); if (v === "week") setCurrentDate(new Date(today.getFullYear(), today.getMonth(), today.getDate())); }}
-                    style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: view === v ? "#fff" : "transparent", color: view === v ? "hsl(222 22% 14%)" : "hsl(222 14% 50%)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", boxShadow: view === v ? "0 2px 8px rgba(0,0,0,0.06)" : "none", textTransform: "capitalize", transition: "all 150ms" }}>
+                    style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: view === v ? "#fff" : "transparent", color: view === v ? "var(--foreground)" : "var(--muted-foreground)", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", boxShadow: view === v ? "0 2px 8px rgba(0,0,0,0.06)" : "none", textTransform: "capitalize", transition: "all 150ms" }}>
                     {v}
                   </button>
                 ))}
@@ -1020,7 +1020,7 @@ export default function CalendarPage() {
 
           {/* Body */}
           {loading ? (
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 12, color: "hsl(222 14% 50%)" }}>
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 12, color: "var(--muted-foreground)" }}>
               <Loader2 size={24} style={{ color: "#2563eb", animation: "spin 1s linear infinite" }} />
               <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>Loading workspace...</span>
             </div>

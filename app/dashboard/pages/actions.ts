@@ -5,6 +5,7 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, spacePages, spaces, users } from "@/db";
 import type { Space, SpacePage } from "@/db/schema";
+import { getActiveWorkspacePlan } from "@/app/dashboard/workspaces/actions";
 
 const PAGES_PATH = "/dashboard/pages";
 
@@ -131,6 +132,18 @@ export async function createSpace(data: {
   color: string;
 }) {
   const userId = await requireUserId();
+
+  const plan = await getActiveWorkspacePlan(userId);
+  if (plan === "Free") {
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(spaces)
+      .where(and(eq(spaces.clerkUserId, userId), eq(spaces.isArchived, false)));
+    if (Number(count) >= 2) {
+      throw new Error("Free plan is limited to 2 spaces. Upgrade to Pro for unlimited spaces.");
+    }
+  }
+
   const [space] = await db
     .insert(spaces)
     .values({
@@ -186,6 +199,18 @@ export async function deleteSpace(id: number) {
 export async function duplicateSpace(id: number) {
   const userId = await requireUserId();
   const existing = await assertOwnsSpace(id, userId);
+
+  const plan = await getActiveWorkspacePlan(userId);
+  if (plan === "Free") {
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(spaces)
+      .where(and(eq(spaces.clerkUserId, userId), eq(spaces.isArchived, false)));
+    if (Number(count) >= 2) {
+      throw new Error("Free plan is limited to 2 spaces. Upgrade to Pro for unlimited spaces.");
+    }
+  }
+
   const pages = await db
     .select()
     .from(spacePages)

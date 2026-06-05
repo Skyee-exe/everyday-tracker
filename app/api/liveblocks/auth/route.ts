@@ -38,11 +38,13 @@ export async function POST(req: Request) {
   let allowed = false;
   try {
     if (parsed.kind === "board") {
-      const access = await canAccessBoard(parsed.entityId, "viewer");
+      const access = await canAccessBoard(parsed.entityId as number, "viewer");
       allowed = access !== null;
     } else if (parsed.kind === "task") {
-      const access = await canAccessTask(parsed.entityId, "viewer");
+      const access = await canAccessTask(parsed.entityId as number, "viewer");
       allowed = access !== null;
+    } else if (parsed.kind === "workspace") {
+      allowed = true;
     }
   } catch {
     allowed = false;

@@ -34,6 +34,7 @@ import {
   updateWhiteboardScene,
   type WhiteboardScene,
 } from "@/app/dashboard/whiteboard/actions";
+import { useTheme } from "@/components/landing/theme-context";
 
 const Excalidraw = dynamic(
   async () => (await import("@excalidraw/excalidraw")).Excalidraw,
@@ -255,6 +256,7 @@ function makeDiagramElements(api: ExcalidrawImperativeAPI, diagram: DiagramRespo
 }
 
 export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: Whiteboard[] }) {
+  const { theme } = useTheme();
   const [boards, setBoards] = useState<Whiteboard[]>(initialBoards);
   const [activeBoardId, setActiveBoardId] = useState<number | null>(initialBoards[0]?.id ?? null);
   const [search, setSearch] = useState("");
@@ -562,14 +564,14 @@ export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: 
 
             <div className="wb-canvas">
               <Excalidraw
-                key={activeBoard.id}
+                key={`${activeBoard.id}_${theme}`}
                 excalidrawAPI={(api) => {
                   apiRef.current = api;
                 }}
                 initialData={{
                   elements: scene.elements as OrderedExcalidrawElement[],
                   appState: {
-                    viewBackgroundColor: "#ffffff",
+                    viewBackgroundColor: theme === "dark" ? "#121212" : "#ffffff",
                     gridModeEnabled: true,
                     ...scene.appState,
                   },
@@ -577,7 +579,7 @@ export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: 
                   scrollToContent: true,
                 }}
                 name={activeBoard.name}
-                theme="light"
+                theme={theme === "dark" ? "dark" : "light"}
                 onChange={handleSceneChange}
                 UIOptions={{
                   canvasActions: {

@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { generatedApps, userCategories, userSettings } from "@/db/schema";
+import { generatedApps, userCategories, userSettings, notes, spaces, notifications } from "@/db/schema";
 
 export type SettingsPayload = Partial<{
   theme: string;
@@ -76,12 +76,33 @@ export async function getOrCreateUserSettings() {
 export async function getSettingsData() {
   const userId = await requireUserId();
 
-  const [settings, appUsage] = await Promise.all([
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const [settings, appUsage, notesUsage, spacesUsage, aiActionsUsage] = await Promise.all([
     getOrCreateUserSettings(),
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(generatedApps)
       .where(eq(generatedApps.clerkUserId, userId)),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(notes)
+      .where(and(eq(notes.clerkUserId, userId), eq(notes.isTrash, false))),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(spaces)
+      .where(and(eq(spaces.clerkUserId, userId), eq(spaces.isArchived, false))),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(notifications)
+      .where(
+        and(
+          eq(notifications.userId, userId),
+          eq(notifications.type, "ai_action"),
+          sql`${notifications.createdAt} >= ${today}`
+        )
+      ),
   ]);
 
   let categories = await db
@@ -120,6 +141,9 @@ export async function getSettingsData() {
     categories,
     usage: {
       generatedApps: appUsage[0]?.count ?? 0,
+      notesCount: notesUsage[0]?.count ?? 0,
+      spacesCount: spacesUsage[0]?.count ?? 0,
+      aiActionsCount: aiActionsUsage[0]?.count ?? 0,
     },
   };
 }
