@@ -134,17 +134,19 @@ export async function generateTemplateApp(prompt: string) {
   if (!userPrompt) throw new Error("Prompt is required");
 
   const plan = await getActiveWorkspacePlan(userId);
-  if (plan === "Free") {
-    throw new Error("AI Template Builder is only available on the Paid plan. Upgrade to Pro to use this feature.");
-  }
 
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)` })
     .from(generatedApps)
     .where(eq(generatedApps.clerkUserId, userId));
 
-  if (Number(count) >= MAX_GENERATED_APPS) {
-    throw new Error(`You can create up to ${MAX_GENERATED_APPS} generated apps. Delete one to create another.`);
+  const maxApps = plan === "Free" ? 1 : MAX_GENERATED_APPS;
+  if (Number(count) >= maxApps) {
+    if (plan === "Free") {
+      throw new Error("Free plan is limited to 1 generated app. Upgrade to Pro to create more.");
+    } else {
+      throw new Error(`You can create up to ${MAX_GENERATED_APPS} generated apps. Delete one to create another.`);
+    }
   }
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;

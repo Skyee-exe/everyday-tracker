@@ -505,9 +505,11 @@ export function GeneratedAppPreview({
 export default function AiTemplateBuilder({
   initialApps,
   initialAppId,
+  plan = "Free",
 }: {
   initialApps: GeneratedApp[];
   initialAppId: number | null;
+  plan?: string;
 }) {
   const router = useRouter();
   const [apps, setApps] = useState<AppRecord[]>(initialApps.map(asApp));
@@ -525,8 +527,9 @@ export default function AiTemplateBuilder({
     [apps, selectedAppId]
   );
   
-  // Total limit in builder is 3 apps
-  const limitReached = apps.length >= 3;
+  // Dynamic limits based on workspace subscription tier
+  const maxApps = plan === "Free" ? 1 : 3;
+  const limitReached = apps.length >= maxApps;
   const sidebarAppsCount = useMemo(() => apps.filter(app => app.inSidebar).length, [apps]);
 
   const openApp = (app: AppRecord) => {
@@ -705,13 +708,19 @@ export default function AiTemplateBuilder({
             </button>
           </div>
 
-          {limitReached && <div className="ait-limit">You have reached the 3 app limit. Delete an app to generate another.</div>}
+          {limitReached && (
+            <div className="ait-limit">
+              {plan === "Free"
+                ? "Free plan is limited to 1 generated app. Upgrade to Pro to generate more."
+                : `You have reached the ${maxApps} app limit. Delete an app to generate another.`}
+            </div>
+          )}
           {error && <div className="ait-error">{error}</div>}
 
           <section className="ait-created">
             <div className="ait-created-head">
               <h2>Created Apps</h2>
-              <span className="ait-count">{apps.length}/3</span>
+              <span className="ait-count">{apps.length}/{maxApps}</span>
             </div>
             {apps.length ? (
               <div className="ait-card-list">

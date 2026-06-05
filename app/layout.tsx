@@ -4,6 +4,7 @@ import "@excalidraw/excalidraw/index.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/landing/theme-context";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Everyday Tracker - Your Modern Workspace",
@@ -30,6 +31,7 @@ export default function RootLayout({
         <body style={{ margin: 0, padding: 0 }}>
           <ThemeProvider>
             {children}
+            <Analytics />
           </ThemeProvider>
         </body>
       </html>
