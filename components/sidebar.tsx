@@ -34,6 +34,9 @@ import {
 } from "lucide-react";
 import CommandPalette from "./command-palette";
 import { useNotifications } from "./notifications/NotificationContext";
+import WorkspaceSwitcher from "./workspaces/WorkspaceSwitcher";
+import { useWorkspace } from "./workspaces/WorkspaceProvider";
+import { useUser } from "@clerk/nextjs";
 
 /* ─────────────────── Types ─────────────────── */
 interface NavItem {
@@ -104,104 +107,7 @@ const GENERATED_ICON_MAP: Record<string, React.ElementType> = {
   Target,
 };
 
-/* ─────────────────── Workspaces ─────────────────── */
-const WORKSPACES = [
-  { name: "Soham's Workspace", plan: "Pro", active: true, initial: "S", color: "#2563eb" },
-  { name: "Side Projects", plan: "Free", active: false, initial: "SP", color: "#0891b2" },
-];
 
-/* ─────────────────── Logo Dropdown ─────────────────── */
-function LogoDropdown({ onClose, collapsed }: { onClose: () => void; collapsed: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    };
-    setTimeout(() => window.addEventListener("mousedown", handler), 0);
-    return () => window.removeEventListener("mousedown", handler);
-  }, [onClose]);
-
-  return (
-    <div
-      ref={ref}
-      className={`logo-dropdown${collapsed ? " logo-dropdown--collapsed" : ""}`}
-      role="menu"
-    >
-      {/* Header */}
-      <div className="logo-dd-header">
-        <div className="logo-dd-ws-name">Soham&apos;s Workspace</div>
-        <span className="logo-dd-plan">
-          <Crown size={10} fill="currentColor" strokeWidth={0} />
-          Pro
-        </span>
-      </div>
-
-      <div className="logo-dd-divider" />
-
-      {/* Workspaces */}
-      <p className="logo-dd-section">Workspaces</p>
-      {WORKSPACES.map((ws) => (
-        <button key={ws.name} className="logo-dd-item logo-dd-item--ws">
-          <span
-            className="logo-dd-ws-dot"
-            style={{ background: ws.color }}
-          >
-            {ws.initial}
-          </span>
-          <div className="logo-dd-ws-info">
-            <span className="logo-dd-ws-label">{ws.name}</span>
-            <span className="logo-dd-ws-plan">{ws.plan}</span>
-          </div>
-          {ws.active && <Check size={13} className="logo-dd-check" strokeWidth={2.5} />}
-        </button>
-      ))}
-
-      <button className="logo-dd-item logo-dd-item--muted">
-        <span className="logo-dd-icon-wrap logo-dd-icon-wrap--dashed">
-          <Plus size={13} strokeWidth={2.5} />
-        </span>
-        <span>Add workspace</span>
-      </button>
-
-      <div className="logo-dd-divider" />
-
-      {/* Actions */}
-      <p className="logo-dd-section">Manage</p>
-      <button className="logo-dd-item">
-        <span className="logo-dd-icon-wrap" style={{ background: "rgba(37,99,235,0.1)", color: "#2563eb" }}>
-          <Users size={13} strokeWidth={1.8} />
-        </span>
-        <span>Invite members</span>
-        <ExternalLink size={11} className="logo-dd-ext" />
-      </button>
-
-      <button className="logo-dd-item">
-        <span className="logo-dd-icon-wrap" style={{ background: "rgba(124,58,237,0.1)", color: "#7c3aed" }}>
-          <Crown size={13} strokeWidth={1.8} />
-        </span>
-        <span>Upgrade plan</span>
-        <span className="logo-dd-badge-tag">Save 30%</span>
-      </button>
-
-      <button className="logo-dd-item">
-        <span className="logo-dd-icon-wrap" style={{ background: "rgba(14,165,233,0.1)", color: "#0ea5e9" }}>
-          <Megaphone size={13} strokeWidth={1.8} />
-        </span>
-        <span>What&apos;s new</span>
-        <span className="logo-dd-new-dot" />
-      </button>
-
-      <div className="logo-dd-divider" />
-
-      {/* Footer */}
-      <div className="logo-dd-footer">
-        <span>Everyday Workspace</span>
-        <span>v1.0.0</span>
-      </div>
-    </div>
-  );
-}
 
 /* ─────────────────── Tooltip ─────────────────── */
 function Tooltip({ label, children }: { label: string; children: React.ReactNode }) {
@@ -254,6 +160,8 @@ export default function Sidebar() {
   const [generatedApps, setGeneratedApps] = useState<GeneratedSidebarApp[]>([]);
   const pathname = usePathname();
   const { unreadCount, isOpen, setIsOpen } = useNotifications();
+  const { activeWorkspace } = useWorkspace();
+  const { user } = useUser();
 
   /* Ctrl+K */
   useEffect(() => {
@@ -343,7 +251,7 @@ export default function Sidebar() {
 
           {/* Logo Dropdown */}
           {logoOpen && (
-            <LogoDropdown onClose={() => setLogoOpen(false)} collapsed={collapsed} />
+            <WorkspaceSwitcher onClose={() => setLogoOpen(false)} collapsed={collapsed} />
           )}
         </div>
 
@@ -454,6 +362,7 @@ export default function Sidebar() {
                 </button>
               </Tooltip>
             )}
+
             <NavLink
               item={{
                 label: "Help & Docs",
@@ -474,13 +383,19 @@ export default function Sidebar() {
                 <ChevronLeft size={13} strokeWidth={2.5} style={{ transform: "rotate(180deg)" }} />
               </button>
             )}
-            <button className="sb-profile">
-              <div className="sb-avatar">S</div>
+            <button className="sb-profile" onClick={() => setLogoOpen((o) => !o)} type="button">
+              <div className="sb-avatar" style={{ padding: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {user?.imageUrl ? (
+                  <img src={user.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  (user?.fullName || user?.primaryEmailAddress?.emailAddress || "U").slice(0, 1).toUpperCase()
+                )}
+              </div>
               {!collapsed && (
                 <>
                   <div className="sb-profile-info">
-                    <span className="sb-profile-name">Soham</span>
-                    <span className="sb-profile-plan">Pro workspace</span>
+                    <span className="sb-profile-name">{user?.fullName || user?.primaryEmailAddress?.emailAddress || "Soham"}</span>
+                    <span className="sb-profile-plan">{activeWorkspace?.plan ? `${activeWorkspace.plan} workspace` : "Free workspace"}</span>
                   </div>
                   <ChevronDown size={13} className="sb-profile-chevron" strokeWidth={2} />
                 </>

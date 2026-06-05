@@ -16,6 +16,116 @@ export const users = pgTable("users", {
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 
+/* Workspaces */
+export const workspaces = pgTable(
+  "workspaces",
+  {
+    id: serial("id").primaryKey(),
+    ownerClerkUserId: text("owner_clerk_user_id").notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    icon: text("icon").notNull().default("Zap"),
+    color: text("color").notNull().default("#2563eb"),
+    type: text("type").notNull().default("personal"),
+    plan: text("plan").notNull().default("Free"),
+    subscriptionStatus: text("subscription_status").notNull().default("active"),
+    stripeCustomerId: text("stripe_customer_id"),
+    stripeSubscriptionId: text("stripe_subscription_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqOwnerWorkspaceName: uniqueIndex("uniq_owner_workspace_name").on(t.ownerClerkUserId, t.name),
+  })
+);
+
+export type Workspace = typeof workspaces.$inferSelect;
+export type NewWorkspace = typeof workspaces.$inferInsert;
+
+export const workspaceMembers = pgTable(
+  "workspace_members",
+  {
+    id: serial("id").primaryKey(),
+    workspaceId: integer("workspace_id").references(() => workspaces.id, { onDelete: "cascade" }).notNull(),
+    clerkUserId: text("clerk_user_id"),
+    email: text("email").notNull(),
+    role: text("role").notNull().default("Member"),
+    status: text("status").notNull().default("active"),
+    invitedByClerkUserId: text("invited_by_clerk_user_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqWorkspaceMemberEmail: uniqueIndex("uniq_workspace_member_email").on(t.workspaceId, t.email),
+  })
+);
+
+export type WorkspaceMember = typeof workspaceMembers.$inferSelect;
+export type NewWorkspaceMember = typeof workspaceMembers.$inferInsert;
+
+export const workspaceInvites = pgTable(
+  "workspace_invites",
+  {
+    id: serial("id").primaryKey(),
+    workspaceId: integer("workspace_id").references(() => workspaces.id, { onDelete: "cascade" }).notNull(),
+    email: text("email").notNull(),
+    role: text("role").notNull().default("Member"),
+    token: text("token").notNull().unique(),
+    status: text("status").notNull().default("pending"),
+    invitedByClerkUserId: text("invited_by_clerk_user_id").notNull(),
+    lastSentAt: timestamp("last_sent_at").defaultNow().notNull(),
+    acceptedAt: timestamp("accepted_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqWorkspaceInviteEmail: uniqueIndex("uniq_workspace_invite_email").on(t.workspaceId, t.email),
+  })
+);
+
+export type WorkspaceInvite = typeof workspaceInvites.$inferSelect;
+export type NewWorkspaceInvite = typeof workspaceInvites.$inferInsert;
+
+export const workspacePreferences = pgTable("workspace_preferences", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull().unique(),
+  activeWorkspaceId: integer("active_workspace_id").references(() => workspaces.id, { onDelete: "set null" }),
+  preferences: jsonb("preferences"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type WorkspacePreference = typeof workspacePreferences.$inferSelect;
+export type NewWorkspacePreference = typeof workspacePreferences.$inferInsert;
+
+export const productUpdates = pgTable("product_updates", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  category: text("category").notNull().default("release"),
+  version: text("version"),
+  publishedAt: timestamp("published_at").defaultNow().notNull(),
+});
+
+export type ProductUpdate = typeof productUpdates.$inferSelect;
+export type NewProductUpdate = typeof productUpdates.$inferInsert;
+
+export const productUpdateReads = pgTable(
+  "product_update_reads",
+  {
+    id: serial("id").primaryKey(),
+    clerkUserId: text("clerk_user_id").notNull(),
+    updateId: integer("update_id").references(() => productUpdates.id, { onDelete: "cascade" }).notNull(),
+    readAt: timestamp("read_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqUserUpdateRead: uniqueIndex("uniq_user_update_read").on(t.clerkUserId, t.updateId),
+  })
+);
+
+export type ProductUpdateRead = typeof productUpdateReads.$inferSelect;
+export type NewProductUpdateRead = typeof productUpdateReads.$inferInsert;
+
 /* ── Calendar Tasks ── */
 export const calendarTasks = pgTable("calendar_tasks", {
   id: serial("id").primaryKey(),

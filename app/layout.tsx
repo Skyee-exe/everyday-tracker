@@ -1,27 +1,24 @@
-import { ClerkProvider } from '@clerk/nextjs';
-import { checkAndSyncUser } from "@/lib/user-sync";
+import { ClerkProvider } from "@clerk/nextjs";
 import "@liveblocks/react-ui/styles.css";
 import "@excalidraw/excalidraw/index.css";
 import "./globals.css";
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/landing/theme-context";
 
 export const metadata: Metadata = {
-  title: "Everyday Tracker — Your Modern Workspace",
+  title: "Everyday Tracker - Your Modern Workspace",
   description:
-    "A powerful productivity workspace combining notes, kanban, whiteboard, calendar, and AI — all in one cozy, modern app.",
+    "A powerful productivity workspace combining notes, kanban, whiteboard, calendar, and AI in one focused app.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Sync the authenticated user details with the Neon database if logged in
-  await checkAndSyncUser();
-
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -31,7 +28,9 @@ export default async function RootLayout({
           />
         </head>
         <body style={{ margin: 0, padding: 0 }}>
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
