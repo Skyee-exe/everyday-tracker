@@ -532,7 +532,7 @@ export default function HelpWorkspace() {
                       }}
                     >
                       <h3>
-                        <res.icon size={16} style={{ color: "#2563eb" }} />
+                        <res.icon size={16} style={{ color: "var(--primary)" }} />
                         {res.title}
                         {res.comingSoon && (
                           <span className="help-badge-soon">Soon</span>
