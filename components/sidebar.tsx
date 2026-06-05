@@ -437,18 +437,17 @@ export default function Sidebar() {
                 </button>
               </Tooltip>
             )}
-            {!collapsed ? (
-              <button className="sb-nav-item" style={{ border: "none", width: "100%", background: "none", cursor: "pointer" }}>
-                <span className="sb-nav-icon"><HelpCircle size={16} strokeWidth={1.8} /></span>
-                <span className="sb-nav-label">Help & Docs</span>
-              </button>
-            ) : (
-              <Tooltip label="Help & Docs">
-                <button className="sb-nav-item" style={{ border: "none", width: "100%", background: "none", cursor: "pointer" }}>
-                  <span className="sb-nav-icon"><HelpCircle size={16} strokeWidth={1.8} /></span>
-                </button>
-              </Tooltip>
-            )}
+            <NavLink
+              item={{
+                label: "Help & Docs",
+                href: "/dashboard/help",
+                icon: HelpCircle,
+                color: "#64748b",
+                bg: "rgba(100,116,139,0.1)",
+              }}
+              collapsed={collapsed}
+              active={isActive("/dashboard/help")}
+            />
           </div>
 
           {/* Profile */}
