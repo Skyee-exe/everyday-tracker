@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { calendarTasks, userCategories } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/app/dashboard/notifications/actions";
 
 /* ─── Get custom categories ─── */
 export async function getCalendarCategories() {
@@ -79,6 +80,15 @@ export async function createTask(data: {
       reminder: data.reminder,
     })
     .returning();
+
+  await createNotification({
+    userId,
+    type: data.type === "reminder" ? "reminder" : "calendar",
+    title: data.type === "reminder" ? "Reminder Created" : "Calendar Event Created",
+    message: `${data.type === "reminder" ? "Reminder" : "Event"} "${data.title}" was added to your schedule.`,
+    entityType: "calendar",
+    entityId: String(task.id),
+  });
 
   revalidatePath("/dashboard/calendar");
   return task;

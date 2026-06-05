@@ -1,4 +1,6 @@
 import Sidebar from "@/components/sidebar";
+import { NotificationProvider } from "@/components/notifications/NotificationContext";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
 
 export default function DashboardLayout({
   children,
@@ -6,11 +8,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="et-app-shell">
-      <Sidebar />
-      <div className="et-main-content">
-        {children}
+    <NotificationProvider>
+      <div className="et-app-shell">
+        <Sidebar />
+        <div className="et-main-content">
+          {children}
+        </div>
       </div>
-    </div>
+      <NotificationCenter />
+    </NotificationProvider>
   );
 }

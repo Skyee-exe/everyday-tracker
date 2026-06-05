@@ -259,3 +259,22 @@ export const userCategories = pgTable(
 
 export type UserCategory = typeof userCategories.$inferSelect;
 export type NewUserCategory = typeof userCategories.$inferInsert;
+
+/* Notifications Table */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull(),
+    type: text("type").notNull(), // 'task' | 'comment' | 'mention' | 'calendar' | 'note' | 'system'
+    title: text("title").notNull(),
+    message: text("message").notNull(),
+    entityType: text("entity_type"), // 'task' | 'board' | 'note' | 'calendar' | 'whiteboard' | 'page' | 'comment'
+    entityId: text("entity_id"), // string identifier for target route params
+    isRead: boolean("is_read").notNull().default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  }
+);
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
