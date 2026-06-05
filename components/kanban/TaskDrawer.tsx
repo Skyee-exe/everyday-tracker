@@ -22,14 +22,7 @@ const PRIORITIES = [
   { value: "critical", label: "Critical", color: "#ef4444" },
 ];
 
-const CATEGORIES = [
-  { value: "work", label: "Work", color: "#2563eb" },
-  { value: "personal", label: "Personal", color: "#7c3aed" },
-  { value: "health", label: "Health", color: "#10b981" },
-  { value: "learning", label: "Learning", color: "#f59e0b" },
-  { value: "finance", label: "Finance", color: "#0891b2" },
-  { value: "urgent", label: "Urgent", color: "#ef4444" },
-];
+
 
 const DURATIONS = [
   { value: 15, label: "15 min" },
@@ -67,6 +60,7 @@ interface Props {
     }>
   ) => void;
   canEdit?: boolean;
+  categories: { value: string; label: string; color: string }[];
 }
 
 export default function TaskDrawer({
@@ -77,6 +71,7 @@ export default function TaskDrawer({
   onCreate,
   onUpdate,
   canEdit = true,
+  categories,
 }: Props) {
   const isEditing = !!task;
   const titleRef = useRef<HTMLInputElement>(null);
@@ -251,7 +246,7 @@ export default function TaskDrawer({
               Category
             </label>
             <div className="kb-drawer-option-grid kb-drawer-option-grid--3">
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <button
                   key={c.value}
                   className={`kb-drawer-option${category === c.value ? " kb-drawer-option--active" : ""}`}

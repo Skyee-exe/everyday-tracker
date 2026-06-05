@@ -44,7 +44,6 @@ import { buildRoomId } from "@/lib/collab/types";
 import type { CollabRole } from "@/lib/collab/permissions";
 
 const PRIORITIES = ["low", "medium", "high", "critical"];
-const CATEGORIES = ["work", "personal", "health", "learning", "finance", "urgent"];
 const SPECIALS = [
   { value: "due-today", label: "Due Today" },
   { value: "overdue", label: "Overdue" },
@@ -87,6 +86,7 @@ interface Props {
   myRole: CollabRole | null;
   totalCollaborators?: number;
   canEdit?: boolean;
+  categories: Array<{ value: string; label: string; color: string }>;
 }
 
 export default function BoardArea({
@@ -115,6 +115,7 @@ export default function BoardArea({
   myRole,
   totalCollaborators,
   canEdit = true,
+  categories,
 }: Props) {
   const [activeTask, setActiveTask] = useState<KanbanTask | null>(null);
   const [activeColId, setActiveColId] = useState<string | null>(null);
@@ -358,15 +359,15 @@ export default function BoardArea({
             <div className="kb-filter-group">
               <label>Category</label>
               <div className="kb-filter-chips">
-                {CATEGORIES.map((c) => (
+                {categories.map((c) => (
                   <button
-                    key={c}
-                    className={`kb-chip${filterCategory === c ? " kb-chip--active" : ""}`}
+                    key={c.value}
+                    className={`kb-chip${filterCategory === c.value ? " kb-chip--active" : ""}`}
                     onClick={() =>
-                      onFilterCategoryChange(filterCategory === c ? null : c)
+                      onFilterCategoryChange(filterCategory === c.value ? null : c.value)
                     }
                   >
-                    {c}
+                    {c.label}
                   </button>
                 ))}
               </div>

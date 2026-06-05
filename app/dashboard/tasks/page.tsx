@@ -1,4 +1,4 @@
-import { getBoards } from "./actions";
+import { getBoards, getTasksCategories } from "./actions";
 import KanbanWorkspace from "@/components/kanban/KanbanWorkspace";
 
 export const metadata = {
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function TasksPage() {
-  const boards = await getBoards();
+  const [boards, categories] = await Promise.all([getBoards(), getTasksCategories()]);
 
-  return <KanbanWorkspace initialBoards={boards} />;
+  return <KanbanWorkspace initialBoards={boards} initialCategories={categories} />;
 }

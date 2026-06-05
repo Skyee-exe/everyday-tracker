@@ -22,14 +22,25 @@ import {
   getMyRoleForBoard,
   getBoardAccess,
 } from "@/app/dashboard/tasks/actions";
-import type { KanbanBoard, KanbanColumn, KanbanTask } from "@/db/schema";
+import type { KanbanBoard, KanbanColumn, KanbanTask, UserCategory } from "@/db/schema";
 import { meetsRole, type CollabRole } from "@/lib/collab/permissions";
+import { useMemo } from "react";
 
 export default function KanbanWorkspace({
   initialBoards,
+  initialCategories = [],
 }: {
   initialBoards: KanbanBoard[];
+  initialCategories?: UserCategory[];
 }) {
+  const categories = useMemo(() => {
+    return initialCategories.map((cc) => ({
+      value: cc.name.toLowerCase(),
+      label: cc.name,
+      color: cc.color,
+    }));
+  }, [initialCategories]);
+
   const [boards, setBoards] = useState<KanbanBoard[]>(initialBoards);
   const [activeBoardId, setActiveBoardId] = useState<number | null>(
     initialBoards[0]?.id ?? null
@@ -294,6 +305,7 @@ export default function KanbanWorkspace({
             myRole={myRole}
             totalCollaborators={totalCollaborators}
             canEdit={canEdit}
+            categories={categories}
           />
         ) : (
           <div className="kb-empty-state">
@@ -338,6 +350,7 @@ export default function KanbanWorkspace({
           onCreate={handleCreateTask}
           onUpdate={handleUpdateTask}
           canEdit={canEdit}
+          categories={categories}
         />
       )}
     </div>

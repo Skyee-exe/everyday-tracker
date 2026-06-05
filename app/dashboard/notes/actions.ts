@@ -1,6 +1,6 @@
 "use server";
 
-import { db, notes } from "@/db";
+import { db, notes, userCategories } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -9,6 +9,16 @@ export async function getNotes() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
   return db.select().from(notes).where(eq(notes.clerkUserId, userId));
+}
+
+export async function getNotesCategories() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  return db
+    .select()
+    .from(userCategories)
+    .where(and(eq(userCategories.clerkUserId, userId), eq(userCategories.scope, "notes")))
+    .orderBy(userCategories.position, userCategories.name);
 }
 
 export async function createNote(templateData?: { title: string; content: any }) {
@@ -52,6 +62,7 @@ export async function duplicateNote(id: number) {
       content: existing.content,
       icon: existing.icon,
       color: existing.color,
+      category: existing.category,
     })
     .returning();
   revalidatePath("/dashboard/notes");
@@ -87,4 +98,8 @@ export async function updateColor(id: number, color: string | null) {
 
 export async function updateIcon(id: number, icon: string | null) {
   return updateNote(id, { icon });
+}
+
+export async function updateCategory(id: number, category: string | null) {
+  return updateNote(id, { category });
 }

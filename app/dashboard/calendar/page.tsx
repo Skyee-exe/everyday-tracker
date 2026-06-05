@@ -26,8 +26,14 @@ import {
   PanelRightOpen,
   AlertCircle,
   Flag,
+  Tag,
+  FileText,
+  Lock,
+  Mail,
+  Shield,
+  Palette,
 } from "lucide-react";
-import { getTasks, createTask, updateTask, deleteTask } from "./actions";
+import { getTasks, createTask, updateTask, deleteTask, getCalendarCategories, getReminderCategories } from "./actions";
 import type { CalendarTask } from "@/db/schema";
 
 /* ══════════════════════════════════════════════
@@ -37,16 +43,30 @@ const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const SLOT_H = 56; // px per hour
 
-const CATEGORIES = [
-  { id: "work",     label: "Work",     color: "#2563eb", bg: "rgba(37,99,235,0.12)",   Icon: Briefcase },
-  { id: "personal", label: "Personal", color: "#7c3aed", bg: "rgba(124,58,237,0.12)",  Icon: User },
-  { id: "health",   label: "Health",   color: "#16a34a", bg: "rgba(22,163,74,0.12)",   Icon: Heart },
-  { id: "learning", label: "Learning", color: "#0ea5e9", bg: "rgba(14,165,233,0.12)",  Icon: BookOpen },
-  { id: "finance",  label: "Finance",  color: "#d97706", bg: "rgba(217,119,6,0.12)",   Icon: TrendingUp },
-  { id: "urgent",   label: "Urgent",   color: "#dc2626", bg: "rgba(220,38,38,0.12)",   Icon: Zap },
-] as const;
+const ICONS: Record<string, any> = {
+  Bell,
+  BookOpen,
+  Briefcase,
+  User,
+  Heart,
+  Zap,
+  CalendarDays,
+  Flag,
+  Sparkles,
+  Tag,
+  FileText,
+  Lock,
+  Mail,
+  Shield,
+  Palette,
+  TrendingUp,
+};
 
-type CategoryId = typeof CATEGORIES[number]["id"];
+let CALENDAR_CATEGORIES: any[] = [];
+let REMINDER_CATEGORIES: any[] = [];
+let ALL_CATEGORIES: any[] = [];
+
+type CategoryId = string;
 
 const PRIORITIES = [
   { id: "low",      label: "Low",      color: "#94a3b8" },
@@ -57,7 +77,7 @@ const PRIORITIES = [
 
 type PriorityId = typeof PRIORITIES[number]["id"];
 
-function getCat(cat: string) { return CATEGORIES.find((c) => c.id === cat) ?? CATEGORIES[0]; }
+function getCat(cat: string) { return ALL_CATEGORIES.find((c) => c.id === cat) || { id: cat, color: "#94a3b8", bg: "#f1f5f9", Icon: Tag }; }
 function getPri(pri: string) { return PRIORITIES.find((p) => p.id === pri) ?? PRIORITIES[1]; }
 
 function toDateStr(date: Date): string {
@@ -317,7 +337,7 @@ function SlideOverPanel({ initialDate, initialHour, initialTask, isOpen, onClose
             <div>
               <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "hsl(222 14% 36%)", display: "block", marginBottom: 8 }}>Category</label>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                {CATEGORIES.map((cat) => {
+                {(type === "task" ? CALENDAR_CATEGORIES : REMINDER_CATEGORIES).map((cat) => {
                   const CatIcon = cat.Icon;
                   const sel = category === cat.id;
                   return (
@@ -832,7 +852,28 @@ export default function CalendarPage() {
   const monthLabel = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   const loadTasks = useCallback(async () => {
-    try { const d = await getTasks(); setTasks(d); }
+    try {
+      const [tData, cData, rData] = await Promise.all([getTasks(), getCalendarCategories(), getReminderCategories()]);
+      setTasks(tData);
+
+      CALENDAR_CATEGORIES = cData.map(cc => ({
+        id: cc.name.toLowerCase(),
+        label: cc.name,
+        color: cc.color,
+        bg: `${cc.color}1c`,
+        Icon: ICONS[cc.icon] ?? Tag,
+      }));
+      
+      REMINDER_CATEGORIES = rData.map(cc => ({
+        id: cc.name.toLowerCase(),
+        label: cc.name,
+        color: cc.color,
+        bg: `${cc.color}1c`,
+        Icon: ICONS[cc.icon] ?? Tag,
+      }));
+
+      ALL_CATEGORIES = [...CALENDAR_CATEGORIES, ...REMINDER_CATEGORIES];
+    }
     catch (e) { console.error(e); }
     finally { setLoading(false); }
   }, []);

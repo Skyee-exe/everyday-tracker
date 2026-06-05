@@ -15,22 +15,26 @@ import Underline from "@tiptap/extension-underline";
 import { SlashCommand } from "./slash-command";
 import { Note } from "@/db/schema";
 import { updateNote } from "@/app/dashboard/notes/actions";
+import { useAssemblyAIStreaming } from "@/hooks/useAssemblyAIStreaming";
 import {
   Heading1, Heading2, Heading3, List, ListOrdered, CheckSquare,
   Quote, Code, Minus, Bold, Italic, Underline as UnderlineIcon,
-  Highlighter, Link as LinkIcon, Wand2, Check, Strikethrough
+  Highlighter, Link as LinkIcon, Wand2, Check, Strikethrough,
+  Mic, Square, Tag, ChevronDown
 } from "lucide-react";
 
 interface EditorProps {
   note: Note;
+  categories: any[];
   onSave?: () => void;
 }
 
-export default function Editor({ note, onSave }: EditorProps) {
+export default function Editor({ note, categories, onSave }: EditorProps) {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [title, setTitle] = useState(note.title);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleRef = useRef(title);
+  const voiceRangeRef = useRef<{ from: number; to: number } | null>(null);
 
   useEffect(() => { titleRef.current = title; }, [title]);
 
@@ -71,6 +75,52 @@ export default function Editor({ note, onSave }: EditorProps) {
     },
   });
 
+  const insertTranscript = useCallback((text: string, isFinal: boolean) => {
+    if (!editor) return;
+
+    const content = isFinal ? `${text} ` : text;
+    const existingRange = voiceRangeRef.current;
+
+    if (existingRange) {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(existingRange)
+        .insertContent(content)
+        .run();
+      voiceRangeRef.current = isFinal
+        ? null
+        : { from: existingRange.from, to: existingRange.from + content.length };
+      return;
+    }
+
+    const insertAt = editor.isFocused
+      ? editor.state.selection.from
+      : editor.state.doc.content.size;
+
+    editor.chain().focus().insertContentAt(insertAt, content).run();
+    voiceRangeRef.current = isFinal
+      ? null
+      : { from: insertAt, to: insertAt + content.length };
+  }, [editor]);
+
+  const {
+    error: speechError,
+    isRecording,
+    liveTranscript,
+    start: startRecording,
+    status: recordingStatus,
+    stop: stopRecording,
+  } = useAssemblyAIStreaming({
+    onTranscript: insertTranscript,
+  });
+
+  useEffect(() => {
+    if (recordingStatus === "idle" || recordingStatus === "error") {
+      voiceRangeRef.current = null;
+    }
+  }, [recordingStatus]);
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
@@ -92,6 +142,8 @@ export default function Editor({ note, onSave }: EditorProps) {
     );
   }
 
+  const activeCategory = categories.find((c) => c.name.toLowerCase() === note.category?.toLowerCase());
+
   return (
     <div className="flex flex-col h-full bg-white flex-1 min-w-0">
       <div className="flex items-center justify-between px-8 h-16 border-b border-slate-100 flex-shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-10">
@@ -106,7 +158,53 @@ export default function Editor({ note, onSave }: EditorProps) {
             placeholder="Untitled"
           />
         </div>
-        <div className="flex items-center gap-4 flex-shrink-0 text-xs font-medium text-slate-400">
+        <div className="flex items-center gap-3 flex-shrink-0 text-xs font-medium text-slate-400">
+          <div className="relative group">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
+              <Tag size={13} style={{ color: activeCategory ? activeCategory.color : "currentColor" }} />
+              <span className="max-w-[100px] truncate text-slate-700 font-bold">
+                {activeCategory ? activeCategory.name : "No Category"}
+              </span>
+              <ChevronDown size={12} className="text-slate-400" />
+            </button>
+            <div className="absolute right-0 top-[calc(100%+4px)] w-48 bg-white border border-slate-200 shadow-xl rounded-xl p-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <button
+                onClick={() => updateNote(note.id, { category: null }).then(() => onSave?.())}
+                className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors flex items-center gap-2"
+              >
+                <Tag size={14} className="text-slate-400" />
+                None
+              </button>
+              {categories.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => updateNote(note.id, { category: c.name }).then(() => onSave?.())}
+                  className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors flex items-center gap-2"
+                >
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: c.color }} />
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={isRecording ? stopRecording : startRecording}
+            disabled={recordingStatus === "requesting" || recordingStatus === "connecting" || recordingStatus === "stopping"}
+            className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-[12px] font-bold transition-colors ${
+              isRecording
+                ? "border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100"
+                : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            } disabled:cursor-not-allowed disabled:opacity-60`}
+          >
+            <span className={`relative flex h-4 w-4 items-center justify-center ${isRecording ? "text-rose-600" : ""}`}>
+              {isRecording && (
+                <span className="absolute inset-0 rounded-full bg-rose-400/40 animate-ping" />
+              )}
+              {isRecording ? <Square size={13} fill="currentColor" /> : <Mic size={14} />}
+            </span>
+            {isRecording ? "Stop Recording" : recordingStatus === "requesting" || recordingStatus === "connecting" ? "Listening..." : "Speak to Note"}
+          </button>
           <div className="flex items-center gap-1.5 w-20 justify-end">
             {saveStatus === "saving" && <><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> Saving...</>}
             {saveStatus === "saved" && <><Check size={12} className="text-green-500" /> Saved</>}
@@ -116,6 +214,25 @@ export default function Editor({ note, onSave }: EditorProps) {
 
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
         <div className="max-w-[760px] mx-auto px-8 py-12 pb-32">
+          {(liveTranscript || speechError) && (
+            <div className={`mb-6 rounded-lg border px-4 py-3 text-sm shadow-sm ${
+              speechError
+                ? "border-rose-100 bg-rose-50 text-rose-700"
+                : "border-blue-100 bg-blue-50/70 text-slate-700"
+            }`}>
+              {liveTranscript ? (
+                <div className="flex items-start gap-3">
+                  <Mic size={16} className="mt-0.5 flex-shrink-0 text-blue-500" />
+                  <p className="min-w-0 leading-6">
+                    <span className="font-semibold text-blue-700">Live preview: </span>
+                    <span className="text-slate-600">{liveTranscript}</span>
+                  </p>
+                </div>
+              ) : (
+                speechError
+              )}
+            </div>
+          )}
           
           <BubbleMenu editor={editor} className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-[0_8px_30px_rgb(0,0,0,0.12)] gap-0.5">
             <button onClick={() => editor.chain().focus().toggleBold().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("bold") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Bold size={14} /></button>

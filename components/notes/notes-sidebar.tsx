@@ -29,6 +29,7 @@ import {
 
 interface NotesSidebarProps {
   notes: Note[];
+  categories: any[];
   selectedNoteId: number | null;
   onSelectNote: (id: number | null) => void;
   onMutate: () => void;
@@ -54,6 +55,7 @@ const TEMPLATES = [
 
 export default function NotesSidebar({
   notes,
+  categories,
   selectedNoteId,
   onSelectNote,
   onMutate,
@@ -63,14 +65,22 @@ export default function NotesSidebar({
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const [showTemplates, setShowTemplates] = useState(false);
   const [showTrash, setShowTrash] = useState(false);
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
 
   const activeNotes = notes.filter((n) => !n.isTrash);
   const trashNotes = notes.filter((n) => n.isTrash);
 
   const filteredNotes = useMemo(() => {
-    const s = search.toLowerCase();
-    return activeNotes.filter((n) => n.title.toLowerCase().includes(s));
-  }, [activeNotes, search]);
+    let result = activeNotes;
+    if (search) {
+      const s = search.toLowerCase();
+      result = result.filter((n) => n.title.toLowerCase().includes(s));
+    }
+    if (filterCategory) {
+      result = result.filter((n) => n.category?.toLowerCase() === filterCategory.toLowerCase());
+    }
+    return result;
+  }, [activeNotes, search, filterCategory]);
 
   const favorites = filteredNotes.filter((n) => n.isFavorite);
   const pinned = filteredNotes.filter((n) => n.isPinned && !n.isFavorite);
@@ -130,9 +140,16 @@ export default function NotesSidebar({
         <div className={`truncate text-[13px] ${selectedNoteId === n.id ? "font-semibold text-blue-700" : "font-medium text-slate-700"}`}>
           {n.title || "Untitled"}
         </div>
-        <div className="flex items-center gap-1 mt-0.5 text-[11px] text-slate-400">
-          <Clock size={10} />
-          <span>{formatDistanceToNow(new Date(n.updatedAt), { addSuffix: true })}</span>
+        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
+          <div className="flex items-center gap-1">
+            <Clock size={10} />
+            <span>{formatDistanceToNow(new Date(n.updatedAt), { addSuffix: true })}</span>
+          </div>
+          {n.category && (
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 font-medium text-[9px] uppercase tracking-wider">
+              {n.category}
+            </span>
+          )}
         </div>
       </div>
 
@@ -241,6 +258,35 @@ export default function NotesSidebar({
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input type="text" placeholder="Search notes..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-white border border-slate-200 rounded-md outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all shadow-sm" />
         </div>
+        {categories && categories.length > 0 && (
+          <div className="mt-2 flex gap-1 overflow-x-auto pb-1 scrollbar-none">
+            <button
+              onClick={() => setFilterCategory(null)}
+              className={`flex-shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-full border transition-colors ${
+                !filterCategory
+                  ? "bg-slate-800 text-white border-slate-800"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              All
+            </button>
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setFilterCategory(filterCategory === c.name ? null : c.name)}
+                className={`flex-shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-full border transition-colors flex items-center gap-1.5 ${
+                  filterCategory === c.name
+                    ? "text-white border-transparent"
+                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                }`}
+                style={{ backgroundColor: filterCategory === c.name ? c.color : undefined }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: filterCategory === c.name ? "white" : c.color }} />
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto pb-4 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">

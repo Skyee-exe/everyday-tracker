@@ -9,11 +9,26 @@ import {
   calendarTasks,
   boardCollaborators,
   users,
+  userCategories,
 } from "@/db/schema";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { canAccessBoard, assertCanAccessBoard } from "@/lib/board-access";
 import { isCollabRole, type CollabRole } from "@/lib/collab/permissions";
+
+/* ─── Get custom categories ─── */
+export async function getTasksCategories() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthenticated");
+
+  const categories = await db
+    .select()
+    .from(userCategories)
+    .where(and(eq(userCategories.clerkUserId, userId), eq(userCategories.scope, "tasks")))
+    .orderBy(userCategories.position, userCategories.name);
+
+  return categories;
+}
 
 /* ═══════════════════════════════════════════════
    Board Templates

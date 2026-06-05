@@ -2,9 +2,36 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
-import { calendarTasks } from "@/db/schema";
+import { calendarTasks, userCategories } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+
+/* ─── Get custom categories ─── */
+export async function getCalendarCategories() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthenticated");
+
+  const categories = await db
+    .select()
+    .from(userCategories)
+    .where(and(eq(userCategories.clerkUserId, userId), eq(userCategories.scope, "calendar")))
+    .orderBy(userCategories.position, userCategories.name);
+
+  return categories;
+}
+
+export async function getReminderCategories() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthenticated");
+
+  const categories = await db
+    .select()
+    .from(userCategories)
+    .where(and(eq(userCategories.clerkUserId, userId), eq(userCategories.scope, "reminders")))
+    .orderBy(userCategories.position, userCategories.name);
+
+  return categories;
+}
 
 /* ─── Get all tasks for the current user ─── */
 export async function getTasks() {
