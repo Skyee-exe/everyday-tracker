@@ -12,11 +12,12 @@ import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
-import { ArrowLeft, BookOpen, Check, Copy, Download, Heart, Share2, Trash2, Archive, Bold, Italic, Underline as UnderlineIcon, Strikethrough, Highlighter, Link as LinkIcon, Wand2, Mic, Square } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, Copy, Download, Heart, Share2, Trash2, Archive, Bold, Italic, Underline as UnderlineIcon, Strikethrough, Highlighter, Link as LinkIcon, Wand2, Mic, Square, Sparkles } from "lucide-react";
 import { SlashCommand } from "../notes/slash-command";
 import { SpacePage } from "@/db/schema";
 import { updatePage } from "@/app/dashboard/pages/actions";
 import { useAssemblyAIStreaming } from "@/hooks/useAssemblyAIStreaming";
+import { convertTiptapToMarkdown } from "@/lib/markdown-export";
 
 interface PageEditorProps {
   page: SpacePage;
@@ -31,6 +32,42 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const titleRef = useRef(title);
   const voiceRangeRef = useRef<{ from: number; to: number } | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showNotification = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleShare = () => {
+    const shareUrl = `${window.location.origin}/dashboard/pages`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showNotification("Workspace link copied!");
+    }).catch((err) => {
+      console.error(err);
+      showNotification("Failed to copy link");
+    });
+  };
+
+  const handleExport = () => {
+    try {
+      const markdownContent = editor
+        ? convertTiptapToMarkdown(editor.getJSON())
+        : page.summary || "";
+      const blob = new Blob([markdownContent], { type: "text/markdown;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${title.toLowerCase().replace(/\s+/g, "-") || "untitled"}.md`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showNotification("Exported to Markdown!");
+    } catch (e) {
+      console.error(e);
+      showNotification("Export failed");
+    }
+  };
 
   useEffect(() => {
     titleRef.current = title;
@@ -164,7 +201,22 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
             <span className="bg-slate-50 px-2 py-0.5 rounded border border-slate-200/50 text-[10px] text-slate-500 uppercase tracking-wider">{page.type}</span>
           </div>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-50 border border-slate-200/60 text-slate-500 hover:text-slate-800 transition-colors"
+            title="Share page link"
+          >
+            <Share2 size={14} />
+          </button>
+          <button
+            onClick={handleExport}
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-50 border border-slate-200/60 text-slate-500 hover:text-slate-800 transition-colors"
+            title="Export page to Markdown"
+          >
+            <Download size={14} />
+          </button>
+          <div className="h-4 w-px bg-slate-200/80 mx-1" />
           <button
             type="button"
             onClick={isRecording ? stopRecording : startRecording}
@@ -242,6 +294,13 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
           <EditorContent editor={editor} className="prose prose-slate prose-lg max-w-none prose-headings:font-display prose-headings:tracking-tight prose-a:text-blue-600 prose-p:leading-relaxed prose-pre:bg-slate-50 prose-pre:text-slate-800 prose-pre:border prose-pre:border-slate-200 focus:outline-none" />
         </div>
       </div>
+
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-250 bg-slate-900/90 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <Sparkles size={14} className="text-blue-400 animate-pulse" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }
