@@ -136,8 +136,8 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
 
   if (!editor) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white">
-        <div className="w-8 h-8 rounded-full bg-slate-100 animate-pulse" />
+      <div className="flex-1 flex items-center justify-center bg-card">
+        <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
       </div>
     );
   }
@@ -145,8 +145,8 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
   const activeCategory = categories.find((c) => c.name.toLowerCase() === note.category?.toLowerCase());
 
   return (
-    <div className="flex flex-col h-full bg-white flex-1 min-w-0">
-      <div className="flex items-center justify-between px-8 h-16 border-b border-slate-100 flex-shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+    <div className="flex flex-col h-full bg-card flex-1 min-w-0">
+      <div className="flex items-center justify-between px-8 h-16 border-b border-border flex-shrink-0 bg-card/80 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {note.icon && <span className="text-2xl">{note.icon}</span>}
           <input
@@ -154,23 +154,23 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
             value={title}
             onChange={handleTitleChange}
             onKeyDown={handleTitleKeyDown}
-            className="text-[22px] font-bold text-slate-800 bg-transparent border-none outline-none w-full placeholder:text-slate-300 font-display tracking-tight"
+            className="text-[22px] font-bold text-slate-800 dark:text-slate-100 bg-transparent border-none outline-none w-full placeholder:text-slate-300 dark:placeholder:text-slate-700 font-display tracking-tight"
             placeholder="Untitled"
           />
         </div>
         <div className="flex items-center gap-3 flex-shrink-0 text-xs font-medium text-slate-400">
           <div className="relative group">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-card hover:bg-muted text-foreground transition-colors">
               <Tag size={13} style={{ color: activeCategory ? activeCategory.color : "currentColor" }} />
               <span className="max-w-[100px] truncate text-slate-700 font-bold">
                 {activeCategory ? activeCategory.name : "No Category"}
               </span>
               <ChevronDown size={12} className="text-slate-400" />
             </button>
-            <div className="absolute right-0 top-[calc(100%+4px)] w-48 bg-white border border-slate-200 shadow-xl rounded-xl p-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+            <div className="absolute right-0 top-[calc(100%+4px)] w-48 bg-card border border-border shadow-xl rounded-xl p-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
               <button
                 onClick={() => updateNote(note.id, { category: null }).then(() => onSave?.())}
-                className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors flex items-center gap-2"
+                className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-muted rounded-md transition-colors flex items-center gap-2"
               >
                 <Tag size={14} className="text-slate-400" />
                 None
@@ -179,7 +179,7 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
                 <button
                   key={c.id}
                   onClick={() => updateNote(note.id, { category: c.name }).then(() => onSave?.())}
-                  className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-[13px] font-medium text-slate-700 hover:bg-muted rounded-md transition-colors flex items-center gap-2"
                 >
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: c.color }} />
                   {c.name}
@@ -194,7 +194,7 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
             className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-[12px] font-bold transition-colors ${
               isRecording
                 ? "border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100"
-                : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+                : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:bg-accent hover:text-primary"
             } disabled:cursor-not-allowed disabled:opacity-60`}
           >
             <span className={`relative flex h-4 w-4 items-center justify-center ${isRecording ? "text-rose-600" : ""}`}>
@@ -212,20 +212,20 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
         <div className="max-w-[760px] mx-auto px-8 py-12 pb-32">
           {(liveTranscript || speechError) && (
             <div className={`mb-6 rounded-lg border px-4 py-3 text-sm shadow-sm ${
               speechError
-                ? "border-rose-100 bg-rose-50 text-rose-700"
-                : "border-blue-100 bg-blue-50/70 text-slate-700"
+                ? "border-rose-100 dark:border-rose-950 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400"
+                : "border-blue-100 dark:border-blue-950 bg-blue-50/70 dark:bg-blue-950/20 text-slate-700 dark:text-slate-300"
             }`}>
               {liveTranscript ? (
                 <div className="flex items-start gap-3">
                   <Mic size={16} className="mt-0.5 flex-shrink-0 text-blue-500" />
                   <p className="min-w-0 leading-6">
-                    <span className="font-semibold text-blue-700">Live preview: </span>
-                    <span className="text-slate-600">{liveTranscript}</span>
+                    <span className="font-semibold text-blue-700 dark:text-blue-400">Live preview: </span>
+                    <span className="text-slate-600 dark:text-slate-400">{liveTranscript}</span>
                   </p>
                 </div>
               ) : (
@@ -234,19 +234,19 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
             </div>
           )}
           
-          <BubbleMenu editor={editor} className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-[0_8px_30px_rgb(0,0,0,0.12)] gap-0.5">
-            <button onClick={() => editor.chain().focus().toggleBold().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("bold") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Bold size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleItalic().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("italic") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Italic size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleUnderline().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("underline") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><UnderlineIcon size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleStrike().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("strike") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Strikethrough size={14} /></button>
-            <button onClick={() => editor.chain().focus().toggleHighlight().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("highlight") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><Highlighter size={14} /></button>
-            <div className="w-px h-4 bg-slate-200 mx-1" />
+          <BubbleMenu editor={editor} className="flex items-center bg-card border border-border rounded-lg p-1 shadow-[0_8px_30px_rgb(0,0,0,0.12)] gap-0.5">
+            <button onClick={() => editor.chain().focus().toggleBold().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("bold") ? "bg-muted text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-muted dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-255"}`}><Bold size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleItalic().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("italic") ? "bg-muted text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-muted dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-255"}`}><Italic size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleUnderline().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("underline") ? "bg-muted text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-muted dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-255"}`}><UnderlineIcon size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleStrike().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("strike") ? "bg-muted text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-muted dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-255"}`}><Strikethrough size={14} /></button>
+            <button onClick={() => editor.chain().focus().toggleHighlight().run()} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("highlight") ? "bg-muted text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400 hover:bg-muted dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-255"}`}><Highlighter size={14} /></button>
+            <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-1" />
             <LinkButton editor={editor} />
-            <div className="w-px h-4 bg-slate-200 mx-1" />
+            <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-1" />
             <AiRefineMenu editor={editor} />
           </BubbleMenu>
 
-          <EditorContent editor={editor} className="prose prose-slate prose-lg max-w-none prose-headings:font-display prose-headings:tracking-tight prose-a:text-blue-600 prose-p:leading-relaxed prose-pre:bg-slate-50 prose-pre:text-slate-800 prose-pre:border prose-pre:border-slate-200 focus:outline-none" />
+          <EditorContent editor={editor} className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-headings:font-display prose-headings:tracking-tight prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-p:leading-relaxed prose-pre:bg-muted prose-pre:text-foreground prose-pre:border prose-pre:border-border focus:outline-none" />
         </div>
       </div>
     </div>
@@ -263,7 +263,7 @@ function LinkButton({ editor }: { editor: any }) {
   }, [editor]);
 
   return (
-    <button onClick={setLink} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("link") ? "bg-slate-100 text-blue-600" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}`}><LinkIcon size={14} /></button>
+    <button onClick={setLink} className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors ${editor.isActive("link") ? "bg-muted text-primary" : "text-slate-500 hover:bg-muted hover:text-slate-800"}`}><LinkIcon size={14} /></button>
   );
 }
 
@@ -302,7 +302,7 @@ function AiRefineMenu({ editor }: { editor: any }) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-[calc(100%+6px)] left-0 w-40 bg-white border border-slate-200 shadow-xl rounded-xl p-1 z-50 animate-in fade-in zoom-in-95">
+        <div className="absolute top-[calc(100%+6px)] left-0 w-40 bg-card border border-border shadow-xl rounded-xl p-1 z-50 animate-in fade-in zoom-in-95">
           {options.map((opt) => (
             <button key={opt} onClick={(e) => { e.stopPropagation(); handleAiAction(opt); }} className="w-full text-left px-3 py-1.5 text-[13px] font-medium text-slate-700 hover:bg-purple-50 hover:text-purple-700 rounded-md transition-colors">
               {opt}

@@ -15,7 +15,7 @@ export type SharedCollabUser = {
   isOnline?: boolean;
 };
 
-export type RoomKind = "board" | "task";
+export type RoomKind = "board" | "task" | "workspace";
 
 export function buildRoomId(kind: RoomKind, entityId: number | string): string {
   return `${kind}_${entityId}`;
@@ -23,9 +23,10 @@ export function buildRoomId(kind: RoomKind, entityId: number | string): string {
 
 export function parseRoomId(
   roomId: string
-): { kind: RoomKind; entityId: number } | null {
+): { kind: RoomKind; entityId: number | string } | null {
   const [kind, rawId] = roomId.split("_");
-  if (kind !== "board" && kind !== "task") return null;
+  if (kind !== "board" && kind !== "task" && kind !== "workspace") return null;
+  if (kind === "workspace") return { kind, entityId: rawId };
   const entityId = Number(rawId);
   if (!Number.isFinite(entityId)) return null;
   return { kind, entityId };

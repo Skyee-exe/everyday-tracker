@@ -1,5 +1,10 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { db } from '@/db';
+import { notifications } from '@/db/schema';
+import { and, eq, gte } from 'drizzle-orm';
+import { getActiveWorkspacePlan } from '@/app/dashboard/workspaces/actions';
 
 const genAI = new GoogleGenerativeAI(
   process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
@@ -35,6 +40,35 @@ export async function POST(req: Request) {
       );
     }
 
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const plan = await getActiveWorkspacePlan(userId);
+    if (plan === "Free") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const counts = await db
+        .select()
+        .from(notifications)
+        .where(
+          and(
+            eq(notifications.userId, userId),
+            eq(notifications.type, "ai_action"),
+            gte(notifications.createdAt, today)
+          )
+        );
+
+      if (counts.length >= 5) {
+        return NextResponse.json(
+          { error: 'Free plan is limited to 5 AI actions per day. Upgrade to Pro for unlimited AI access.' },
+          { status: 429 }
+        );
+      }
+    }
+
     const apiKey =
       process.env.GEMINI_API_KEY ||
       process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -54,6 +88,15 @@ export async function POST(req: Request) {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const refinedText = response.text().trim();
+
+    if (plan === "Free") {
+      await db.insert(notifications).values({
+        userId,
+        type: 'ai_action',
+        title: 'AI Action consumed',
+        message: `Used AI Refine: ${option}`,
+      });
+    }
 
     return NextResponse.json({ result: refinedText });
   } catch (error) {

@@ -1,6 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { db } from "@/db";
+import { notifications } from "@/db/schema";
+import { and, eq, gte } from "drizzle-orm";
+import { getActiveWorkspacePlan } from "@/app/dashboard/workspaces/actions";
 
 type DiagramNode = {
   id: string;
@@ -91,6 +95,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
 
+    const plan = await getActiveWorkspacePlan(userId);
+    if (plan === "Free") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const counts = await db
+        .select()
+        .from(notifications)
+        .where(
+          and(
+            eq(notifications.userId, userId),
+            eq(notifications.type, "ai_action"),
+            gte(notifications.createdAt, today)
+          )
+        );
+
+      if (counts.length >= 5) {
+        return NextResponse.json(
+          { error: "Free plan is limited to 5 AI actions per day. Upgrade to Pro for unlimited AI access." },
+          { status: 429 }
+        );
+      }
+    }
+
     const apiKey =
       process.env.GEMINI_API_KEY ||
       process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -125,6 +153,16 @@ Use 4 to 10 nodes. Use diamond nodes only for decisions. Keep labels concise.
 
     const text = result.response.text();
     const diagram = normalizeDiagram(extractJson(text));
+
+    if (plan === "Free") {
+      await db.insert(notifications).values({
+        userId,
+        type: "ai_action",
+        title: "AI Action consumed",
+        message: "Generated a whiteboard diagram using AI",
+      });
+    }
+
     return NextResponse.json({ diagram });
   } catch (error) {
     console.error("AI Diagram error:", error);

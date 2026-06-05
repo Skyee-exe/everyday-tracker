@@ -133,8 +133,8 @@ const CommandList = forwardRef((props: any, ref) => {
   }
 
   return (
-    <div className="z-50 w-72 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden py-2 animate-in fade-in zoom-in-95">
-      <div className="px-3 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+    <div className="z-50 w-72 bg-card rounded-xl shadow-xl border border-border overflow-hidden py-2 animate-in fade-in zoom-in-95">
+      <div className="px-3 pb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
         Basic Blocks
       </div>
       <div className="max-h-[300px] overflow-y-auto px-1 scrollbar-thin">
@@ -142,16 +142,16 @@ const CommandList = forwardRef((props: any, ref) => {
           <button
             key={index}
             className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg transition-colors ${
-              index === selectedIndex ? "bg-slate-100" : "hover:bg-slate-50"
+              index === selectedIndex ? "bg-muted text-foreground" : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
             }`}
             onClick={() => selectItem(index)}
           >
-            <div className="flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-md text-slate-600 shadow-sm">
+            <div className="flex items-center justify-center w-10 h-10 bg-muted border border-border rounded-md text-foreground shadow-sm">
               {item.icon}
             </div>
             <div>
-              <div className="text-sm font-medium text-slate-800">{item.title}</div>
-              <div className="text-xs text-slate-500">{item.description}</div>
+              <div className="text-sm font-medium text-foreground">{item.title}</div>
+              <div className="text-xs text-muted-foreground">{item.description}</div>
             </div>
           </button>
         ))}

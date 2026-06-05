@@ -6,6 +6,7 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, generatedApps } from "@/db";
 import type { GeneratedApp } from "@/db/schema";
+import { getActiveWorkspacePlan } from "@/app/dashboard/workspaces/actions";
 
 const AI_TEMPLATES_PATH = "/dashboard/ai-templates";
 const MAX_GENERATED_APPS = 3;
@@ -131,6 +132,11 @@ export async function generateTemplateApp(prompt: string) {
   const userId = await requireUserId();
   const userPrompt = prompt.trim();
   if (!userPrompt) throw new Error("Prompt is required");
+
+  const plan = await getActiveWorkspacePlan(userId);
+  if (plan === "Free") {
+    throw new Error("AI Template Builder is only available on the Paid plan. Upgrade to Pro to use this feature.");
+  }
 
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)` })

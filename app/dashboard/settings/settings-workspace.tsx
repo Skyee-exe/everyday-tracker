@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState, useTransition } from "react";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, Show } from "@clerk/nextjs";
 import { CheckoutButton, SubscriptionDetailsButton, useSubscription } from "@clerk/nextjs/experimental";
 import {
   Bell,
@@ -55,14 +55,16 @@ type Props = {
   initialCategories: UserCategory[];
   initialUsage: {
     generatedApps: number;
+    notesCount?: number;
+    spacesCount?: number;
+    aiActionsCount?: number;
   };
 };
 
-type SectionId = "profile" | "subscription" | "categories" | "ai" | "preferences";
+type SectionId = "profile" | "categories" | "ai" | "preferences";
 
 const SECTIONS: { id: SectionId; label: string; icon: LucideIcon }[] = [
   { id: "profile", label: "Profile", icon: User },
-  { id: "subscription", label: "Subscription", icon: CreditCard },
   { id: "categories", label: "Categories", icon: Tag },
   { id: "ai", label: "AI Settings", icon: Brain },
   { id: "preferences", label: "Preferences", icon: Palette },
@@ -202,19 +204,23 @@ function BillingPanel({ usage }: { usage: Props["initialUsage"] }) {
         )}
 
         <div className="settings-action-row">
-          <SubscriptionDetailsButton>
-            <button className="settings-btn settings-btn--ghost" type="button">
-              <CreditCard size={15} />
-              Manage plan
-            </button>
-          </SubscriptionDetailsButton>
-          {proPlanId ? (
-            <CheckoutButton planId={proPlanId} planPeriod="month">
-              <button className="settings-btn settings-btn--primary" type="button" disabled={isPro}>
-                <Sparkles size={15} />
-                {isPro ? "Pro active" : "Upgrade to Pro"}
+          <Show when="signed-in">
+            <SubscriptionDetailsButton>
+              <button className="settings-btn settings-btn--ghost" type="button">
+                <CreditCard size={15} />
+                Manage plan
               </button>
-            </CheckoutButton>
+            </SubscriptionDetailsButton>
+          </Show>
+          {proPlanId ? (
+            <Show when="signed-in">
+              <CheckoutButton planId={proPlanId} planPeriod="month">
+                <button className="settings-btn settings-btn--primary" type="button" disabled={isPro || subscription.isFetching}>
+                  <Sparkles size={15} />
+                  {subscription.isFetching ? "Loading..." : isPro ? "Pro active" : "Upgrade to Pro"}
+                </button>
+              </CheckoutButton>
+            </Show>
           ) : (
             <button className="settings-btn settings-btn--primary" type="button" disabled>
               <Sparkles size={15} />
@@ -228,18 +234,26 @@ function BillingPanel({ usage }: { usage: Props["initialUsage"] }) {
         <h3>Usage limits</h3>
         <div className="settings-usage-list">
           <div>
-            <span>Generated apps</span>
+            <span>Active notes</span>
             <strong>
-              {usage.generatedApps} / {generatedAppLimit}
+              {usage.notesCount ?? 0} / {isPro ? "Unlimited" : "10"}
             </strong>
           </div>
           <div>
-            <span>AI tools</span>
-            <strong>{isPro ? "All enabled" : "Basic access"}</strong>
+            <span>Active spaces</span>
+            <strong>
+              {usage.spacesCount ?? 0} / {isPro ? "Unlimited" : "2"}
+            </strong>
           </div>
           <div>
-            <span>Integrations</span>
-            <strong>{isPro ? "All features" : "Core tools"}</strong>
+            <span>Daily AI actions</span>
+            <strong>
+              {usage.aiActionsCount ?? 0} / {isPro ? "Unlimited" : "5"}
+            </strong>
+          </div>
+          <div>
+            <span>AI template builder</span>
+            <strong>{isPro ? "Enabled" : "Disabled (Paid only)"}</strong>
           </div>
         </div>
       </div>
@@ -385,7 +399,7 @@ export default function SettingsWorkspace({ profile, initialSettings, initialCat
       );
     }
 
-    if (activeSection === "subscription") return <BillingPanel usage={initialUsage} />;
+    
 
     if (activeSection === "categories") {
       return (

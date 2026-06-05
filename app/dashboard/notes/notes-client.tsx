@@ -40,7 +40,7 @@ export default function NotesClient({ initialNotes, categories }: NotesClientPro
   }, []);
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-white">
+    <div className="flex h-full w-full overflow-hidden bg-background text-foreground">
       <NotesSidebar
         notes={notes}
         categories={categories}
@@ -52,12 +52,12 @@ export default function NotesClient({ initialNotes, categories }: NotesClientPro
         {selectedNote ? (
           <Editor key={selectedNote.id} note={selectedNote} categories={categories} onSave={refreshNotes} />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-slate-400">
-            <div className="w-16 h-16 mb-4 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <div className="w-16 h-16 mb-4 rounded-xl bg-muted flex items-center justify-center border border-border shadow-sm">
               <span className="text-2xl">📝</span>
             </div>
-            <p className="text-lg font-medium text-slate-600">Start writing</p>
-            <p className="text-sm mt-1 text-slate-400">
+            <p className="text-lg font-medium text-foreground">Start writing</p>
+            <p className="text-sm mt-1 text-muted-foreground">
               Select a note or create a new one.
             </p>
           </div>

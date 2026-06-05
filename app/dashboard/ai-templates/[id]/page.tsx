@@ -31,17 +31,17 @@ export default async function StandaloneAppPage({
   if (!app) notFound();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Top Premium Nav Bar */}
-      <header className="border-b border-slate-200 bg-white h-14 px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+      <header className="border-b border-border bg-card h-14 px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm">
         <Link
           href="/dashboard/ai-templates"
-          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+          className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft size={16} />
           <span>Back to Builder</span>
         </Link>
-        <span className="text-xs text-slate-400 font-medium">Standalone View</span>
+        <span className="text-xs text-muted-foreground font-medium">Standalone View</span>
       </header>
 
       {/* Main content wrapper */}
