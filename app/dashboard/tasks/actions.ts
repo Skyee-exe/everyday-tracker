@@ -15,6 +15,7 @@ import { eq, and, asc, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { canAccessBoard, assertCanAccessBoard } from "@/lib/board-access";
 import { isCollabRole, type CollabRole } from "@/lib/collab/permissions";
+import { createNotification } from "@/app/dashboard/notifications/actions";
 
 /* ─── Get custom categories ─── */
 export async function getTasksCategories() {
@@ -300,6 +301,15 @@ export async function createTask(data: {
     })
     .returning();
 
+  await createNotification({
+    userId,
+    type: "task",
+    title: "Task Created",
+    message: `Task "${task.title}" was added to the board.`,
+    entityType: "task",
+    entityId: String(task.id),
+  });
+
   revalidatePath("/dashboard/tasks");
   revalidatePath("/dashboard/calendar");
   return task;
@@ -318,11 +328,35 @@ export async function updateTask(
     linkedNoteId: number | null;
   }>
 ) {
+  const { userId } = await auth();
+
   const [task] = await db
     .update(kanbanTasks)
     .set({ ...data, updatedAt: new Date() })
     .where(eq(kanbanTasks.id, id))
     .returning();
+
+  if (userId) {
+    if (data.completed !== undefined) {
+      await createNotification({
+        userId,
+        type: "task",
+        title: data.completed ? "Task Completed" : "Task Re-opened",
+        message: `Task "${task.title}" was marked ${data.completed ? "completed" : "incomplete"}.`,
+        entityType: "task",
+        entityId: String(task.id),
+      });
+    } else if (data.priority === "high" || data.priority === "critical") {
+      await createNotification({
+        userId,
+        type: "task",
+        title: "High Priority Task",
+        message: `Task "${task.title}" priority was set to ${data.priority}.`,
+        entityType: "task",
+        entityId: String(task.id),
+      });
+    }
+  }
 
   revalidatePath("/dashboard/tasks");
   return task;

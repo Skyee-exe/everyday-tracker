@@ -4,6 +4,7 @@ import { db, notes, userCategories } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/app/dashboard/notifications/actions";
 
 export async function getNotes() {
   const { userId } = await auth();
@@ -32,6 +33,16 @@ export async function createNote(templateData?: { title: string; content: any })
       content: templateData?.content || null,
     })
     .returning();
+
+  await createNotification({
+    userId,
+    type: "note",
+    title: "New Note Created",
+    message: `Note "${note.title}" has been created.`,
+    entityType: "note",
+    entityId: String(note.id),
+  });
+
   revalidatePath("/dashboard/notes");
   return note;
 }
@@ -44,6 +55,18 @@ export async function updateNote(id: number, data: Partial<typeof notes.$inferIn
     .set({ ...data, updatedAt: new Date() })
     .where(and(eq(notes.id, id), eq(notes.clerkUserId, userId)))
     .returning();
+
+  if (data.title !== undefined || data.content !== undefined) {
+    await createNotification({
+      userId,
+      type: "note",
+      title: "Note Updated",
+      message: `Note "${updated.title}" was updated.`,
+      entityType: "note",
+      entityId: String(updated.id),
+    });
+  }
+
   revalidatePath("/dashboard/notes");
   return updated;
 }

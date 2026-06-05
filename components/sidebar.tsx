@@ -33,6 +33,7 @@ import {
   Crown,
 } from "lucide-react";
 import CommandPalette from "./command-palette";
+import { useNotifications } from "./notifications/NotificationContext";
 
 /* ─────────────────── Types ─────────────────── */
 interface NavItem {
@@ -252,6 +253,7 @@ export default function Sidebar() {
   const [logoOpen, setLogoOpen] = useState(false);
   const [generatedApps, setGeneratedApps] = useState<GeneratedSidebarApp[]>([]);
   const pathname = usePathname();
+  const { unreadCount, isOpen, setIsOpen } = useNotifications();
 
   /* Ctrl+K */
   useEffect(() => {
@@ -424,16 +426,31 @@ export default function Sidebar() {
               <NavLink key={item.href} item={item} collapsed={collapsed} active={isActive(item.href)} />
             ))}
             {!collapsed ? (
-              <button className="sb-nav-item" style={{ border: "none", width: "100%", background: "none", cursor: "pointer" }}>
+              <button
+                className={`sb-nav-item${isOpen ? " sb-nav-item--active" : ""}`}
+                onClick={() => setIsOpen(!isOpen)}
+                style={{ border: "none", width: "100%", background: "none", cursor: "pointer" }}
+              >
                 <span className="sb-nav-icon"><Bell size={16} strokeWidth={1.8} /></span>
                 <span className="sb-nav-label">Notifications</span>
-                <span className="sb-notif-dot" />
+                {unreadCount > 0 && (
+                  <span
+                    className="sb-badge"
+                    style={{ background: "#2563eb", color: "#ffffff", marginLeft: "auto" }}
+                  >
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             ) : (
               <Tooltip label="Notifications">
-                <button className="sb-nav-item" style={{ border: "none", width: "100%", background: "none", cursor: "pointer", position: "relative" }}>
+                <button
+                  className={`sb-nav-item${isOpen ? " sb-nav-item--active" : ""}`}
+                  onClick={() => setIsOpen(!isOpen)}
+                  style={{ border: "none", width: "100%", background: "none", cursor: "pointer", position: "relative" }}
+                >
                   <span className="sb-nav-icon"><Bell size={16} strokeWidth={1.8} /></span>
-                  <span className="sb-notif-dot sb-notif-dot--abs" />
+                  {unreadCount > 0 && <span className="sb-notif-dot sb-notif-dot--abs" />}
                 </button>
               </Tooltip>
             )}
