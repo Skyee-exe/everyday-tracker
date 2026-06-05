@@ -8,9 +8,10 @@ import { getNotes } from "@/app/dashboard/notes/actions";
 
 interface NotesClientProps {
   initialNotes: Note[];
+  categories: any[];
 }
 
-export default function NotesClient({ initialNotes }: NotesClientProps) {
+export default function NotesClient({ initialNotes, categories }: NotesClientProps) {
   const [notes, setNotes] = useState<Note[]>(initialNotes);
   const [selectedNoteId, setSelectedNoteId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -42,13 +43,14 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
     <div className="flex h-full w-full overflow-hidden bg-white">
       <NotesSidebar
         notes={notes}
+        categories={categories}
         selectedNoteId={selectedNoteId}
         onSelectNote={setSelectedNoteId}
         onMutate={refreshNotes}
       />
       <div className="flex-1 relative">
         {selectedNote ? (
-          <Editor key={selectedNote.id} note={selectedNote} onSave={refreshNotes} />
+          <Editor key={selectedNote.id} note={selectedNote} categories={categories} onSave={refreshNotes} />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-slate-400">
             <div className="w-16 h-16 mb-4 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm">

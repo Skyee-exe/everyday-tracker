@@ -12,6 +12,11 @@ import {
   PenTool,
   BookOpen,
   Wand2,
+  ListChecks,
+  Wallet,
+  Utensils,
+  BarChart3,
+  Target,
   Settings2,
   ChevronLeft,
   Zap,
@@ -44,6 +49,14 @@ interface NavGroup {
   items: NavItem[];
 }
 
+interface GeneratedSidebarApp {
+  id: number;
+  appName: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
 /* ─────────────────── Nav Config ─────────────────── */
 const NAV_GROUPS: NavGroup[] = [
   {
@@ -55,7 +68,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     groupLabel: "Intelligence",
     items: [
-      { label: "AI Assistant", href: "/dashboard/ai-assistant", icon: Sparkles, color: "#0ea5e9", bg: "rgba(14,165,233,0.1)", badge: "New" },
       { label: "AI Templates", href: "/dashboard/ai-templates", icon: Wand2, color: "#7c3aed", bg: "rgba(124,58,237,0.1)" },
     ],
   },
@@ -79,6 +91,17 @@ const NAV_GROUPS: NavGroup[] = [
 const BOTTOM_ITEMS: NavItem[] = [
   { label: "Settings", href: "/dashboard/settings", icon: Settings2, color: "#64748b", bg: "rgba(100,116,139,0.1)" },
 ];
+
+const GENERATED_ICON_MAP: Record<string, React.ElementType> = {
+  Sparkles,
+  Calendar,
+  ListChecks,
+  Wallet,
+  BookOpen,
+  Utensils,
+  BarChart3,
+  Target,
+};
 
 /* ─────────────────── Workspaces ─────────────────── */
 const WORKSPACES = [
@@ -227,6 +250,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
   const [logoOpen, setLogoOpen] = useState(false);
+  const [generatedApps, setGeneratedApps] = useState<GeneratedSidebarApp[]>([]);
   const pathname = usePathname();
 
   /* Ctrl+K */
@@ -238,8 +262,35 @@ export default function Sidebar() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  useEffect(() => {
+    let alive = true;
+    const fetchApps = () => {
+      fetch("/api/ai-templates/apps")
+        .then((response) => response.json())
+        .then((data) => {
+          if (alive && Array.isArray(data.apps)) setGeneratedApps(data.apps);
+        })
+        .catch(() => {
+          if (alive) setGeneratedApps([]);
+        });
+    };
+
+    fetchApps();
+
+    const handleUpdate = () => {
+      fetchApps();
+    };
+
+    window.addEventListener("sidebar-update", handleUpdate);
+
+    return () => {
+      alive = false;
+      window.removeEventListener("sidebar-update", handleUpdate);
+    };
+  }, [pathname]);
+
   const isActive = (href: string) =>
-    pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+    pathname === href || (href !== "/dashboard" && pathname.startsWith(href) && (href === "/dashboard/ai-templates" ? !/^\/dashboard\/ai-templates\/\d+/.test(pathname) : true));
 
   return (
     <>
@@ -323,6 +374,47 @@ export default function Sidebar() {
               ))}
             </div>
           ))}
+
+          {(generatedApps.length > 0 || pathname.startsWith("/dashboard/ai-templates")) && (
+            <div className="sb-group">
+              {!collapsed && <p className="sb-group-label">Generated Apps</p>}
+              {collapsed && <div className="sb-group-divider" />}
+              {generatedApps.map((app) => {
+                const Icon = GENERATED_ICON_MAP[app.icon] ?? Sparkles;
+                const appHref = `/dashboard/ai-templates/${app.id}`;
+                return (
+                  <NavLink
+                    key={app.id}
+                    item={{
+                      label: app.appName,
+                      href: appHref,
+                      icon: Icon,
+                      color: app.color,
+                      bg: `${app.color}1a`,
+                    }}
+                    collapsed={collapsed}
+                    active={isActive(appHref)}
+                  />
+                );
+              })}
+              {!collapsed && generatedApps.length >= 3 && (
+                <div
+                  style={{
+                    margin: "5px 8px 2px",
+                    padding: "7px 8px",
+                    borderRadius: 7,
+                    background: "rgba(217,119,6,0.09)",
+                    color: "#92400e",
+                    fontSize: "0.68rem",
+                    fontWeight: 700,
+                    lineHeight: 1.35,
+                  }}
+                >
+                  3 app limit reached
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* ── Bottom ── */}

@@ -32,12 +32,10 @@ const ACTIONS = [
   { icon: Plus, label: "New Task", sub: "Add to Kanban board", color: "#dc2626", kbd: "T" },
   { icon: NotebookPen, label: "New Note", sub: "Open blank note", color: "#0ea5e9", kbd: "N" },
   { icon: Calendar, label: "New Event", sub: "Add to calendar", color: "#2563eb", kbd: "E" },
-  { icon: Sparkles, label: "Ask AI", sub: "Open AI Assistant", color: "#7c3aed", kbd: "A" },
 ];
 
 const NAV_PAGES = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", color: "#2563eb" },
-  { icon: Sparkles, label: "AI Assistant", href: "/dashboard/ai-assistant", color: "#0ea5e9" },
   { icon: Kanban, label: "Tasks & Kanban", href: "/dashboard/tasks", color: "#dc2626" },
   { icon: NotebookPen, label: "Notes", href: "/dashboard/notes", color: "#0ea5e9" },
   { icon: PenTool, label: "Whiteboard", href: "/dashboard/whiteboard", color: "#0891b2" },

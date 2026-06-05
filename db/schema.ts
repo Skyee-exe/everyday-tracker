@@ -122,6 +122,7 @@ export const notes = pgTable("notes", {
   content: jsonb("content"),
   icon: text("icon"),
   color: text("color"),
+  category: text("category"),
   folderId: integer("folder_id"),
   isFavorite: boolean("is_favorite").notNull().default(false),
   isPinned: boolean("is_pinned").notNull().default(false),
@@ -188,3 +189,73 @@ export const spacePages = pgTable("space_pages", {
 
 export type SpacePage = typeof spacePages.$inferSelect;
 export type NewSpacePage = typeof spacePages.$inferInsert;
+
+/* AI Generated Apps */
+export const generatedApps = pgTable("generated_apps", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull(),
+  appName: text("app_name").notNull(),
+  description: text("description").notNull(),
+  icon: text("icon").notNull().default("Sparkles"),
+  color: text("color").notNull().default("#2563eb"),
+  layout: text("layout").notNull().default("single-page"),
+  appJson: jsonb("app_json").notNull(),
+  inSidebar: boolean("in_sidebar").notNull().default(false),
+  lastOpenedAt: timestamp("last_opened_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type GeneratedApp = typeof generatedApps.$inferSelect;
+export type NewGeneratedApp = typeof generatedApps.$inferInsert;
+
+/* User Settings */
+export const userSettings = pgTable("user_settings", {
+  id: serial("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").notNull().unique(),
+  theme: text("theme").notNull().default("system"),
+  notificationsEnabled: boolean("notifications_enabled").notNull().default(true),
+  defaultCalendarView: text("default_calendar_view").notNull().default("week"),
+  defaultTaskPriority: text("default_task_priority").notNull().default("medium"),
+  autosaveEnabled: boolean("autosave_enabled").notNull().default(true),
+  dataExportPreference: text("data_export_preference").notNull().default("json"),
+  privacyModeEnabled: boolean("privacy_mode_enabled").notNull().default(false),
+  securityAlertsEnabled: boolean("security_alerts_enabled").notNull().default(true),
+  aiDefaultModel: text("ai_default_model").notNull().default("gemini-2.5-flash"),
+  aiBehavior: text("ai_behavior").notNull().default("balanced"),
+  aiResponseStyle: text("ai_response_style").notNull().default("concise"),
+  aiRefineEnabled: boolean("ai_refine_enabled").notNull().default(true),
+  aiAssistantEnabled: boolean("ai_assistant_enabled").notNull().default(true),
+  aiTemplateBuilderEnabled: boolean("ai_template_builder_enabled").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type UserSettings = typeof userSettings.$inferSelect;
+export type NewUserSettings = typeof userSettings.$inferInsert;
+
+/* User Categories */
+export const userCategories = pgTable(
+  "user_categories",
+  {
+    id: serial("id").primaryKey(),
+    clerkUserId: text("clerk_user_id").notNull(),
+    scope: text("scope").notNull(),
+    name: text("name").notNull(),
+    color: text("color").notNull().default("#2563eb"),
+    icon: text("icon").notNull().default("Tag"),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniqUserCategoryScopeName: uniqueIndex("uniq_user_category_scope_name").on(
+      t.clerkUserId,
+      t.scope,
+      t.name
+    ),
+  })
+);
+
+export type UserCategory = typeof userCategories.$inferSelect;
+export type NewUserCategory = typeof userCategories.$inferInsert;

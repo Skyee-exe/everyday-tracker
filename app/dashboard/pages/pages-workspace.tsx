@@ -43,6 +43,7 @@ import {
   type SpaceWithStats,
 } from "./actions";
 import PageEditor from "@/components/pages/page-editor";
+import { convertTiptapToMarkdown } from "@/lib/markdown-export";
 
 type SpaceFilter = "all" | "favorites" | "recent" | "archived";
 type SpaceSort = "updated" | "name" | "pages" | "favorites";
@@ -111,6 +112,12 @@ export default function PagesWorkspace({
   const [editingSpaceId, setEditingSpaceId] = useState<number | null>(null);
   const [selectedPageId, setSelectedPageId] = useState<number | null>(null);
   const [openedPageId, setOpenedPageId] = useState<number | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showNotification = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
   const [spaceQuery, setSpaceQuery] = useState("");
   const [pageQuery, setPageQuery] = useState("");
   const [spaceFilter, setSpaceFilter] = useState<SpaceFilter>("all");
@@ -260,6 +267,36 @@ export default function PagesWorkspace({
       refreshPages(page.spaceId);
       refreshSpaces();
     });
+  };
+
+  const handleShare = (page: SpacePage) => {
+    const shareUrl = `${window.location.origin}/dashboard/pages`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showNotification("Workspace link copied to clipboard!");
+    }).catch((err) => {
+      console.error(err);
+      showNotification("Failed to copy link");
+    });
+  };
+
+  const handleExport = (page: SpacePage) => {
+    try {
+      const markdownContent = page.content
+        ? convertTiptapToMarkdown(page.content)
+        : page.summary || "";
+      const blob = new Blob([markdownContent], { type: "text/markdown;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${page.title.toLowerCase().replace(/\s+/g, "-") || "untitled"}.md`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showNotification("Page exported and downloaded successfully!");
+    } catch (e) {
+      console.error(e);
+      showNotification("Failed to export page");
+    }
   };
 
   return (
@@ -748,10 +785,18 @@ export default function PagesWorkspace({
                         >
                           <Copy size={15} />
                         </button>
-                        <button className="ps-icon-btn" aria-label="Share page">
+                        <button
+                          className="ps-icon-btn"
+                          aria-label="Share page"
+                          onClick={() => handleShare(selectedPage)}
+                        >
                           <Share2 size={15} />
                         </button>
-                        <button className="ps-icon-btn" aria-label="Export page">
+                        <button
+                          className="ps-icon-btn"
+                          aria-label="Export page"
+                          onClick={() => handleExport(selectedPage)}
+                        >
                           <Download size={15} />
                         </button>
                         <button
@@ -957,11 +1002,23 @@ export default function PagesWorkspace({
                 <Copy size={15} />
                 Duplicate
               </button>
-              <button className="ps-btn ps-btn--ghost">
+              <button
+                className="ps-btn ps-btn--ghost"
+                onClick={() => {
+                  setPagePanel(null);
+                  handleShare(selectedPage);
+                }}
+              >
                 <Share2 size={15} />
                 Share
               </button>
-              <button className="ps-btn ps-btn--ghost">
+              <button
+                className="ps-btn ps-btn--ghost"
+                onClick={() => {
+                  setPagePanel(null);
+                  handleExport(selectedPage);
+                }}
+              >
                 <Download size={15} />
                 Export
               </button>
@@ -988,6 +1045,13 @@ export default function PagesWorkspace({
             setEditingSpaceId(null);
           }}
         />
+      )}
+
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-250 bg-slate-900/90 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <Sparkles size={14} className="text-blue-400 animate-pulse" />
+          <span>{toastMessage}</span>
+        </div>
       )}
     </div>
   );
