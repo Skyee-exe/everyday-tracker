@@ -21,7 +21,7 @@ interface AIWorkflowCommand {
 }
 
 export default function AIWorkflowsSection() {
-  const [activeId, setActiveId] = useState("marketing");
+  const [activeId, setActiveId] = useState("tasks-from-notes");
   const [running, setRunning] = useState(false);
   const [visibleStepCount, setVisibleStepCount] = useState(0);
   const { theme } = useTheme();
@@ -29,37 +29,69 @@ export default function AIWorkflowsSection() {
 
   const workflows: AIWorkflowCommand[] = [
     {
-      id: "marketing",
-      command: "/create launch campaign",
-      description: "Setup marketing pipeline, kickoff schedule, specifications wiki, and dev checklist.",
-      prompt: "Draft launch campaign pipeline including marketing checklist, calendar, spec notes, and assign sprint board cards.",
+      id: "tasks-from-notes",
+      command: "/generate-tasks-from-notes",
+      description: "Scans meeting briefs or scratchpad raw notes to extract actionable todo checklists automatically.",
+      prompt: "Scan the 'Q4 Planning Session' raw notes, identify all action items, and push them to the Team Tasks tracker.",
       steps: [
-        { type: "note", label: "Spec Notes", detail: "Created wiki 'Product Launch Strategy Guide'" },
-        { type: "task", label: "Checklist", detail: "Generated 3 tasks: Press kit draft, Web assets, SEO config" },
-        { type: "event", label: "Calendar Event", detail: "Scheduled 'Kickoff Meeting' for Mon at 10 AM" },
-        { type: "board", label: "Board Card", detail: "Added task card to Marketing Sprint Column" },
+        { type: "note", label: "Scanning Note Page", detail: "Read page 'Q4 Planning Session' (850 words)" },
+        { type: "task", label: "Action Items", detail: "Extracted 4 tasks: Draft landing copy, Review design specs, Set up analytics, Publish release docs" },
+        { type: "board", label: "Board Update", detail: "Assigned tasks to Soham and Lucas in the Sprint Board backlog" },
       ],
     },
     {
-      id: "sprint",
-      command: "/setup development sprint",
-      description: "Initialize Kanban board sprint cards, database migration alerts, and code cleanup times.",
-      prompt: "Create sprint structures with schema push actions, code refactoring milestones, and test checks.",
+      id: "project-plans",
+      command: "/create-project-plan",
+      description: "Builds a complete multi-phase roadmap from a simple prompt, specifying tasks, milestones, and timelines.",
+      prompt: "Generate a 3-week project plan for migrating our database to PostgreSQL, including safety migration checks.",
       steps: [
-        { type: "board", label: "Board Setup", detail: "Created board 'Sprint 15 Roadmap'" },
-        { type: "task", label: "Checklist", detail: "Added: Drizzle schema push, ESLint cleanup, Unit tests run" },
-        { type: "event", label: "Calendar Event", detail: "Scheduled 'Sprint Review' for Friday at 4 PM" },
+        { type: "board", label: "Roadmap Setup", detail: "Created board 'Postgres Migration Roadmap'" },
+        { type: "task", label: "Milestones", detail: "Added: Schema dry run (Week 1), Test migrations (Week 2), Production rollout (Week 3)" },
+        { type: "event", label: "Sync Scheduled", detail: "Scheduled reminder 'Database Migration Sync' on Wednesdays at 2 PM" },
       ],
     },
     {
-      id: "personal",
-      command: "/start morning routine",
-      description: "Log habit trackers, physical stretch notifications, and daily calendar review outlines.",
-      prompt: "Log streaks habits checklists, cardio run reminders, and daily journaling drafts.",
+      id: "study-schedules",
+      command: "/build-study-schedule",
+      description: "Schedules dynamic study blocks, exam preparation review dates, and breaks adjusted to syllabus topics.",
+      prompt: "Build a 10-day prep schedule for the Calculus exam, covering derivatives, integration, and series.",
       steps: [
-        { type: "task", label: "Habit list", detail: "Created habits: 5k Cardio run, 15 Pages reading, Hydrate" },
-        { type: "note", label: "Journal Draft", detail: "Created daily log note page 'Morning Reflection'" },
-        { type: "event", label: "Calendar Event", detail: "Scheduled 'Meditation Session' at 7:30 AM" },
+        { type: "note", label: "Syllabus Index", detail: "Created syllabus breakdown index page 'Calculus Review Guide'" },
+        { type: "event", label: "Study Blocks", detail: "Scheduled 10 daily 2-hour deep work calendar blocks" },
+        { type: "task", label: "Practice Sets", detail: "Added 3 study milestone tasks: Integration practice, Limit proofs, Practice Exam" },
+      ],
+    },
+    {
+      id: "summarize-meetings",
+      command: "/summarize-meeting",
+      description: "Condenses raw audio transcript notes into key summaries, decisions made, and follow-up items.",
+      prompt: "Summarize the 'Weekly Design Sync' audio transcript and list decisions and action points.",
+      steps: [
+        { type: "note", label: "Meeting Brief", detail: "Created summary wiki 'Weekly Design Sync Summary'" },
+        { type: "task", label: "Follow-ups", detail: "Added tasks: Update landing page typography, Schedule user testing" },
+        { type: "event", label: "Review Meeting", detail: "Created calendar invite 'Typography Review Session' on Tuesday 11 AM" },
+      ],
+    },
+    {
+      id: "whiteboard-diagrams",
+      command: "/generate-diagram",
+      description: "Converts system descriptions into visual architecture node diagrams on the collaborative canvas.",
+      prompt: "Draw a microservices architecture diagram showing Client, API Gateway, Auth Service, and Database flows.",
+      steps: [
+        { type: "board", label: "Canvas Created", detail: "Opened fresh flow canvas 'Backend Architecture Diagram'" },
+        { type: "task", label: "Nodes Placed", detail: "Rendered 4 service shapes: Client App, API Gateway, Auth Microservice, PG Database" },
+        { type: "event", label: "Sync Connections", detail: "Drew flow arrow pathways representing token auth and database queries" },
+      ],
+    },
+    {
+      id: "productivity-systems",
+      command: "/create-productivity-system",
+      description: "Initializes custom GTD systems, daily review logs, habit trackers, and Eisenhower matrices.",
+      prompt: "Set up a complete Getting Things Done (GTD) productivity system with Inbox, Next Actions, and Weekly Review.",
+      steps: [
+        { type: "board", label: "GTD Workspace", detail: "Created board 'GTD Action Center' with Inbox, Next, Someday columns" },
+        { type: "note", label: "Review Template", detail: "Built daily journal template 'Weekly Review Reflection'" },
+        { type: "task", label: "Habit Tracker", detail: "Initialized habit streak trackers: Daily Inbox Zero, Weekly review audit" },
       ],
     },
   ];
@@ -94,12 +126,12 @@ export default function AIWorkflowsSection() {
   }, [activeId]);
 
   return (
-    <section className="py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
+    <section className="py-12 md:py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-20">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -121,7 +153,7 @@ export default function AIWorkflowsSection() {
         </div>
 
         {/* Console layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch max-w-6xl mx-auto">
           
           {/* Left Panel: Workflow command lists */}
           <div className="col-span-12 lg:col-span-5 flex flex-col gap-4 text-left">
@@ -163,11 +195,11 @@ export default function AIWorkflowsSection() {
 
           {/* Right Panel: Simulated Output Screen */}
           <div className="col-span-12 lg:col-span-7">
-            <div className={`relative rounded-3xl border p-2.5 shadow-xl h-full transition-colors ${
+            <div className={`relative rounded-3xl border p-1.5 sm:p-2.5 shadow-xl h-full transition-colors ${
               isDark ? "border-slate-850 bg-slate-900/20" : "border-slate-200 bg-slate-50/60"
             }`}>
               
-              <div className={`relative rounded-2xl border p-6 min-h-[300px] flex flex-col justify-between overflow-hidden h-full transition-colors ${
+              <div className={`relative rounded-2xl border p-4 sm:p-6 min-h-[280px] flex flex-col justify-between overflow-hidden h-full transition-colors ${
                 isDark ? "bg-slate-950 border-slate-900" : "bg-white border-slate-150"
               }`}>
                 

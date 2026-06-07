@@ -11,6 +11,7 @@ import {
   Send,
   RotateCcw,
   Sparkles,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./theme-context";
@@ -40,7 +41,7 @@ interface WhiteboardShape {
 }
 
 export default function ProductShowcase() {
-  const [activeTab, setActiveTab] = useState<"dashboard" | "notes" | "kanban" | "whiteboard" | "ai">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "notes" | "kanban" | "calendar" | "whiteboard" | "ai">("dashboard");
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -83,6 +84,18 @@ export default function ProductShowcase() {
       ],
     },
     {
+      id: "calendar",
+      icon: <CalendarIcon className="h-4 w-4" />,
+      label: "Calendar Sync",
+      headline: "Unify your scheduling and project timelines",
+      description: "Track standing meetings, coordinate sprint durations, and schedule task reminder timelines directly alongside notes and Kanban pipelines.",
+      benefits: [
+        "Multi-calendar import integration",
+        "Inline task scheduling triggers",
+        "Automatic standup notification times",
+      ],
+    },
+    {
       id: "whiteboard",
       icon: <Compass className="h-4 w-4" />,
       label: "Visual Whiteboard",
@@ -97,8 +110,8 @@ export default function ProductShowcase() {
     {
       id: "ai",
       icon: <Sparkles className="h-4 w-4" />,
-      label: "AI Copilot",
-      headline: "Context-aware assistant built for action",
+      label: "AI Templates",
+      headline: "Context-aware assistant and template preset logs",
       description: "Run checklists, write documentation drafts, ask workspace summaries, and create calendar standups using plain language.",
       benefits: [
         "Reads workspace context automatically",
@@ -218,12 +231,12 @@ export default function ProductShowcase() {
   const currentStory = stories.find((s) => s.id === activeTab) || stories[0];
 
   return (
-    <section id="showcase" className="py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
+    <section id="showcase" className="py-12 md:py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-20">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -243,9 +256,194 @@ export default function ProductShowcase() {
             Don&apos;t just read about features. Test the actual workspace tools in the interactive playground below.
           </motion.p>
         </div>
+        {/* Mobile Stacked Layout (Visible on screens below 1024px) */}
+        <div className="lg:hidden flex flex-col gap-6 w-full">
+          {stories.map((story) => (
+            <div
+              key={story.id}
+              className={`rounded-3xl border p-5 flex flex-col gap-4 text-left transition-colors ${
+                isDark ? "border-slate-850 bg-[#0F172A]/40" : "border-slate-200 bg-slate-50/50"
+              }`}
+            >
+              {/* Card Header (Icon, Label, Title) */}
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-7 w-7 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-350">
+                    {story.icon}
+                  </div>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">{story.label}</span>
+                </div>
+                <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white mt-1">
+                  {story.headline}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
+                  {story.description}
+                </p>
+              </div>
 
-        {/* ── SIDE-BY-SIDE INTERACTIVE LAYOUT ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
+              {/* Screenshot mockup wrapper */}
+              <div className={`relative rounded-2xl border p-4 shadow-xs transition-colors ${
+                isDark ? "bg-slate-950 border-slate-900" : "bg-white border-slate-150"
+              }`}>
+                {/* Static Render of Mockups based on story.id */}
+                {story.id === "dashboard" && (
+                  <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-3 gap-2.5">
+                      <div className={`rounded-xl border p-2.5 ${isDark ? "border-slate-900 bg-slate-900/40" : "border-slate-150 bg-slate-50/40"}`}>
+                        <span className="text-[8px] uppercase font-bold tracking-wider text-slate-500">Pipeline</span>
+                        <p className="text-base font-black mt-0.5 text-blue-600 dark:text-blue-400">75%</p>
+                      </div>
+                      <div className={`rounded-xl border p-2.5 ${isDark ? "border-slate-900 bg-slate-900/40" : "border-slate-150 bg-slate-50/40"}`}>
+                        <span className="text-[8px] uppercase font-bold tracking-wider text-slate-500">Notes</span>
+                        <p className="text-base font-black mt-0.5 text-slate-850 dark:text-slate-200">12 Wiki</p>
+                      </div>
+                      <div className={`rounded-xl border p-2.5 ${isDark ? "border-slate-900 bg-slate-900/40" : "border-slate-150 bg-slate-50/40"}`}>
+                        <span className="text-[8px] uppercase font-bold tracking-wider text-slate-500">Canvas</span>
+                        <p className="text-base font-black mt-0.5 text-slate-850 dark:text-slate-200">3 Nodes</p>
+                      </div>
+                    </div>
+                    <div className={`rounded-xl border p-3 flex flex-col gap-2.5 ${
+                      isDark ? "border-slate-900 bg-slate-900/20" : "border-slate-150 bg-slate-50/20"
+                    }`}>
+                      <span className="text-[8px] uppercase font-bold text-slate-500">Weekly Focus Hours</span>
+                      <div className="flex items-end justify-between gap-2 h-8">
+                        {[35, 45, 60, 25, 80, 55, 90].map((h, i) => (
+                          <div key={i} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                            <div
+                              style={{ height: `${h}%` }}
+                              className={`w-full rounded-xs ${
+                                i === 6 ? "bg-blue-600 dark:bg-blue-500" : isDark ? "bg-slate-805" : "bg-slate-200"
+                              }`}
+                            ></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {story.id === "notes" && (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-200">spec-doc-final.md</span>
+                      <span className="text-[9px] px-2 py-0.5 rounded bg-blue-600/10 border border-blue-500/20 text-blue-600 dark:text-blue-405 font-bold">Spec</span>
+                    </div>
+                    <div className={`w-full rounded-xl p-3 text-[10.5px] font-sans leading-relaxed border ${
+                      isDark ? "bg-slate-900/20 border-slate-900 text-slate-300" : "bg-slate-50 border-slate-150 text-slate-700"
+                    }`}>
+                      <p className="font-bold text-slate-850 dark:text-white mb-1.5">⚡ DESIGN DIRECTIVE:</p>
+                      <p>• Modern Apple/Linear style landing page layout.</p>
+                      <p>• Monochromatic styling using scale colors and subtle 1px borders.</p>
+                      <p className="mt-1.5 text-blue-600 dark:text-blue-400 font-bold">✓ Refined with Everyday AI</p>
+                    </div>
+                  </div>
+                )}
+
+                {story.id === "kanban" && (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex justify-between border-b pb-2 text-[8px] text-slate-400 uppercase font-black">
+                      <span>Tasks Pipeline</span>
+                      <span>Progress Status</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {[
+                        { title: "Write landing page copy", cat: "Marketing", status: "To Do" },
+                        { title: "Mockup whiteboard UI component", cat: "Design", status: "Doing" },
+                        { title: "Design marketing banner", cat: "Design", status: "Done" },
+                      ].map((card, idx) => (
+                        <div key={idx} className={`rounded-xl border p-3 flex justify-between items-center ${
+                          isDark ? "bg-slate-900 border-slate-850" : "bg-slate-50 border-slate-150"
+                        }`}>
+                          <div className="flex flex-col gap-1 text-left">
+                            <p className="text-[10px] font-bold text-slate-800 dark:text-slate-200">{card.title}</p>
+                            <span className="text-[7.5px] w-fit px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">{card.cat}</span>
+                          </div>
+                          <span className={`text-[8.5px] font-bold ${
+                            card.status === "Done" ? "text-green-600 dark:text-green-400" :
+                            card.status === "Doing" ? "text-blue-600 dark:text-blue-400" : "text-slate-450"
+                          }`}>{card.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {story.id === "calendar" && (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <span className="text-xs font-bold text-slate-750 dark:text-slate-200">Daily Agenda</span>
+                      <span className="text-[9px] text-slate-400">June 2026</span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {[
+                        { time: "09:00 AM", title: "Product Spec Review", type: "Sync" },
+                        { time: "10:00 AM", title: "Weekly Team Standup", type: "Standup" },
+                        { time: "02:00 PM", title: "Calculus Study Block", type: "Study" },
+                      ].map((item, idx) => (
+                        <div key={idx} className={`p-2.5 rounded-xl border flex items-center justify-between font-mono text-[9px] ${
+                          isDark ? "border-slate-900 bg-slate-900/30" : "border-slate-150 bg-slate-50"
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-blue-600 dark:text-blue-400 font-bold shrink-0">{item.time}</span>
+                            <span className={`font-semibold ${isDark ? "text-slate-200" : "text-slate-800"}`}>{item.title}</span>
+                          </div>
+                          <span className="text-[7.5px] px-1.5 py-0.5 bg-blue-500/10 text-blue-650 dark:text-blue-400 font-bold rounded">{item.type}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {story.id === "whiteboard" && (
+                  <div className="flex flex-col gap-2">
+                    <div className="border rounded-xl h-24 relative overflow-hidden bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] bg-[size:10px_10px] flex items-center justify-center gap-2.5 p-2 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-900">
+                      <div className="px-2 py-1 border border-blue-400 bg-blue-50/60 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 text-[8px] font-mono rounded shadow-xs font-bold shrink-0">
+                        Client App
+                      </div>
+                      <span className="text-slate-400">⟶</span>
+                      <div className="px-2 py-1 border border-slate-200 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-[8px] font-mono rounded shadow-xs font-bold shrink-0">
+                        AI Gateway
+                      </div>
+                      <span className="text-slate-400">⟶</span>
+                      <div className="px-2 py-1 border border-blue-400 bg-blue-50/60 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 text-[8px] font-mono rounded shadow-xs font-bold shrink-0">
+                        Database
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {story.id === "ai" && (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-200">AI Template Presets</span>
+                      <span className="text-[9px] text-blue-600 dark:text-blue-500 font-bold">Ready</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[8.5px] font-bold font-mono">
+                      {[
+                        "📝 Spec outline",
+                        "📅 Sprint scheduler",
+                        "🎨 Wireframe helper",
+                        "⚡ GTD matrices",
+                      ].map((preset, idx) => (
+                        <div key={idx} className={`p-2 rounded-xl border text-left ${
+                          isDark ? "border-slate-900 bg-slate-900/40 text-slate-300" : "border-slate-150 bg-slate-50 text-slate-700"
+                        }`}>
+                          {preset}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[9px] text-blue-600 dark:text-blue-400 font-mono text-left">
+                      ⚡ Prompt: "/use-template GTD system"
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Interactive Layout (Visible on screens 1024px and up) */}
+        <div className="hidden lg:grid grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
           
           {/* Left Column: Stories & Tab List */}
           <div className="col-span-12 lg:col-span-5 flex flex-col gap-8 text-left">
@@ -258,8 +456,8 @@ export default function ProductShowcase() {
                   onClick={() => setActiveTab(s.id as any)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
                     activeTab === s.id
-                      ? "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 shadow-xs"
-                      : "bg-transparent border-transparent text-slate-500 dark:text-slate-450 hover:text-slate-905 dark:hover:text-slate-200"
+                      ? "bg-slate-100 dark:bg-slate-800 border-slate-205 dark:border-slate-700 text-slate-900 dark:text-slate-100 shadow-xs"
+                      : "bg-transparent border-transparent text-slate-500 dark:text-slate-450 hover:text-slate-905 dark:hover:text-slate-205"
                   }`}
                 >
                   {s.icon}
@@ -280,7 +478,7 @@ export default function ProductShowcase() {
               {/* Checklist */}
               <div className="flex flex-col gap-2.5 mt-3">
                 {currentStory.benefits.map((b, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-semibold">
+                  <div key={i} className="flex items-center gap-2 text-xs text-slate-705 dark:text-slate-300 font-semibold">
                     <span className="text-blue-600 dark:text-blue-500 font-extrabold text-sm shrink-0">✓</span>
                     <span>{b}</span>
                   </div>
@@ -294,7 +492,7 @@ export default function ProductShowcase() {
               className={`flex items-center justify-center gap-2 w-fit px-4 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                 isDark 
                   ? "border-slate-800 bg-slate-900/30 text-slate-400 hover:text-white hover:bg-slate-900/60" 
-                  : "border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                  : "border-slate-200 bg-white text-slate-650 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               <RotateCcw className="h-4 w-4" />
@@ -305,7 +503,7 @@ export default function ProductShowcase() {
           {/* Right Column: Interactive Sandbox Container */}
           <div className="col-span-12 lg:col-span-7">
             <div className={`relative rounded-3xl border p-2.5 shadow-xl transition-colors ${
-              isDark ? "border-slate-850 bg-slate-900/20" : "border-slate-200 bg-slate-50/60"
+              isDark ? "border-slate-855 bg-slate-900/20" : "border-slate-200 bg-slate-50/60"
             }`}>
               
               {/* Sandbox Window Frame */}
@@ -328,7 +526,7 @@ export default function ProductShowcase() {
                         <div className={`flex items-center justify-between border-b pb-3 ${
                           isDark ? "border-slate-900" : "border-slate-100"
                         }`}>
-                          <h4 className={`font-display text-sm font-bold ${isDark ? "text-slate-200" : "text-slate-800"}`}>Smart Command Center</h4>
+                          <h4 className={`font-display text-sm font-bold ${isDark ? "text-slate-200" : "text-slate-805"}`}>Smart Command Center</h4>
                           <span className="text-[10px] text-slate-500">Milestone Hub</span>
                         </div>
                         <div className="grid grid-cols-3 gap-3">
@@ -348,14 +546,14 @@ export default function ProductShowcase() {
                         <div className={`flex-1 min-h-[90px] rounded-xl border p-3 flex flex-col justify-between ${
                           isDark ? "border-slate-900 bg-slate-900/20" : "border-slate-150 bg-slate-50/20"
                         }`}>
-                          <span className="text-[8px] uppercase font-bold text-slate-500">Weekly Focus Hours</span>
+                          <span className="text-[8px] uppercase font-bold text-slate-505">Weekly Focus Hours</span>
                           <div className="flex items-end justify-between gap-3 h-10">
                             {[35, 45, 60, 25, 80, 55, 90].map((h, i) => (
                               <div key={i} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
                                 <div
                                   style={{ height: `${h}%` }}
                                   className={`w-full rounded-xs transition-all duration-300 ${
-                                    i === 6 ? "bg-blue-600 dark:bg-blue-500" : isDark ? "bg-slate-800" : "bg-slate-200"
+                                    i === 6 ? "bg-blue-600 dark:bg-blue-500" : isDark ? "bg-slate-800" : "bg-slate-202"
                                   }`}
                                 ></div>
                               </div>
@@ -369,13 +567,13 @@ export default function ProductShowcase() {
                     {activeTab === "notes" && (
                       <div className="flex-1 flex flex-col gap-3">
                         <div className={`flex items-center justify-between border-b pb-3 ${
-                          isDark ? "border-slate-900" : "border-slate-100"
+                          isDark ? "border-slate-900" : "border-slate-105"
                         }`}>
                           <span className="text-xs font-bold text-slate-700 dark:text-slate-200">spec-doc-final.md</span>
                           <button
                             onClick={handleRefineNotes}
                             disabled={isTypingNotes}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-semibold disabled:opacity-50 cursor-pointer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-202 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-semibold disabled:opacity-50 cursor-pointer"
                           >
                             {isTypingNotes ? "Expanding..." : "Refine with AI"}
                           </button>
@@ -386,8 +584,8 @@ export default function ProductShowcase() {
                           disabled={isTypingNotes}
                           className={`w-full h-44 border rounded-xl p-3 text-xs font-sans focus:outline-none resize-none leading-relaxed transition-colors ${
                             isDark 
-                              ? "bg-slate-900/30 text-slate-200 border-slate-900 focus:border-blue-500" 
-                              : "bg-slate-50 text-slate-850 border-slate-200 focus:border-blue-500"
+                              ? "bg-slate-900/30 text-slate-200 border-slate-900 focus:border-blue-550" 
+                              : "bg-slate-50 text-slate-850 border-slate-200 focus:border-blue-550"
                           }`}
                         />
                       </div>
@@ -406,7 +604,7 @@ export default function ProductShowcase() {
                             <div key={col} className={`rounded-xl border p-2 flex flex-col gap-2 ${
                               isDark ? "border-slate-900 bg-slate-950/40" : "border-slate-150 bg-slate-50/40"
                             }`}>
-                              <span className="text-[8px] uppercase font-bold text-slate-500">{col}</span>
+                              <span className="text-[8px] uppercase font-bold text-slate-505">{col}</span>
                               {kanbanCards
                                 .filter((c) => c.status === col)
                                 .map((card) => (
@@ -415,7 +613,7 @@ export default function ProductShowcase() {
                                   }`}>
                                     <p className={`text-[9.5px] font-bold leading-normal ${isDark ? "text-slate-200" : "text-slate-850"}`}>{card.title}</p>
                                     <div className="flex justify-between items-center mt-1">
-                                      <span className="text-[7.5px] px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-750 text-slate-500 dark:text-slate-400 font-bold">{card.category}</span>
+                                      <span className="text-[7.5px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-805 border border-slate-200 dark:border-slate-750 text-slate-500 dark:text-slate-400 font-bold">{card.category}</span>
                                       {col !== "done" ? (
                                         <button
                                           onClick={() => handleMoveKanban(card.id, col === "todo" ? "doing" : "done")}
@@ -426,7 +624,7 @@ export default function ProductShowcase() {
                                       ) : (
                                         <button
                                           onClick={() => handleMoveKanban(card.id, "doing")}
-                                          className="text-[8.5px] text-slate-450 dark:text-slate-500 font-bold cursor-pointer hover:underline"
+                                          className="text-[8.5px] text-slate-450 dark:text-slate-505 font-bold cursor-pointer hover:underline"
                                         >
                                           Back
                                         </button>
@@ -440,7 +638,47 @@ export default function ProductShowcase() {
                       </div>
                     )}
 
-                    {/* 4. Whiteboard Tab */}
+                    {/* 4. Calendar Tab */}
+                    {activeTab === "calendar" && (
+                      <div className="flex-1 flex flex-col gap-3">
+                        <div className={`flex items-center justify-between border-b pb-2.5 ${
+                          isDark ? "border-slate-900" : "border-slate-100"
+                        }`}>
+                          <span className={`text-xs font-bold ${isDark ? "text-slate-200" : "text-slate-800"}`}>Everyday Timelines</span>
+                          <span className="text-[10px] text-slate-500 font-mono font-semibold">June 2026</span>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1.5 text-center text-[9px] font-bold text-slate-400 font-mono">
+                          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1.5 text-center text-[9px] font-mono">
+                          {[...Array(30)].map((_, i) => {
+                            const day = i + 1;
+                            const isToday = day === 8;
+                            const hasEvent = day === 8 || day === 12 || day === 20;
+                            return (
+                              <div key={i} className={`py-1.5 rounded-lg border transition-all ${
+                                isToday ? "bg-blue-600 text-white border-blue-500 font-bold" :
+                                hasEvent ? (isDark ? "bg-blue-950/20 border-blue-900/40 text-blue-405 font-semibold" : "bg-blue-50 border-blue-100 text-blue-600 font-semibold") :
+                                isDark ? "border-slate-900 text-slate-500 hover:text-slate-300" : "border-slate-100 text-slate-400 hover:text-slate-900"
+                              }`}>
+                                {day}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className={`mt-2 p-2.5 rounded-xl border flex items-center gap-3 font-mono text-[9.5px] ${
+                          isDark ? "border-slate-900 bg-slate-900/30" : "border-slate-150 bg-slate-50"
+                        }`}>
+                          <div className="h-4.5 w-4.5 bg-blue-600 text-white rounded flex items-center justify-center shrink-0 text-[8px] font-black">8</div>
+                          <div className="flex-1 text-left">
+                            <p className={`font-bold ${isDark ? "text-slate-202" : "text-slate-850"}`}>Weekly Team Standup</p>
+                            <p className="text-[8px] text-slate-500 font-semibold">10:00 AM - 10:30 AM • Video Call</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 5. Whiteboard Tab */}
                     {activeTab === "whiteboard" && (
                       <div className="flex-1 flex flex-col gap-3">
                         <div className={`flex items-center justify-between border-b pb-2 ${
@@ -454,7 +692,7 @@ export default function ProductShowcase() {
                                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-[9px] font-bold border transition-colors cursor-pointer ${
                                   isDark 
                                     ? "bg-slate-900 border-slate-800 text-slate-350 hover:text-white" 
-                                    : "bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-950"
+                                    : "bg-slate-50 border-slate-202 text-slate-700 hover:text-slate-950"
                                 }`}
                               >
                                 <Plus className="h-3 w-3" /> {sh}
@@ -489,7 +727,7 @@ export default function ProductShowcase() {
                       </div>
                     )}
 
-                    {/* 5. AI Assistant Tab */}
+                    {/* 6. AI Assistant Tab */}
                     {activeTab === "ai" && (
                       <div className="flex-1 flex flex-col gap-3">
                         <div className={`flex-1 h-32 border rounded-xl p-3 flex flex-col gap-2 overflow-y-auto transition-colors ${
@@ -502,15 +740,15 @@ export default function ProductShowcase() {
                               key={idx}
                               className={`max-w-[85%] rounded-xl p-2.5 text-[10.5px] leading-relaxed ${
                                 m.sender === "ai"
-                                  ? "bg-blue-50/40 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 self-start text-slate-800 dark:text-slate-200"
-                                  : "bg-slate-100 dark:bg-slate-800 border border-slate-200/50 dark:border-transparent self-end text-slate-700 dark:text-slate-200"
+                                  ? "bg-blue-50/40 dark:bg-blue-955/20 border border-blue-105 dark:border-blue-900/40 self-start text-slate-800 dark:text-slate-200"
+                                  : "bg-slate-100 dark:bg-slate-808 border border-slate-200/50 dark:border-transparent self-end text-slate-700 dark:text-slate-202"
                               }`}
                             >
                               {m.text}
                             </div>
                           ))}
                           {isAiTyping && (
-                            <div className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 self-start max-w-[85%] rounded-xl p-2.5 text-[10.5px] text-slate-400 dark:text-slate-500 animate-pulse font-semibold">
+                            <div className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-805 self-start max-w-[85%] rounded-xl p-2.5 text-[10.5px] text-slate-400 dark:text-slate-500 animate-pulse font-semibold">
                               AI is typing...
                             </div>
                           )}
@@ -523,13 +761,13 @@ export default function ProductShowcase() {
                             placeholder="Ask me: 'summarize projects' or 'add tasks'"
                             className={`flex-1 border rounded-xl px-3 py-2 text-xs focus:outline-none transition-colors ${
                               isDark 
-                                ? "bg-slate-900 border-slate-850 text-slate-200 focus:border-blue-500/50" 
+                                ? "bg-slate-900 border-slate-850 text-slate-202 focus:border-blue-500/50" 
                                 : "bg-white border-slate-200 text-slate-800 focus:border-blue-500/50"
                             }`}
                           />
                           <button
                             type="submit"
-                            className="bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-white rounded-xl px-3.5 flex items-center justify-center cursor-pointer shadow-xs"
+                            className="bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 dark:text-slate-955 text-white rounded-xl px-3.5 flex items-center justify-center cursor-pointer shadow-xs"
                           >
                             <Send className="h-3 w-3" />
                           </button>

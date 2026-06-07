@@ -12,12 +12,12 @@ interface PricingSectionProps {
 
 export default function PricingSection({ userId }: PricingSectionProps) {
   return (
-    <section id="pricing" className="py-28 bg-transparent text-slate-900 dark:text-white relative border-t border-slate-205 dark:border-slate-900/40">
+    <section id="pricing" className="py-12 md:py-28 bg-transparent text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-20">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -33,7 +33,7 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         </div>
 
         {/* Pricing Cards Grid (Exactly 2 Plans) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-3xl mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 items-stretch max-w-3xl mx-auto px-4">
           
           {/* Plan 1: Free */}
           <motion.div
@@ -59,15 +59,14 @@ export default function PricingSection({ userId }: PricingSectionProps) {
 
               <ul className="space-y-4 mb-8">
                 {[
-                  "Notes Editor",
-                  "Tasks & Reminders",
-                  "Calendar Sync",
-                  "Kanban Boards",
-                  "Basic AI Access",
-                  "Personal Workspace",
+                  "Basic productivity features",
+                  "Notes and documents",
+                  "Simple tasks & checklist boards",
+                  "Personal workspaces",
+                  "Limited AI command sandbox",
                 ].map((feature, idx) => (
                   <li key={idx} className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
-                    <Check className="h-4 w-4 text-blue-605 dark:text-blue-500 shrink-0" />
+                    <Check className="h-4 w-4 text-blue-600 dark:text-blue-500 shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -121,12 +120,12 @@ export default function PricingSection({ userId }: PricingSectionProps) {
 
               <ul className="space-y-4 mb-8">
                 {[
-                  "Unlimited Notes",
-                  "Unlimited Projects",
-                  "Contextual AI Assistant",
-                  "Infinite Whiteboard",
-                  "AI Custom Templates",
+                  "Unlimited usage",
+                  "AI features",
+                  "Advanced workspaces",
+                  "Priority updates",
                   "Multiplayer Collaboration",
+                  "Infinite Whiteboard",
                   "Priority customer support",
                 ].map((feature, idx) => (
                   <li key={idx} className="flex items-center gap-3 text-xs text-slate-700 dark:text-slate-200">
@@ -158,9 +157,9 @@ export default function PricingSection({ userId }: PricingSectionProps) {
         </div>
 
         {/* Future Plans note */}
-        <div className="text-center mt-12">
-          <p className="text-slate-400 dark:text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
-            Team and Enterprise plans coming soon.
+        <div className="text-center mt-8 sm:mt-12 px-4">
+          <p className="text-slate-400 dark:text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+            Coming Soon: Team plans with shared billing, permissions, and workspace stats.
           </p>
         </div>
 

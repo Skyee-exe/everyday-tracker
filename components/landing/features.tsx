@@ -2,23 +2,17 @@
 
 import React, { useState } from "react";
 import {
-  LayoutGrid,
   Calendar as CalendarIcon,
   Trello,
   FileText,
   PenTool,
   Settings,
-  Plus,
-  ArrowRight,
   Terminal,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useTheme } from "./theme-context";
 
 export default function FeatureSection() {
   const [completedTask, setCompletedTask] = useState<string | null>(null);
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   
   // Fade-in container parameters
   const containerVariants = {
@@ -37,12 +31,12 @@ export default function FeatureSection() {
   };
 
   return (
-    <section id="features" className="py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
+    <section id="features" className="py-12 md:py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-20">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -72,14 +66,14 @@ export default function FeatureSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[220px] md:auto-rows-[250px]"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-auto md:auto-rows-[250px]"
         >
           
           {/* Card 1: Large Featured - AI Assistant (2 cols, 2 rows) */}
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -2 }}
-            className="md:col-span-2 md:row-span-2 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-8 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
+            className="md:col-span-2 md:row-span-2 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-5 sm:p-8 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
           >
             <div className="max-w-md">
               <div className="flex items-center gap-2 mb-3.5">
@@ -90,12 +84,12 @@ export default function FeatureSection() {
               </div>
               <h3 className="font-display text-xl sm:text-2xl font-bold mb-2 text-slate-900 dark:text-white">AI assistant with full database context</h3>
               <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
-                Chat with an AI that knows your notes, active tasks, and team milestones. Instantly summarize long specs or push project checklists.
+                Accelerate your output with an AI that has complete context of your projects. Instantly summarize specs, draft documents, and automate action items directly inside your database.
               </p>
             </div>
 
             {/* Realistic AI Conversation UI Mock */}
-            <div className="mt-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 flex flex-col gap-3 font-mono text-[10px] w-full self-center rounded-2xl shadow-xs">
+            <div className="mt-4 sm:mt-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-955 p-3 sm:p-4 flex flex-col gap-3 font-mono text-[10px] w-full self-center rounded-2xl shadow-xs">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-900 pb-2 mb-1">
                 <span className="text-slate-400 dark:text-slate-500 font-bold uppercase text-[8px]">Prompt AI</span>
                 <span className="text-blue-600 dark:text-blue-500 font-semibold">Active context</span>
@@ -114,7 +108,7 @@ export default function FeatureSection() {
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -2 }}
-            className="md:col-span-1 md:row-span-2 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
+            className="md:col-span-1 md:row-span-2 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-5 sm:p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
           >
             <div>
               <div className="flex items-center gap-2 mb-3.5">
@@ -125,7 +119,7 @@ export default function FeatureSection() {
               </div>
               <h3 className="font-display text-lg font-bold mb-2 text-slate-900 dark:text-white">Interactive sprint boards</h3>
               <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
-                Coordinate project sprint columns, customize categories, and assign tasks with comments.
+                Streamline execution with visual pipelines. Track progress from idea to launch, drag-and-drop tasks, and coordinate with your team in real time.
               </p>
             </div>
 
@@ -163,18 +157,18 @@ export default function FeatureSection() {
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -2 }}
-            className="md:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
+            className="md:col-span-2 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-5 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
           >
             <div className="max-w-sm shrink-0">
               <div className="flex items-center gap-2 mb-3">
-                <div className="h-7 w-7 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300">
+                <div className="h-7 w-7 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-305">
                   <PenTool className="h-4 w-4" />
                 </div>
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">Visual Canvas</span>
               </div>
               <h3 className="font-display text-lg font-bold mb-1.5 text-slate-900 dark:text-white">Infinite collaborative whiteboard</h3>
               <p className="text-slate-550 dark:text-slate-400 text-xs leading-relaxed">
-                Sketch flows, map architecture nodes, and place sticky notes on an infinite digital canvas.
+                Bridge the gap between brainstorming and execution. Sketch user flows, wireframe layouts, and map complex project architectures on an infinite digital canvas.
               </p>
             </div>
 
@@ -194,7 +188,7 @@ export default function FeatureSection() {
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -2 }}
-            className="md:col-span-1 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
+            className="md:col-span-1 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-5 sm:p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
           >
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -204,8 +198,8 @@ export default function FeatureSection() {
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">Calendar Sync</span>
               </div>
               <h3 className="font-display text-base font-bold mb-1 text-slate-900 dark:text-white">Schedule & Reminders</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
-                Keep standups and due milestones integrated in your dashboard daily.
+              <p className="text-slate-550 dark:text-slate-400 text-xs leading-relaxed">
+                Never miss a milestone. Keep your standups, deadlines, and project milestones in sync with a calendar integrated directly into your daily workspace.
               </p>
             </div>
 
@@ -226,7 +220,7 @@ export default function FeatureSection() {
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -2 }}
-            className="md:col-span-1 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
+            className="md:col-span-1 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-5 sm:p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
           >
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -253,7 +247,7 @@ export default function FeatureSection() {
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -2 }}
-            className="md:col-span-1 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
+            className="md:col-span-1 rounded-3xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-[#0F172A]/60 p-5 sm:p-6 flex flex-col justify-between overflow-hidden relative group shadow-sm hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-200 text-left"
           >
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -264,7 +258,7 @@ export default function FeatureSection() {
               </div>
               <h3 className="font-display text-base font-bold mb-1 text-slate-900 dark:text-white">Custom Categories</h3>
               <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">
-                Filter documents and checklists by workspace tags to fit your routine.
+                Customize your environment. Tag, filter, and organize files by workspace, sprint, or personal tags to view exactly what you need when you need it.
               </p>
             </div>
 

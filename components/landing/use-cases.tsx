@@ -185,36 +185,36 @@ export default function UseCasesSection() {
       ),
     },
     {
-      id: "personal",
+      id: "freelancers",
       icon: <Compass className="h-4 w-4" />,
-      label: "Personal Productivity",
-      headline: "Streamline your daily life schedule",
-      description: "Keep a journal, maintain fitness routines, log finance trackers, and clear daily checklist tasks.",
+      label: "Freelancers",
+      headline: "Manage multiple clients and project scopes seamlessly",
+      description: "Track freelance contracts, client deliverable pipelines, invoices, and scope notes in a single workspace. Know exactly what to work on next.",
       benefits: [
-        "Daily dashboard highlights due items",
-        "Track custom categories like workouts or budget",
-        "Write thoughts in simple Notion-style notes",
-        "Ask AI to generate workout templates"
+        "Track client projects in pipeline stages",
+        "Store invoice status lists and invoice terms",
+        "Organize draft files and client meeting notes",
+        "Leverage AI to draft proposals and summarize briefings"
       ],
       mockCard: (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-955 p-4 font-mono text-[11px] h-full flex flex-col justify-between shadow-xs">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 font-mono text-[11px] h-full flex flex-col justify-between shadow-xs">
           <div>
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-900 mb-3">
-              <span className="text-slate-405 dark:text-slate-500 font-bold uppercase text-[9px]">Habit Tracker</span>
-              <span className="text-blue-650 dark:text-blue-550 font-bold uppercase text-[9px]">Streaks</span>
+            <div className="flex items-center justify-between pb-2 border-b border-slate-150 dark:border-slate-900 mb-3">
+              <span className="text-slate-400 dark:text-slate-500 font-bold uppercase text-[9px]">Freelancer Scope</span>
+              <span className="text-blue-600 dark:text-blue-500 font-bold uppercase text-[9px]">CRM Hub</span>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center text-slate-705 dark:text-slate-300">
-                <span>🏃 5km Morning Run</span>
-                <span className="text-blue-600 dark:text-blue-400 font-bold">✓ Done</span>
+              <div className="p-2 rounded bg-slate-50 dark:bg-slate-900 border border-slate-150 dark:border-slate-850 flex justify-between">
+                <span className="text-slate-700 dark:text-slate-300">Acme Corp Redesign</span>
+                <span className="text-blue-600 dark:text-blue-400 font-bold">Proposal Sent</span>
               </div>
-              <div className="flex justify-between items-center text-slate-705 dark:text-slate-300">
-                <span>📚 Read 15 pages</span>
-                <span className="text-slate-400 dark:text-slate-500">Pending</span>
+              <div className="p-2 rounded bg-slate-50 dark:bg-slate-900 border border-slate-150 dark:border-slate-850 flex justify-between">
+                <span className="text-slate-700 dark:text-slate-300">Stark Dash API Setup</span>
+                <span className="text-slate-500 dark:text-slate-405 font-bold">In Progress</span>
               </div>
             </div>
           </div>
-          <div className="text-[10px] text-blue-650 dark:text-blue-400 font-bold mt-4">🔥 5-day streak active!</div>
+          <div className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold mt-4">⚡ AI Tip: Invoice Acme Corp for Milestone 1 delivery.</div>
         </div>
       ),
     },
@@ -223,26 +223,26 @@ export default function UseCasesSection() {
   const activeUseCase = useCases.find((u) => u.id === activeTab) || useCases[0];
 
   return (
-    <section id="use-cases" className="py-24 bg-transparent text-slate-900 dark:text-white relative">
+    <section id="use-cases" className="py-12 md:py-24 bg-transparent text-slate-900 dark:text-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-18">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-18">
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">
             Built for how <span className="text-blue-600 dark:text-blue-500">you work</span>
           </h2>
-          <p className="text-slate-500 dark:text-slate-405 text-base sm:text-lg">
+          <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg">
             Everyday Tracker adapts to your routine. Select a use case below to see how different people supercharge their productivity.
           </p>
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-4xl mx-auto">
+        <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center gap-2 mb-8 md:mb-12 max-w-4xl mx-auto overflow-x-auto pb-3 md:pb-0 px-4 md:px-0 scrollbar-none">
           {useCases.map((uc) => (
             <button
               key={uc.id}
               onClick={() => setActiveTab(uc.id)}
-              className={`flex items-center gap-2 px-4.5 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4.5 py-3 md:py-2.5 min-h-[44px] md:min-h-0 rounded-xl text-xs font-bold border transition-all cursor-pointer shrink-0 ${
                 activeTab === uc.id
                   ? "bg-slate-100 dark:bg-slate-900 border-slate-205 dark:border-slate-750 text-slate-900 dark:text-slate-100 shadow-xs"
                   : "bg-transparent border-transparent text-slate-500 dark:text-slate-450 hover:text-slate-900 dark:hover:text-white"
@@ -281,7 +281,7 @@ export default function UseCasesSection() {
             </div>
 
             {/* Custom Interactive Mockup Card */}
-            <div className="md:col-span-5 h-[220px] md:h-auto">
+            <div className="md:col-span-5 h-auto min-h-[220px]">
               <div className="relative h-full rounded-2xl border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 p-2 shadow-sm">
                 <div className="relative h-full min-h-[180px]">
                   {activeUseCase.mockCard}

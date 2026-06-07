@@ -8,9 +8,7 @@ import {
   Play,
   CheckCircle,
   FileText,
-  Calendar as CalendarIcon,
   Layers,
-  Users,
   Compass,
   Star,
   Activity,
@@ -42,7 +40,7 @@ export default function HeroSection({ userId }: HeroSectionProps) {
   return (
     <section 
       ref={containerRef}
-      className={`relative pt-32 pb-24 md:pt-40 md:pb-36 overflow-hidden transition-colors duration-300 ${
+      className={`relative pt-24 pb-12 md:pt-40 md:pb-36 overflow-hidden transition-colors duration-300 ${
         isDark ? "bg-[#050816] text-white" : "bg-white text-slate-900"
       }`}
     >
@@ -84,10 +82,10 @@ export default function HeroSection({ userId }: HeroSectionProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-            className="font-display text-[42px] leading-[1.05] sm:text-[64px] sm:leading-[1.02] md:text-[80px] font-semibold tracking-tight mb-8"
+            className="font-display text-[32px] sm:text-[64px] md:text-[80px] leading-[1.1] sm:leading-[1.02] font-semibold tracking-tight mb-6 sm:mb-8"
           >
             One Workspace. Every Tool. <br className="hidden sm:inline" />
-            <span className="text-blue-600 dark:text-blue-505">
+            <span className="text-blue-600 dark:text-blue-500">
               Powered by AI.
             </span>
           </motion.h1>
@@ -97,7 +95,7 @@ export default function HeroSection({ userId }: HeroSectionProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className={`text-base sm:text-lg max-w-3xl mx-auto mb-10 font-normal leading-relaxed ${
+            className={`text-sm sm:text-lg max-w-3xl mx-auto mb-8 sm:mb-10 font-normal leading-relaxed px-2 sm:px-0 ${
               isDark ? "text-slate-400" : "text-slate-500"
             }`}
           >
@@ -109,20 +107,20 @@ export default function HeroSection({ userId }: HeroSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4.5 mb-10"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4.5 mb-8 sm:mb-10 max-w-xs sm:max-w-none mx-auto w-full px-4 sm:px-0"
           >
             {userId ? (
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-950 font-bold text-sm shadow-md transition-all duration-200"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:py-4.5 rounded-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-950 font-bold text-sm shadow-md transition-all duration-200"
               >
                 Go to Dashboard
                 <ArrowRight className="h-4.5 w-4.5" />
               </Link>
             ) : (
               <SignUpButton mode="modal">
-                <button className={`w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4.5 rounded-full font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer ${
-                  isDark ? "bg-slate-100 hover:bg-white text-slate-950" : "bg-slate-900 hover:bg-slate-800 text-white"
+                <button className={`w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:py-4.5 rounded-full font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer ${
+                  isDark ? "bg-slate-100 hover:bg-white text-slate-955" : "bg-slate-900 hover:bg-slate-800 text-white"
                 }`}>
                   Start for Free
                   <ArrowRight className="h-4.5 w-4.5" />
@@ -130,11 +128,11 @@ export default function HeroSection({ userId }: HeroSectionProps) {
               </SignUpButton>
             )}
             <a
-              href="#showcase"
-              className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4.5 rounded-full border text-sm font-bold transition-all duration-200 ${
+              href="#use-cases"
+              className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4.5 rounded-full border text-sm font-bold transition-all duration-200 ${
                 isDark 
                   ? "border-slate-800 bg-slate-900/40 text-slate-350 hover:text-white hover:bg-slate-900/80" 
-                  : "border-slate-205 bg-white text-slate-650 hover:text-slate-900 hover:bg-slate-100"
+                  : "border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               }`}
             >
               <Play className="h-4 w-4 fill-current text-blue-600 dark:text-blue-500" />
@@ -147,7 +145,7 @@ export default function HeroSection({ userId }: HeroSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-20 text-xs ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-10 sm:mb-20 text-[11px] sm:text-xs ${
               isDark ? "text-slate-500" : "text-slate-400"
             }`}
           >
@@ -199,13 +197,13 @@ export default function HeroSection({ userId }: HeroSectionProps) {
           {/* Main Central Dashboard Frame */}
           <motion.div
             style={{ y: mainY }}
-            className={`relative rounded-2xl border p-2 shadow-xl z-20 group transition-colors duration-300 ${
+            className={`relative rounded-2xl border p-1.5 sm:p-2 shadow-2xl z-20 group transition-all duration-300 ${
               isDark 
-                ? "border-slate-850 bg-[#090d16] shadow-[#030610]/50" 
-                : "border-slate-200/80 bg-slate-50/50 shadow-slate-100"
+                ? "border-slate-800 bg-slate-900/60 shadow-[#030610]/80" 
+                : "border-slate-200 bg-slate-50/80 shadow-slate-200/50"
             }`}
           >
-            <div className={`relative rounded-xl border overflow-hidden h-[300px] sm:h-[400px] md:h-[480px] grid grid-cols-12 transition-colors duration-300 ${
+            <div className={`relative rounded-xl border overflow-hidden h-[280px] sm:h-[400px] md:h-[480px] grid grid-cols-12 transition-colors duration-300 ${
               isDark ? "bg-[#0b111e] border-slate-900" : "bg-white border-slate-150"
             }`}>
               {/* Internal Sidebar Mock */}
@@ -242,53 +240,52 @@ export default function HeroSection({ userId }: HeroSectionProps) {
                   </div>
                 </div>
               </div>
-
               {/* Main Content Area Mock */}
-              <div className="col-span-12 md:col-span-9 p-4 flex flex-col justify-between">
+              <div className="col-span-12 md:col-span-9 p-3 sm:p-4 flex flex-col justify-between h-full">
                 {/* Header */}
-                <div className={`flex items-center justify-between pb-3.5 border-b ${
+                <div className={`flex items-center justify-between pb-2.5 border-b ${
                   isDark ? "border-slate-900" : "border-slate-150"
                 }`}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black font-mono">Workspace</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-black font-mono">Workspace</span>
                     <span className="text-slate-400 text-xs">/</span>
-                    <span className={`text-xs font-bold ${isDark ? "text-slate-300" : "text-slate-705"}`}>Command Center</span>
+                    <span className={`text-[10px] sm:text-xs font-bold ${isDark ? "text-slate-300" : "text-slate-700"}`}>Command Center</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="flex -space-x-1.5">
-                      <span className={`h-5 w-5 rounded-full text-[8px] font-black flex items-center justify-center border ${
+                    <div className="flex -space-x-1">
+                      <span className={`h-4.5 w-4.5 rounded-full text-[8px] font-black flex items-center justify-center border ${
                         isDark ? "bg-slate-800 border-[#0b111e] text-slate-200" : "bg-slate-200 border-white text-slate-800"
                       }`}>S</span>
-                      <span className={`h-5 w-5 rounded-full text-[8px] font-black flex items-center justify-center border ${
+                      <span className={`h-4.5 w-4.5 rounded-full text-[8px] font-black flex items-center justify-center border ${
                         isDark ? "bg-slate-700 border-[#0b111e] text-slate-200" : "bg-slate-100 border-white text-slate-800"
                       }`}>L</span>
                     </div>
-                    <span className="text-[9px] text-slate-450 dark:text-slate-500 font-semibold">Live sync</span>
+                    <span className="text-[9px] text-slate-450 dark:text-slate-500 font-semibold hidden sm:inline">Live sync</span>
                   </div>
                 </div>
 
                 {/* Dashboard Widgets */}
-                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 overflow-hidden">
-                  <div className={`rounded-xl border p-4 ${
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4 overflow-hidden">
+                  <div className={`rounded-xl border p-3 sm:p-4 flex flex-col justify-center ${
                     isDark ? "border-slate-900 bg-slate-950/40" : "border-slate-200 bg-slate-50/40"
                   }`}>
-                    <p className="text-[10px] uppercase font-black tracking-wider text-slate-500">Pipeline Performance</p>
-                    <p className={`text-3xl font-black mt-1.5 ${isDark ? "text-white" : "text-slate-900"}`}>88%</p>
-                    <div className={`h-1.5 w-full rounded-full mt-3 overflow-hidden ${
+                    <p className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider text-slate-500">Pipeline Performance</p>
+                    <p className={`text-2xl sm:text-3xl font-black mt-1 ${isDark ? "text-white" : "text-slate-900"}`}>88%</p>
+                    <div className={`h-1.5 w-full rounded-full mt-2 sm:mt-3 overflow-hidden ${
                       isDark ? "bg-slate-900" : "bg-slate-200"
                     }`}>
                       <div className="h-full w-[88%] bg-blue-600 dark:bg-blue-500 rounded-full"></div>
                     </div>
                   </div>
-                  <div className={`rounded-xl border p-4 ${
+                  <div className={`rounded-xl border p-3 sm:p-4 flex flex-col justify-center ${
                     isDark ? "border-slate-900 bg-slate-950/40" : "border-slate-200 bg-slate-50/40"
                   }`}>
-                    <p className="text-[10px] uppercase font-black tracking-wider text-slate-500">Milestone Due</p>
-                    <div className={`flex items-center gap-2.5 mt-2 border p-2 rounded-lg ${
+                    <p className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider text-slate-500">Milestone Due</p>
+                    <div className={`flex items-center gap-2 mt-1.5 border p-2 rounded-lg ${
                       isDark ? "bg-slate-900/60 border-slate-900" : "bg-white border-slate-150"
                     }`}>
-                      <div className="h-4.5 w-4.5 bg-blue-600/10 border border-blue-500/20 text-blue-600 dark:text-blue-500 rounded-md flex items-center justify-center"><Activity className="h-3 w-3" /></div>
-                      <span className={`text-xs font-semibold ${isDark ? "text-slate-200" : "text-slate-700"}`}>Release beta app version</span>
+                      <div className="h-4 w-4 bg-blue-600/10 border border-blue-500/20 text-blue-600 dark:text-blue-500 rounded flex items-center justify-center shrink-0"><Activity className="h-2.5 w-2.5" /></div>
+                      <span className={`text-[10px] sm:text-xs font-semibold truncate ${isDark ? "text-slate-200" : "text-slate-700"}`}>Release beta version</span>
                     </div>
                   </div>
                 </div>

@@ -20,7 +20,7 @@ export default function CollaborationSection() {
 
   const [cursors, setCursors] = useState<CollaboratorCursor[]>([
     { name: "Soham", color: "bg-blue-600 border-blue-500 text-white", x: 120, y: 70, label: "Editing spec...", avatar: "S" },
-    { name: "Sarah", color: "bg-slate-700 border-slate-600 text-white", x: 260, y: 150, label: "Drawing flowchart", avatar: "S" },
+    { name: "Durgasri", color: "bg-slate-700 border-slate-600 text-white", x: 260, y: 150, label: "Drawing flowchart", avatar: "D" },
     { name: "Lucas", color: "bg-slate-800 border-slate-700 text-white", x: 80, y: 200, label: "Adding task", avatar: "L" },
   ]);
 
@@ -99,7 +99,7 @@ export default function CollaborationSection() {
                   <span className={`font-bold ${isDark ? "text-slate-200" : "text-slate-800"}`}>Discussion</span>
                 </div>
                 <p className={isDark ? "text-slate-405" : "text-slate-600"}>
-                  <span className="font-bold text-blue-600 dark:text-blue-400">Sarah:</span> Added details.
+                  <span className="font-bold text-blue-600 dark:text-blue-400">Durgasri:</span> Added details.
                 </p>
               </div>
 

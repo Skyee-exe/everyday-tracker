@@ -9,7 +9,7 @@ export default function Footer() {
 
   const productLinks = [
     { name: "Features", href: "#features" },
-    { name: "Showcase Sandbox", href: "#showcase" },
+    { name: "How It Works", href: "#how-it-works" },
     { name: "Use Cases", href: "#use-cases" },
     { name: "Pricing Plans", href: "#pricing" },
   ];
@@ -18,25 +18,29 @@ export default function Footer() {
     { name: "Documentation", href: "/docs" },
     { name: "Help Center", href: "/dashboard/help" },
     { name: "API Reference", href: "/docs/api" },
-    { name: "Security Standards", href: "/docs/security" },
+  ];
+
+  const companyLinks = [
+    { name: "About Us", href: "/about" },
+    { name: "Blog Updates", href: "/blog" },
+    { name: "Careers", href: "/careers" },
   ];
 
   const legalLinks = [
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Terms of Service", href: "/terms" },
-    { name: "Data Security", href: "/security" },
-    { name: "System Status", href: "https://status.everyday.so" },
+    { name: "Security Policy", href: "/security" },
   ];
 
   return (
-    <footer className="bg-slate-50 dark:bg-[#050816] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-900 py-16 transition-colors duration-300">
+    <footer className="bg-slate-50 dark:bg-[#050816] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-900 py-12 md:py-16 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 md:gap-10 mb-12">
           
           {/* Brand Col */}
-          <div className="md:col-span-4 flex flex-col gap-4">
+          <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-2 flex flex-col items-center lg:items-start text-center lg:text-left gap-4">
             <Link href="/" className="flex items-center gap-2 group w-fit">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform duration-200">
                 <Sparkles className="h-4.5 w-4.5 text-white" />
@@ -51,13 +55,13 @@ export default function Footer() {
           </div>
 
           {/* Product links */}
-          <div className="col-span-2 flex flex-col gap-3">
+          <div className="col-span-1 lg:col-span-2 flex flex-col items-center lg:items-start text-center lg:text-left gap-3">
             <h4 className="font-display text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">Product</h4>
             {productLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-150"
+                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-155"
               >
                 {link.name}
               </a>
@@ -65,27 +69,41 @@ export default function Footer() {
           </div>
 
           {/* Resources Links */}
-          <div className="col-span-2 flex flex-col gap-3">
+          <div className="col-span-1 lg:col-span-2 flex flex-col items-center lg:items-start text-center lg:text-left gap-3">
             <h4 className="font-display text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">Resources</h4>
             {resourceLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-150"
+                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-155"
               >
                 {link.name}
               </Link>
             ))}
           </div>
 
+          {/* Company Links */}
+          <div className="col-span-1 lg:col-span-2 flex flex-col items-center lg:items-start text-center lg:text-left gap-3">
+            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">Company</h4>
+            {companyLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-155"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
+
           {/* Legal Links */}
-          <div className="col-span-2 flex flex-col gap-3">
-            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">Company & Legal</h4>
+          <div className="col-span-1 lg:col-span-2 flex flex-col items-center lg:items-start text-center lg:text-left gap-3">
+            <h4 className="font-display text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">Legal</h4>
             {legalLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-150"
+                className="text-xs sm:text-sm hover:text-slate-900 dark:hover:text-white transition-colors duration-155"
               >
                 {link.name}
               </a>
@@ -93,7 +111,7 @@ export default function Footer() {
           </div>
 
           {/* Socials */}
-          <div className="col-span-2 flex flex-col gap-3">
+          <div className="col-span-1 lg:col-span-2 flex flex-col items-center lg:items-start text-center lg:text-left gap-3">
             <h4 className="font-display text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">Connect</h4>
             <div className="flex gap-3">
               <a
