@@ -359,7 +359,7 @@ function UpdatesDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function WorkspaceSwitcher({ onClose, collapsed }: { onClose: () => void; collapsed: boolean }) {
+export default function WorkspaceSwitcher({ onClose }: { onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const {
     activeWorkspace,
@@ -393,7 +393,7 @@ export default function WorkspaceSwitcher({ onClose, collapsed }: { onClose: () 
 
   return (
     <>
-      <div ref={ref} className={`logo-dropdown workspace-switcher${collapsed ? " logo-dropdown--collapsed" : ""}`} role="menu">
+      <div ref={ref} className="logo-dropdown workspace-switcher" role="menu">
         <div className="logo-dd-header workspace-switcher-header">
           <span className="logo-dd-ws-dot" style={{ background: activeColor }}>{initials(visibleName)}</span>
           <div className="workspace-header-copy">

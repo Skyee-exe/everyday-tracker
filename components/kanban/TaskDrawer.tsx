@@ -129,6 +129,7 @@ export default function TaskDrawer({
 
       {/* Drawer */}
       <div className="kb-drawer">
+        <div className="kb-bottom-sheet-handle kb-mobile-only" style={{ marginTop: "12px", marginBottom: "-4px" }} />
         {/* Header */}
         <div className="kb-drawer-header">
           <h2>{isEditing ? "Edit Task" : "Create Task"}</h2>
