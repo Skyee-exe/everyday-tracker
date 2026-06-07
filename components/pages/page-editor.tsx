@@ -195,9 +195,9 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
           >
             <ArrowLeft size={16} />
           </button>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground select-none">
-            <span>{spaceName}</span>
-            <span>/</span>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground select-none truncate">
+            <span className="hidden sm:inline">{spaceName}</span>
+            <span className="hidden sm:inline">/</span>
             <span className="bg-muted px-2 py-0.5 rounded border border-border text-[10px] text-muted-foreground uppercase tracking-wider">{page.type}</span>
           </div>
         </div>
@@ -233,7 +233,9 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
               )}
               {isRecording ? <Square size={10} fill="currentColor" /> : <Mic size={11} />}
             </span>
-            {isRecording ? "Stop" : recordingStatus === "requesting" || recordingStatus === "connecting" ? "Listening..." : "Speak to Page"}
+            <span className="hidden sm:inline">
+              {isRecording ? "Stop" : recordingStatus === "requesting" || recordingStatus === "connecting" ? "Listening..." : "Speak to Page"}
+            </span>
           </button>
           <div className="flex items-center gap-1.5 w-18 justify-end text-xs font-medium text-muted-foreground">
             {saveStatus === "saving" && <><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> Saving...</>}
@@ -274,7 +276,7 @@ export default function PageEditor({ page, spaceName, onClose, onSave }: PageEdi
               value={title}
               onChange={handleTitleChange}
               onKeyDown={handleTitleKeyDown}
-              className="text-3xl font-extrabold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground font-display tracking-tight"
+              className="text-2xl md:text-3xl font-extrabold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground font-display tracking-tight"
               placeholder="Untitled Page"
             />
           </div>

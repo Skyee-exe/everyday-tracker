@@ -695,6 +695,9 @@ export default function PagesWorkspace({
                               await updatePage(page.id, { lastOpenedAt: new Date() });
                               refreshPages(page.spaceId);
                             });
+                            if (typeof window !== "undefined" && window.innerWidth < 768) {
+                              setOpenedPageId(page.id);
+                            }
                           }}
                           onDoubleClick={() => {
                             setOpenedPageId(page.id);

@@ -6,12 +6,14 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   Calendar,
   Clock,
-  FileText,
   CheckCircle2,
   Circle,
   Trash2,
+  MoreHorizontal,
+  Pencil,
+  X,
 } from "lucide-react";
-import type { KanbanTask } from "@/db/schema";
+import type { KanbanTask, KanbanColumn } from "@/db/schema";
 import {
   CollabRoom,
   CommentCountBadge,
@@ -60,6 +62,8 @@ interface Props {
   onToggleComplete: (completed: boolean) => void;
   onDelete: () => void;
   canEdit?: boolean;
+  allColumns?: KanbanColumn[];
+  onMoveToColumn?: (taskId: number, columnId: number) => void;
 }
 
 export default function TaskCard({
@@ -69,7 +73,10 @@ export default function TaskCard({
   onToggleComplete,
   onDelete,
   canEdit = true,
+  allColumns = [],
+  onMoveToColumn,
 }: Props) {
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const {
     attributes,
     listeners,
@@ -93,21 +100,27 @@ export default function TaskCard({
   const overdue = !task.completed && isOverdue(task.dueDate);
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`kb-task-card${isDragOverlay ? " kb-task-card--overlay" : ""}${
-        task.completed ? " kb-task-card--done" : ""
-      }${overdue ? " kb-task-card--overdue" : ""}`}
-      onClick={(e) => {
-        // Don't open edit if clicking complete or delete
-        const target = e.target as HTMLElement;
-        if (target.closest(".kb-task-complete-btn") || target.closest(".kb-task-delete-btn")) return;
-        onEdit();
-      }}
-    >
+    <>
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`kb-task-card${isDragOverlay ? " kb-task-card--overlay" : ""}${
+          task.completed ? " kb-task-card--done" : ""
+        }${overdue ? " kb-task-card--overdue" : ""}`}
+        onClick={(e) => {
+          // Don't open edit if clicking complete, delete, or touch menu
+          const target = e.target as HTMLElement;
+          if (
+            target.closest(".kb-task-complete-btn") ||
+            target.closest(".kb-task-delete-btn") ||
+            target.closest(".kb-task-menu-btn")
+          )
+            return;
+          onEdit();
+        }}
+      >
       {/* Priority strip */}
       <div
         className="kb-task-priority-strip"
@@ -135,16 +148,28 @@ export default function TaskCard({
             {task.title}
           </span>
           {canEdit && (
-            <button
-              className="kb-task-delete-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-              title="Delete task"
-            >
-              <Trash2 size={12} />
-            </button>
+            <>
+              <button
+                className="kb-task-delete-btn kb-desktop-only"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+                title="Delete task"
+              >
+                <Trash2 size={12} />
+              </button>
+              <button
+                className="kb-task-menu-btn kb-mobile-only"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(true);
+                }}
+                title="Task Actions"
+              >
+                <MoreHorizontal size={14} />
+              </button>
+            </>
           )}
         </div>
 
@@ -227,5 +252,74 @@ export default function TaskCard({
         </div>
       </div>
     </div>
+    {menuOpen && (
+        <div
+          className="kb-bottom-sheet-backdrop kb-mobile-only"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(false);
+          }}
+        >
+          <div className="kb-bottom-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="kb-bottom-sheet-handle" />
+            <div className="kb-bottom-sheet-header">
+              <span className="kb-bottom-sheet-title">{task.title}</span>
+              <button
+                className="kb-bottom-sheet-close"
+                onClick={() => setMenuOpen(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="kb-task-mobile-menu-options">
+              <button
+                className="kb-task-mobile-menu-option"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onEdit();
+                }}
+              >
+                <Pencil size={16} />
+                Edit Task Details
+              </button>
+
+              {allColumns.length > 1 && onMoveToColumn && (
+                <>
+                  <span className="kb-task-mobile-menu-sublabel">
+                    Move to Column
+                  </span>
+                  {allColumns
+                    .filter((c) => c.id !== task.columnId)
+                    .map((c) => (
+                      <button
+                        key={c.id}
+                        className="kb-task-mobile-menu-option"
+                        style={{ paddingLeft: "24px" }}
+                        onClick={() => {
+                          onMoveToColumn(task.id, c.id);
+                          setMenuOpen(false);
+                        }}
+                      >
+                        👉 {c.name}
+                      </button>
+                    ))}
+                </>
+              )}
+
+              <button
+                className="kb-task-mobile-menu-option kb-task-mobile-menu-option-danger"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onDelete();
+                }}
+              >
+                <Trash2 size={16} />
+                Delete Task
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

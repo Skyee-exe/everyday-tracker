@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -18,19 +18,14 @@ import {
   BarChart3,
   Target,
   Settings2,
-  ChevronLeft,
   Zap,
   Bell,
   HelpCircle,
   ChevronDown,
   Search,
-  Plus,
-  Users,
-  Check,
-  ExternalLink,
-  Megaphone,
   ChevronUp,
-  Crown,
+  Menu,
+  X,
 } from "lucide-react";
 import CommandPalette from "./command-palette";
 import { useNotifications } from "./notifications/NotificationContext";
@@ -79,7 +74,7 @@ const NAV_GROUPS: NavGroup[] = [
     groupLabel: "Workspace",
     items: [
       { label: "Calendar", href: "/dashboard/calendar", icon: Calendar, color: "#2563eb", bg: "rgba(37,99,235,0.1)" },
-      { label: "Tasks & Kanban", href: "/dashboard/tasks", icon: Kanban, color: "#dc2626", bg: "rgba(220,38,38,0.1)", badge: "5" },
+      { label: "Tasks", href: "/dashboard/tasks", icon: Kanban, color: "#dc2626", bg: "rgba(220,38,38,0.1)", badge: "5" },
       { label: "Notes", href: "/dashboard/notes", icon: NotebookPen, color: "#0891b2", bg: "rgba(8,145,178,0.1)" },
       { label: "Whiteboard", href: "/dashboard/whiteboard", icon: PenTool, color: "#0ea5e9", bg: "rgba(14,165,233,0.1)" },
     ],
@@ -110,58 +105,54 @@ const GENERATED_ICON_MAP: Record<string, React.ElementType> = {
 
 
 /* ─────────────────── Tooltip ─────────────────── */
-function Tooltip({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="sb-tooltip-wrap">
-      {children}
-      <div className="sb-tooltip" role="tooltip">{label}</div>
-    </div>
-  );
+function Tooltip({ children }: { label: string; children: React.ReactNode }) {
+  return <>{children}</>;
 }
 
 /* ─────────────────── Nav Item ─────────────────── */
-function NavLink({ item, collapsed, active }: { item: NavItem; collapsed: boolean; active: boolean }) {
+function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;
-  const inner = (
-    <Link
-      href={item.href}
-      className={`sb-nav-item${active ? " sb-nav-item--active" : ""}`}
-      style={{ "--item-color": item.color, "--item-bg": item.bg } as React.CSSProperties}
-    >
-      <span className="sb-nav-icon">
-        <Icon size={16} strokeWidth={active ? 2.2 : 1.8} />
-      </span>
-      {!collapsed && (
-        <>
-          <span className="sb-nav-label">{item.label}</span>
-          {item.badge && (
-            <span
-              className="sb-badge"
-              style={isNaN(Number(item.badge))
-                ? { background: item.color }
-                : { background: "rgba(100,116,139,0.15)", color: "#64748b" }}
-            >
-              {item.badge}
-            </span>
-          )}
-        </>
-      )}
-    </Link>
+  return (
+    <Tooltip label={item.label}>
+      <Link
+        href={item.href}
+        className={`sb-nav-item${active ? " sb-nav-item--active" : ""}`}
+        style={{ "--item-color": item.color, "--item-bg": item.bg } as React.CSSProperties}
+      >
+        <span className="sb-nav-icon">
+          <Icon size={16} strokeWidth={active ? 2.2 : 1.8} />
+        </span>
+        <span className="sb-nav-label">{item.label}</span>
+        {item.badge && (
+          <span
+            className="sb-badge"
+            style={isNaN(Number(item.badge))
+              ? { background: item.color }
+              : { background: "rgba(100,116,139,0.15)", color: "#64748b" }}
+          >
+            {item.badge}
+          </span>
+        )}
+      </Link>
+    </Tooltip>
   );
-  if (collapsed) return <Tooltip label={item.label}>{inner}</Tooltip>;
-  return inner;
 }
 
 /* ─────────────────── Main Sidebar ─────────────────── */
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
   const [logoOpen, setLogoOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [generatedApps, setGeneratedApps] = useState<GeneratedSidebarApp[]>([]);
   const pathname = usePathname();
   const { unreadCount, isOpen, setIsOpen } = useNotifications();
   const { activeWorkspace } = useWorkspace();
   const { user } = useUser();
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   /* Ctrl+K */
   useEffect(() => {
@@ -204,91 +195,122 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className={`sb-root${collapsed ? " sb-root--collapsed" : ""}`}>
+      {/* Sticky Mobile Header */}
+      <header className="sb-mobile-header">
+        <button
+          className="sb-mobile-toggle"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle navigation drawer"
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
 
-        {/* ── Header ── */}
-        <div className="sb-header" style={{ position: "relative" }}>
+        <div className="sb-mobile-brand">
+          <div className="sb-logo" style={{ width: 22, height: 22 }}>
+            <Zap size={12} fill="currentColor" strokeWidth={0} className="sb-logo-zap" />
+          </div>
+          <span className="sb-mobile-title">Everyday</span>
+        </div>
+
+        <div className="sb-mobile-right">
           <button
-            className={`sb-brand-btn${logoOpen ? " sb-brand-btn--open" : ""}`}
-            onClick={() => setLogoOpen((o) => !o)}
-            aria-label="Open workspace menu"
-            aria-expanded={logoOpen}
+            className="sb-mobile-notif-btn"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Notifications"
           >
-            {/* Animated logo mark */}
-            <div className="sb-logo">
-              <Zap size={15} fill="currentColor" strokeWidth={0} className="sb-logo-zap" />
-              {/* Pulse ring */}
-              <span className="sb-logo-pulse" />
-            </div>
+            <Bell size={18} />
+            {unreadCount > 0 && <span className="sb-notif-dot" />}
+          </button>
+        </div>
+      </header>
 
-            {!collapsed && (
+      {/* Backdrop overlay for mobile drawer */}
+      {mobileOpen && (
+        <div
+          className="sb-mobile-overlay"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`sb-root${mobileOpen ? " sb-root--mobile-open" : ""}`}
+      >
+
+        {/* ── Top Section ── */}
+        <div className="sb-top-section flex flex-col shrink-0">
+          {/* Logo / Header */}
+          <div className="sb-header" style={{ position: "relative" }}>
+            <button
+              className={`sb-brand-btn${logoOpen ? " sb-brand-btn--open" : ""}`}
+              onClick={() => setLogoOpen((o) => !o)}
+              aria-label="Open workspace menu"
+              aria-expanded={logoOpen}
+            >
+              {/* Animated logo mark */}
+              <div className="sb-logo">
+                <Zap size={15} fill="currentColor" strokeWidth={0} className="sb-logo-zap" />
+                {/* Pulse ring */}
+                <span className="sb-logo-pulse" />
+              </div>
+
               <div className="sb-brand-text">
                 <span className="sb-brand-name">Everyday</span>
                 <span className="sb-brand-sub">Workspace</span>
               </div>
-            )}
 
-            {!collapsed && (
               <ChevronUp
                 size={13}
                 className="sb-brand-chevron"
                 strokeWidth={2}
                 style={{ transform: logoOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}
               />
-            )}
-          </button>
-
-          {/* Collapse button — visible on sidebar hover */}
-          {!collapsed && (
-            <button
-              className="sb-collapse-btn"
-              onClick={() => setCollapsed(true)}
-              aria-label="Collapse sidebar"
-            >
-              <ChevronLeft size={14} strokeWidth={2} />
             </button>
-          )}
 
-          {/* Logo Dropdown */}
-          {logoOpen && (
-            <WorkspaceSwitcher onClose={() => setLogoOpen(false)} collapsed={collapsed} />
-          )}
-        </div>
+            {/* Close button inside mobile drawer */}
+            <button
+              className="sb-mobile-close-btn"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close sidebar drawer"
+            >
+              <X size={16} />
+            </button>
 
-        {/* ── Search ── */}
-        {!collapsed ? (
-          <button className="sb-search" onClick={() => setCmdOpen(true)} aria-label="Open search (Ctrl+K)">
-            <Search size={13} className="sb-search-icon" strokeWidth={2} />
-            <span className="sb-search-text">Search...</span>
-            <div className="sb-search-kbd-group">
-              <span className="sb-search-kbd">Ctrl</span>
-              <span className="sb-search-kbd">K</span>
-            </div>
-          </button>
-        ) : (
+            {/* Logo Dropdown */}
+            {logoOpen && (
+              <WorkspaceSwitcher onClose={() => setLogoOpen(false)} />
+            )}
+          </div>
+
+          {/* Search */}
           <Tooltip label="Search (Ctrl+K)">
-            <button className="sb-search-icon-btn" onClick={() => setCmdOpen(true)} aria-label="Search">
-              <Search size={15} strokeWidth={2} />
+            <button className="sb-search" onClick={() => setCmdOpen(true)} aria-label="Open search (Ctrl+K)">
+              <Search size={13} className="sb-search-icon" strokeWidth={2} />
+              <span className="sb-search-text">Search...</span>
+              <div className="sb-search-kbd-group">
+                <span className="sb-search-kbd">Ctrl</span>
+                <span className="sb-search-kbd">K</span>
+              </div>
             </button>
           </Tooltip>
-        )}
+        </div>
 
-        {/* ── Nav ── */}
+        {/* ── Main Navigation ── */}
         <nav className="sb-nav">
           {NAV_GROUPS.map((group) => (
             <div key={group.groupLabel} className="sb-group">
-              {!collapsed && <p className="sb-group-label">{group.groupLabel}</p>}
-              {collapsed && <div className="sb-group-divider" />}
+              <p className="sb-group-label">{group.groupLabel}</p>
+              <div className="sb-group-divider" />
               {group.items.map((item) => (
-                <NavLink key={item.href} item={item} collapsed={collapsed} active={isActive(item.href)} />
+                <NavLink key={item.href} item={item} active={isActive(item.href)} />
               ))}
             </div>
           ))}
 
           {(generatedApps.length > 0 || pathname.startsWith("/dashboard/ai-templates")) && (
             <div className="sb-group">
-              {!collapsed && <p className="sb-group-label">Generated Apps</p>}
-              {collapsed && <div className="sb-group-divider" />}
+              <p className="sb-group-label">Generated Apps</p>
+              <div className="sb-group-divider" />
               {generatedApps.map((app) => {
                 const Icon = GENERATED_ICON_MAP[app.icon] ?? Sparkles;
                 const appHref = `/dashboard/ai-templates/${app.id}`;
@@ -302,24 +324,12 @@ export default function Sidebar() {
                       color: app.color,
                       bg: `${app.color}1a`,
                     }}
-                    collapsed={collapsed}
                     active={isActive(appHref)}
                   />
                 );
               })}
-              {!collapsed && generatedApps.length >= 3 && (
-                <div
-                  style={{
-                    margin: "5px 8px 2px",
-                    padding: "7px 8px",
-                    borderRadius: 7,
-                    background: "rgba(217,119,6,0.09)",
-                    color: "#92400e",
-                    fontSize: "0.68rem",
-                    fontWeight: 700,
-                    lineHeight: 1.35,
-                  }}
-                >
+              {generatedApps.length >= 3 && (
+                <div className="sb-limit-badge">
                   3 app limit reached
                 </div>
               )}
@@ -327,17 +337,26 @@ export default function Sidebar() {
           )}
         </nav>
 
-        {/* ── Bottom ── */}
-        <div className="sb-bottom">
-          <div className="sb-bottom-actions">
+        {/* ── Spacer ── */}
+        <div className="sb-spacer flex-1" style={{ flex: 1 }} />
+
+        {/* ── Bottom Section ── */}
+        <div className="sb-bottom-section flex flex-col shrink-0">
+          <div className="sb-bottom-actions" style={{ borderTop: "1px solid var(--sb-border)", flexShrink: 0 }}>
             {BOTTOM_ITEMS.map((item) => (
-              <NavLink key={item.href} item={item} collapsed={collapsed} active={isActive(item.href)} />
+              <NavLink key={item.href} item={item} active={isActive(item.href)} />
             ))}
-            {!collapsed ? (
+            
+            <Tooltip label="Notifications">
               <button
                 className={`sb-nav-item${isOpen ? " sb-nav-item--active" : ""}`}
                 onClick={() => setIsOpen(!isOpen)}
-                style={{ border: "none", width: "100%", background: "none", cursor: "pointer" }}
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  position: "relative",
+                }}
               >
                 <span className="sb-nav-icon"><Bell size={16} strokeWidth={1.8} /></span>
                 <span className="sb-nav-label">Notifications</span>
@@ -349,19 +368,9 @@ export default function Sidebar() {
                     {unreadCount}
                   </span>
                 )}
+                {unreadCount > 0 && <span className="sb-notif-dot sb-notif-dot--abs" />}
               </button>
-            ) : (
-              <Tooltip label="Notifications">
-                <button
-                  className={`sb-nav-item${isOpen ? " sb-nav-item--active" : ""}`}
-                  onClick={() => setIsOpen(!isOpen)}
-                  style={{ border: "none", width: "100%", background: "none", cursor: "pointer", position: "relative" }}
-                >
-                  <span className="sb-nav-icon"><Bell size={16} strokeWidth={1.8} /></span>
-                  {unreadCount > 0 && <span className="sb-notif-dot sb-notif-dot--abs" />}
-                </button>
-              </Tooltip>
-            )}
+            </Tooltip>
 
             <NavLink
               item={{
@@ -371,18 +380,12 @@ export default function Sidebar() {
                 color: "#64748b",
                 bg: "rgba(100,116,139,0.1)",
               }}
-              collapsed={collapsed}
               active={isActive("/dashboard/help")}
             />
           </div>
 
-          {/* Profile */}
-          <div className="sb-profile-wrap">
-            {collapsed && (
-              <button className="sb-expand-btn" onClick={() => setCollapsed(false)} aria-label="Expand sidebar">
-                <ChevronLeft size={13} strokeWidth={2.5} style={{ transform: "rotate(180deg)" }} />
-              </button>
-            )}
+          {/* Profile & Collapse Toggle */}
+          <div className="sb-profile-wrap" style={{ flexShrink: 0 }}>
             <button className="sb-profile" onClick={() => setLogoOpen((o) => !o)} type="button">
               <div className="sb-avatar" style={{ padding: 0, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {user?.imageUrl ? (
@@ -391,15 +394,11 @@ export default function Sidebar() {
                   (user?.fullName || user?.primaryEmailAddress?.emailAddress || "U").slice(0, 1).toUpperCase()
                 )}
               </div>
-              {!collapsed && (
-                <>
-                  <div className="sb-profile-info">
-                    <span className="sb-profile-name">{user?.fullName || user?.primaryEmailAddress?.emailAddress || "Soham"}</span>
-                    <span className="sb-profile-plan">{activeWorkspace?.plan ? `${activeWorkspace.plan} workspace` : "Free workspace"}</span>
-                  </div>
-                  <ChevronDown size={13} className="sb-profile-chevron" strokeWidth={2} />
-                </>
-              )}
+              <div className="sb-profile-info">
+                <span className="sb-profile-name">{user?.fullName || user?.primaryEmailAddress?.emailAddress || "Soham"}</span>
+                <span className="sb-profile-plan">{activeWorkspace?.plan ? `${activeWorkspace.plan} workspace` : "Free workspace"}</span>
+              </div>
+              <ChevronDown size={13} className="sb-profile-chevron" strokeWidth={2} />
             </button>
           </div>
         </div>

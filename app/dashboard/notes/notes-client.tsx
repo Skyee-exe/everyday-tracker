@@ -41,16 +41,18 @@ export default function NotesClient({ initialNotes, categories }: NotesClientPro
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-background text-foreground">
-      <NotesSidebar
-        notes={notes}
-        categories={categories}
-        selectedNoteId={selectedNoteId}
-        onSelectNote={setSelectedNoteId}
-        onMutate={refreshNotes}
-      />
-      <div className="flex-1 relative">
+      <div className={`h-full flex-shrink-0 ${selectedNoteId !== null ? "hidden md:block" : "w-full md:w-[280px]"}`}>
+        <NotesSidebar
+          notes={notes}
+          categories={categories}
+          selectedNoteId={selectedNoteId}
+          onSelectNote={setSelectedNoteId}
+          onMutate={refreshNotes}
+        />
+      </div>
+      <div className={`flex-1 relative h-full ${selectedNoteId === null ? "hidden md:block" : "w-full"}`}>
         {selectedNote ? (
-          <Editor key={selectedNote.id} note={selectedNote} categories={categories} onSave={refreshNotes} />
+          <Editor key={selectedNote.id} note={selectedNote} categories={categories} onSave={refreshNotes} onBack={() => setSelectedNoteId(null)} />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <div className="w-16 h-16 mb-4 rounded-xl bg-muted flex items-center justify-center border border-border shadow-sm">

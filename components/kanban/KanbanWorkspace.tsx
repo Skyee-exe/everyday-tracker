@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useUser } from "@clerk/nextjs";
 import BoardSidebar from "./BoardSidebar";
 import BoardArea from "./BoardArea";
 import CreateBoardDialog from "./CreateBoardDialog";
@@ -19,7 +18,6 @@ import {
   createColumn,
   updateColumn,
   deleteColumn as deleteColumnAction,
-  getMyRoleForBoard,
   getBoardAccess,
 } from "@/app/dashboard/tasks/actions";
 import type { KanbanBoard, KanbanColumn, KanbanTask, UserCategory } from "@/db/schema";
@@ -54,7 +52,7 @@ export default function KanbanWorkspace({
   const [drawerColumnId, setDrawerColumnId] = useState<number | null>(null);
   const [myRole, setMyRole] = useState<CollabRole | null>(null);
   const [totalCollaborators, setTotalCollaborators] = useState<number>(0);
-  const { user } = useUser();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   /* ── Filters & Search ── */
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +62,6 @@ export default function KanbanWorkspace({
 
   const activeBoard = boards.find((b) => b.id === activeBoardId) ?? null;
   const canEdit = myRole !== null && meetsRole(myRole, "editor");
-  const currentUserEmail = user?.emailAddresses?.[0]?.emailAddress ?? null;
 
   /* ── Load columns + tasks when board changes ── */
   const loadBoardData = useCallback(async (boardId: number) => {
@@ -273,6 +270,8 @@ export default function KanbanWorkspace({
         onSelectBoard={setActiveBoardId}
         onCreateBoard={() => setShowCreateBoard(true)}
         onDeleteBoard={handleDeleteBoard}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
 
       <div className="kb-main">
@@ -306,6 +305,7 @@ export default function KanbanWorkspace({
             totalCollaborators={totalCollaborators}
             canEdit={canEdit}
             categories={categories}
+            onToggleSidebar={() => setSidebarOpen(true)}
           />
         ) : (
           <div className="kb-empty-state">

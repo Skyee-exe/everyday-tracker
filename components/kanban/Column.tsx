@@ -13,6 +13,7 @@ import type { KanbanColumn, KanbanTask } from "@/db/schema";
 
 interface Props {
   column: KanbanColumn;
+  id?: string;
   tasks: KanbanTask[];
   onAddTask: () => void;
   onEditTask: (task: KanbanTask) => void;
@@ -21,10 +22,14 @@ interface Props {
   onToggleComplete: (id: number, completed: boolean) => void;
   onDeleteTask: (id: number) => void;
   canEdit?: boolean;
+  isActiveMobile?: boolean;
+  allColumns?: KanbanColumn[];
+  onMoveTaskToColumn?: (taskId: number, colId: number) => void;
 }
 
 export default function Column({
   column,
+  id,
   tasks,
   onAddTask,
   onEditTask,
@@ -33,6 +38,9 @@ export default function Column({
   onToggleComplete,
   onDeleteTask,
   canEdit = true,
+  isActiveMobile = false,
+  allColumns = [],
+  onMoveTaskToColumn,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -59,7 +67,7 @@ export default function Column({
   const taskIds = tasks.map((t) => String(t.id));
 
   return (
-    <div ref={setNodeRef} style={style} className="kb-column">
+    <div id={id} ref={setNodeRef} style={style} className={`kb-column ${isActiveMobile ? "kb-column--active-mobile" : "kb-column--hidden-mobile"}`}>
       {/* Column Header */}
       <div className="kb-column-header">
         <div className="kb-column-header-left">
@@ -158,16 +166,18 @@ export default function Column({
               }
               onDelete={() => onDeleteTask(task.id)}
               canEdit={canEdit}
+              allColumns={allColumns}
+              onMoveToColumn={onMoveTaskToColumn}
             />
           ))}
         </SortableContext>
 
         {tasks.length === 0 && (
           <div className="kb-column-empty">
-            <p>No tasks</p>
-            <button className="kb-column-empty-add" onClick={onAddTask}>
-              <Plus size={13} />
-              Add a task
+            <p>No tasks in {column.name}</p>
+            <button className="kb-btn kb-btn--primary kb-btn--sm" onClick={onAddTask}>
+              <Plus size={14} />
+              Create Task
             </button>
           </div>
         )}

@@ -231,7 +231,7 @@ export default function NotesSidebar({
   );
 
   return (
-    <div className="w-[280px] h-full border-r border-border bg-muted/30 flex flex-col flex-shrink-0">
+    <div className="w-full md:w-[280px] h-full border-r border-border bg-muted/30 flex flex-col flex-shrink-0">
       <div className="p-4 pb-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-bold text-slate-800 tracking-tight">Notes</h2>

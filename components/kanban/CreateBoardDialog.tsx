@@ -52,6 +52,7 @@ export default function CreateBoardDialog({ onClose, onCreate }: Props) {
     <>
       <div className="kb-dialog-backdrop" onClick={onClose} />
       <div className="kb-dialog">
+        <div className="kb-bottom-sheet-handle kb-mobile-only" style={{ marginTop: "12px", marginBottom: "-4px" }} />
         {/* Header */}
         <div className="kb-dialog-header">
           <h2>Create Board</h2>

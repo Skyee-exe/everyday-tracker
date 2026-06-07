@@ -5,6 +5,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition
 import {
   Bot,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   Download,
   FilePenLine,
   Loader2,
@@ -115,6 +117,9 @@ function getViewportCenter(api: ExcalidrawImperativeAPI) {
   return {
     x: -appState.scrollX + width / 2 / zoom,
     y: -appState.scrollY + height / 2 / zoom,
+    width,
+    height,
+    zoom,
   };
 }
 
@@ -136,14 +141,25 @@ function serializableAppState(appState: AppState) {
 
 function makeStickyNote(api: ExcalidrawImperativeAPI): OrderedExcalidrawElement[] {
   const center = getViewportCenter(api);
+  const zoom = center.zoom || 1;
+  const viewportWidth = center.width / zoom;
+  const isMobile = viewportWidth < 600;
+
+  // Constrain sticky note size for narrow viewports
+  const defaultWidth = isMobile ? 160 : 240;
+  const defaultHeight = isMobile ? 110 : 160;
+  const noteWidth = Math.min(defaultWidth, viewportWidth - 40);
+  const noteHeight = Math.min(defaultHeight, noteWidth * 0.69);
+  const fontSize = Math.max(isMobile ? 11 : 14, Math.floor(noteWidth / 11)); // Responsive font sizing
+  
   const groupId = `sticky-${Date.now()}`;
   const skeleton: ExcalidrawElementSkeleton[] = [
     {
       type: "rectangle",
-      x: center.x - 120,
-      y: center.y - 80,
-      width: 240,
-      height: 160,
+      x: center.x - noteWidth / 2,
+      y: center.y - noteHeight / 2,
+      width: noteWidth,
+      height: noteHeight,
       strokeColor: "#f59e0b",
       backgroundColor: "#fef3c7",
       fillStyle: "solid",
@@ -154,12 +170,12 @@ function makeStickyNote(api: ExcalidrawImperativeAPI): OrderedExcalidrawElement[
     },
     {
       type: "text",
-      x: center.x - 94,
-      y: center.y - 48,
-      width: 188,
-      height: 80,
+      x: center.x - (noteWidth - 26) / 2,
+      y: center.y - (noteHeight - 32) / 2,
+      width: noteWidth - 26,
+      height: noteHeight - 32,
       text: "Sticky note",
-      fontSize: 22,
+      fontSize: fontSize,
       strokeColor: "#78350f",
       backgroundColor: "transparent",
       textAlign: "center",
@@ -172,20 +188,26 @@ function makeStickyNote(api: ExcalidrawImperativeAPI): OrderedExcalidrawElement[
 
 function makeDiagramElements(api: ExcalidrawImperativeAPI, diagram: DiagramResponse): OrderedExcalidrawElement[] {
   const center = getViewportCenter(api);
-  const spacingX = diagram.layout === "mindmap" ? 280 : 240;
-  const spacingY = 150;
-  const startX = center.x - Math.min(diagram.nodes.length, 4) * spacingX * 0.5;
-  const startY = center.y - 160;
+  const zoom = center.zoom || 1;
+  const viewportWidth = center.width / zoom;
+  const isMobile = viewportWidth < 600;
+
+  const spacingX = isMobile ? Math.min(130, viewportWidth - 20) : (diagram.layout === "mindmap" ? 280 : 240);
+  const spacingY = isMobile ? 85 : 150;
+  const startX = center.x - Math.min(diagram.nodes.length, isMobile ? 2 : 4) * spacingX * 0.5;
+  const startY = center.y - 120;
 
   const nodePositions = new Map<string, { x: number; y: number; width: number; height: number }>();
   const nodeSkeleton: ExcalidrawElementSkeleton[] = diagram.nodes.map((node, index) => {
-    const col = diagram.layout === "mindmap" ? index % 3 : index % 4;
-    const row = diagram.layout === "mindmap" ? Math.floor(index / 3) : Math.floor(index / 4);
+    const col = isMobile ? index % 2 : (diagram.layout === "mindmap" ? index % 3 : index % 4);
+    const row = isMobile ? Math.floor(index / 2) : (diagram.layout === "mindmap" ? Math.floor(index / 3) : Math.floor(index / 4));
     const x = startX + col * spacingX;
     const y = startY + row * spacingY;
-    const width = 190;
-    const height = node.type === "diamond" ? 100 : 92;
+    const width = isMobile ? Math.min(105, viewportWidth - 30) : 190;
+    const height = isMobile ? 52 : (node.type === "diamond" ? 100 : 92);
     nodePositions.set(node.id, { x, y, width, height });
+
+    const fontSize = isMobile ? 11 : 18;
 
     return {
       type: node.type,
@@ -201,7 +223,7 @@ function makeDiagramElements(api: ExcalidrawImperativeAPI, diagram: DiagramRespo
       roundness: node.type === "rectangle" ? { type: 3 } : null,
       label: {
         text: node.label,
-        fontSize: 18,
+        fontSize: fontSize,
         strokeColor: "#172033",
         textAlign: "center",
         verticalAlign: "middle",
@@ -228,7 +250,7 @@ function makeDiagramElements(api: ExcalidrawImperativeAPI, diagram: DiagramRespo
         label: edge.label
           ? {
               text: edge.label,
-              fontSize: 14,
+              fontSize: isMobile ? 9 : 14,
               strokeColor: "#475569",
             }
           : undefined,
@@ -241,10 +263,10 @@ function makeDiagramElements(api: ExcalidrawImperativeAPI, diagram: DiagramRespo
       type: "text",
       text: diagram.title,
       x: startX,
-      y: startY - 72,
-      width: 520,
-      height: 42,
-      fontSize: 28,
+      y: startY - (isMobile ? 36 : 72),
+      width: isMobile ? Math.min(240, viewportWidth - 40) : 520,
+      height: isMobile ? 24 : 42,
+      fontSize: isMobile ? 14 : 28,
       strokeColor: "#0f172a",
       backgroundColor: "transparent",
     },
@@ -268,6 +290,19 @@ export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: 
   const [renamingId, setRenamingId] = useState<number | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setMoreMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeBoard = boards.find((board) => board.id === activeBoardId) ?? null;
@@ -311,6 +346,23 @@ export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: 
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to delete whiteboard");
+      }
+    });
+  };
+
+  const handleDuplicate = (board: Whiteboard) => {
+    startTransition(async () => {
+      try {
+        const duplicated = await createWhiteboard({
+          name: `${board.name} (Copy)`,
+          color: board.color,
+        });
+        const boardScene = getScene(board);
+        const updated = await updateWhiteboardScene(duplicated.id, boardScene);
+        setBoards((prev) => [updated, ...prev]);
+        setActiveBoardId(duplicated.id);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to duplicate whiteboard");
       }
     });
   };
@@ -431,15 +483,27 @@ export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: 
 
   return (
     <div className="wb-workspace">
-      <aside className="wb-sidebar">
+      <aside className={`wb-sidebar ${sidebarExpanded ? "wb-sidebar--expanded" : "wb-sidebar--collapsed"}`}>
         <div className="wb-sidebar-header">
-          <div className="wb-sidebar-title-row">
+          <div className="wb-sidebar-title-row" onClick={() => setSidebarExpanded(!sidebarExpanded)} style={{ cursor: "pointer" }}>
             <FilePenLine size={18} strokeWidth={1.8} />
             <span className="wb-sidebar-title">Whiteboards</span>
           </div>
-          <button className="wb-icon-btn wb-icon-btn--primary" onClick={handleCreate} title="New whiteboard" disabled={isPending}>
-            {isPending ? <Loader2 size={15} className="wb-spin" /> : <Plus size={16} />}
-          </button>
+          <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+            <button
+              className="wb-icon-btn wb-mobile-only"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSidebarExpanded(!sidebarExpanded);
+              }}
+              title={sidebarExpanded ? "Collapse list" : "Expand list"}
+            >
+              {sidebarExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+            <button className="wb-icon-btn wb-icon-btn--primary" onClick={handleCreate} title="New whiteboard" disabled={isPending}>
+              {isPending ? <Loader2 size={15} className="wb-spin" /> : <Plus size={16} />}
+            </button>
+          </div>
         </div>
 
         <div className="wb-sidebar-search">
@@ -535,28 +599,108 @@ export default function WhiteboardWorkspace({ initialBoards }: { initialBoards: 
                 </div>
               </div>
 
-              <div className="wb-actions">
-                <span className={`wb-save-state wb-save-state--${saveStatus}`}>
+              <div className="wb-actions" ref={moreMenuRef}>
+                <span className={`wb-save-state wb-save-state--${saveStatus} wb-desktop-only`}>
                   {saveStatus === "saving" && <Loader2 size={13} className="wb-spin" />}
                   {saveStatus === "saved" && <CheckCircle2 size={13} />}
                   {saveStatus === "error" && <X size={13} />}
                   {saveStatus === "saving" ? "Saving" : saveStatus === "error" ? "Save issue" : "Saved"}
                 </span>
-                <button className="wb-btn wb-btn--ghost" onClick={handleStickyNote}>
+                <button className="wb-btn wb-btn--ghost wb-desktop-only" onClick={handleStickyNote}>
                   <StickyNote size={15} />
-                  Sticky
+                  <span className="wb-btn-text">Sticky</span>
                 </button>
                 <button className="wb-btn wb-btn--ai" onClick={() => setAiOpen(true)}>
                   <Bot size={15} />
-                  AI Diagram
+                  <span className="wb-btn-text">AI Diagram</span>
                 </button>
-                <button className="wb-btn wb-btn--ghost" onClick={handleExport}>
+                <button className="wb-btn wb-btn--ghost wb-desktop-only" onClick={handleExport}>
                   <Download size={15} />
-                  PNG
+                  <span className="wb-btn-text">PNG</span>
                 </button>
-                <button className="wb-icon-btn" title="More options">
-                  <MoreHorizontal size={16} />
-                </button>
+                <div style={{ position: "relative", display: "inline-flex" }}>
+                  <button
+                    className="wb-icon-btn"
+                    title="More options"
+                    onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                  >
+                    <MoreHorizontal size={16} />
+                  </button>
+                  {moreMenuOpen && (
+                    <div className="wb-more-dropdown">
+                      {/* Save Status - Mobile Only */}
+                      <div className="wb-dropdown-item wb-mobile-only" style={{ cursor: "default", pointerEvents: "none" }}>
+                        {saveStatus === "saving" && <Loader2 size={13} className="wb-spin" />}
+                        {saveStatus === "saved" && <CheckCircle2 size={13} />}
+                        {saveStatus === "error" && <X size={13} />}
+                        <span>Status: {saveStatus === "saving" ? "Saving..." : saveStatus === "error" ? "Save error" : "Saved"}</span>
+                      </div>
+                      
+                      {/* Add Sticky Note - Mobile Only */}
+                      <button
+                        className="wb-dropdown-item wb-mobile-only"
+                        onClick={() => {
+                          setMoreMenuOpen(false);
+                          handleStickyNote();
+                        }}
+                      >
+                        <StickyNote size={13} />
+                        <span>Add Sticky Note</span>
+                      </button>
+                      
+                      {/* Export PNG - Mobile Only */}
+                      <button
+                        className="wb-dropdown-item wb-mobile-only"
+                        onClick={() => {
+                          setMoreMenuOpen(false);
+                          void handleExport();
+                        }}
+                      >
+                        <Download size={13} />
+                        <span>Export PNG</span>
+                      </button>
+                      
+                      {/* Rename Board */}
+                      <button
+                        className="wb-dropdown-item"
+                        onClick={() => {
+                          setMoreMenuOpen(false);
+                          setSidebarExpanded(true);
+                          setRenamingId(activeBoard.id);
+                          setRenameValue(activeBoard.name);
+                        }}
+                      >
+                        <FilePenLine size={13} />
+                        <span>Rename Board</span>
+                      </button>
+                      
+                      {/* Duplicate Board */}
+                      <button
+                        className="wb-dropdown-item"
+                        onClick={() => {
+                          setMoreMenuOpen(false);
+                          void handleDuplicate(activeBoard);
+                        }}
+                      >
+                        <Plus size={13} />
+                        <span>Duplicate Board</span>
+                      </button>
+                      
+                      {/* Delete Board */}
+                      <button
+                        className="wb-dropdown-item"
+                        onClick={() => {
+                          setMoreMenuOpen(false);
+                          handleDelete(activeBoard);
+                        }}
+                        style={{ color: "#dc2626" }}
+                      >
+                        <Trash2 size={13} />
+                        <span>Delete Board</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

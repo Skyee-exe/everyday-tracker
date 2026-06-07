@@ -20,16 +20,17 @@ import {
   Heading1, Heading2, Heading3, List, ListOrdered, CheckSquare,
   Quote, Code, Minus, Bold, Italic, Underline as UnderlineIcon,
   Highlighter, Link as LinkIcon, Wand2, Check, Strikethrough,
-  Mic, Square, Tag, ChevronDown
+  Mic, Square, Tag, ChevronDown, ArrowLeft
 } from "lucide-react";
 
 interface EditorProps {
   note: Note;
   categories: any[];
   onSave?: () => void;
+  onBack?: () => void;
 }
 
-export default function Editor({ note, categories, onSave }: EditorProps) {
+export default function Editor({ note, categories, onSave, onBack }: EditorProps) {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [title, setTitle] = useState(note.title);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -146,9 +147,18 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
 
   return (
     <div className="flex flex-col h-full bg-card flex-1 min-w-0">
-      <div className="flex items-center justify-between px-8 h-16 border-b border-border flex-shrink-0 bg-card/80 backdrop-blur-md sticky top-0 z-10">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          {note.icon && <span className="text-2xl">{note.icon}</span>}
+      <div className="flex items-center justify-between px-4 md:px-8 h-16 border-b border-border flex-shrink-0 bg-card/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-accent border border-border text-muted-foreground hover:text-foreground transition-colors mr-1 flex-shrink-0"
+              title="Back to notes list"
+            >
+              <ArrowLeft size={16} />
+            </button>
+          )}
+          {note.icon && <span className="text-2xl flex-shrink-0">{note.icon}</span>}
           <input
             type="text"
             value={title}
@@ -203,7 +213,9 @@ export default function Editor({ note, categories, onSave }: EditorProps) {
               )}
               {isRecording ? <Square size={13} fill="currentColor" /> : <Mic size={14} />}
             </span>
-            {isRecording ? "Stop Recording" : recordingStatus === "requesting" || recordingStatus === "connecting" ? "Listening..." : "Speak to Note"}
+            <span className="hidden sm:inline">
+              {isRecording ? "Stop Recording" : recordingStatus === "requesting" || recordingStatus === "connecting" ? "Listening..." : "Speak to Note"}
+            </span>
           </button>
           <div className="flex items-center gap-1.5 w-20 justify-end">
             {saveStatus === "saving" && <><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> Saving...</>}

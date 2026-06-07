@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { getTasks, createTask, updateTask, deleteTask, getCalendarCategories, getReminderCategories } from "./actions";
 import type { CalendarTask } from "@/db/schema";
+import MobileCalendar from "@/components/calendar/mobile-calendar";
 
 /* ══════════════════════════════════════════════
    CONSTANTS & HELPERS
@@ -511,8 +512,12 @@ function MonthGrid({ year, month, tasks, onCellClick, onDragStart, onDrop, onTas
               onDrop={(e) => { e.preventDefault(); setDropTarget(null); onDrop(ds); }}
               style={{
                 minHeight: 120,
-                border: isDropTarget ? "2px solid var(--primary)" : isToday ? "2px solid var(--primary)" : "1px solid var(--border)",
-                borderLeft: hasOverdue && !isDropTarget && !isToday ? "3px solid #ef4444" : undefined,
+                borderTop: isDropTarget ? "2px solid var(--primary)" : isToday ? "2px solid var(--primary)" : "1px solid var(--border)",
+                borderRight: isDropTarget ? "2px solid var(--primary)" : isToday ? "2px solid var(--primary)" : "1px solid var(--border)",
+                borderBottom: isDropTarget ? "2px solid var(--primary)" : isToday ? "2px solid var(--primary)" : "1px solid var(--border)",
+                borderLeft: hasOverdue && !isDropTarget && !isToday
+                  ? "3px solid #ef4444"
+                  : (isDropTarget ? "2px solid var(--primary)" : isToday ? "2px solid var(--primary)" : "1px solid var(--border)"),
                 borderRadius: 12, padding: "8px", cursor: "pointer",
                 display: "flex", flexDirection: "column", gap: 4, position: "relative",
                 opacity: isCurrMonth ? 1 : 0.4,
@@ -573,7 +578,7 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
 
   return (
     <div style={{ flex: 1, overflowY: "auto", overflowX: "auto" }}>
-      <div style={{ minWidth: 800, fontFamily: "var(--font-sans)", position: "relative" }}>
+      <div style={{ minWidth: "var(--cal-min-width, 800px)", fontFamily: "var(--font-sans)", position: "relative" }}>
 
         {/* Week header row */}
         <div style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", borderBottom: "1px solid var(--border)", background: "var(--card)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 10 }}>
@@ -655,11 +660,14 @@ function WeekGrid({ baseDate, tasks, onSlotClick, onDragStart, onDropOnSlot, onT
                       title={`${t.title} (${pri.label} Priority, ${t.durationMinutes}m)`}
                       style={{ 
                         position: "absolute", left: 4, right: 8, top, height: `calc(${height}px - 2px)`, 
-                        borderRadius: 8, padding: "6px 10px", background: cat.bg, borderLeft: `3px solid ${cat.color}`,
+                        borderRadius: 8, padding: "6px 10px", background: cat.bg,
+                        borderTop: `1px solid ${cat.color}30`,
+                        borderRight: `1px solid ${cat.color}30`,
+                        borderBottom: `1px solid ${cat.color}30`,
+                        borderLeft: `3px solid ${cat.color}`,
                         color: "var(--foreground)", cursor: "grab", zIndex: 2, 
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)", overflow: "hidden",
                         opacity: t.completed ? 0.5 : 1, transition: "all 150ms",
-                        border: `1px solid ${cat.color}30`, borderLeftWidth: 3
                       }}
                       onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)"}
                       onMouseLeave={e => e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)"}
@@ -701,7 +709,7 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
 
   if (collapsed) {
     return (
-      <div style={{ width: 64, minWidth: 64, background: "var(--card)", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column", alignItems: "center", padding: "16px 0", position: "relative", zIndex: 20 }}>
+      <div style={{ display: "var(--cal-sidebar-display, flex)", width: 64, minWidth: 64, background: "var(--card)", borderLeft: "1px solid var(--border)", flexDirection: "column", alignItems: "center", padding: "16px 0", position: "relative", zIndex: 20 }}>
         <button onClick={() => setCollapsed(false)} style={{ width: 40, height: 40, borderRadius: 10, border: "none", background: "var(--background)", color: "var(--muted-foreground)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} title="Expand Sidebar">
           <PanelRightOpen size={18} />
         </button>
@@ -722,7 +730,7 @@ function CommandSidebar({ tasks, onQuickCapture, onDragStart, onTaskClick, onDro
   }
 
   return (
-    <div style={{ width: 340, minWidth: 340, background: "var(--card)", borderLeft: "1px solid var(--border)", display: "flex", flexDirection: "column", position: "relative", zIndex: 20 }}>
+    <div style={{ display: "var(--cal-sidebar-display, flex)", width: 340, minWidth: 340, background: "var(--card)", borderLeft: "1px solid var(--border)", flexDirection: "column", position: "relative", zIndex: 20 }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid var(--border)" }}>
         <span style={{ fontFamily: "var(--font-display)", fontSize: "1rem", fontWeight: 700, color: "var(--foreground)" }}>Command Center</span>
@@ -844,8 +852,15 @@ export default function CalendarPage() {
   const [panelDate, setPanelDate]     = useState<string|undefined>(undefined);
   const [panelHour, setPanelHour]     = useState<number|undefined>(undefined);
   const [editTask, setEditTask]       = useState<CalendarTask|undefined>(undefined);
-  
   const [dragTaskId, setDragTaskId]   = useState<number|null>(null);
+  const [isMobile, setIsMobile]       = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const year  = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -978,9 +993,37 @@ export default function CalendarPage() {
     ? `${wStart.toLocaleDateString("en-US", { month: "long" })} ${wStart.getDate()}–${wEnd.getDate()}, ${wStart.getFullYear()}`
     : `${wStart.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${wEnd.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${wEnd.getFullYear()}`;
 
+  if (isMobile) {
+    return (
+      <>
+        <MobileCalendar
+          currentDate={currentDate}
+          setCurrentDate={setCurrentDate}
+          tasks={tasks}
+          loading={loading}
+          openPanel={openPanel}
+          prevPeriod={prevPeriod}
+          nextPeriod={nextPeriod}
+          goToday={goToday}
+          categories={ALL_CATEGORIES}
+        />
+        {/* Slide-Over Task Editor */}
+        <SlideOverPanel
+          isOpen={panelOpen}
+          initialDate={panelDate}
+          initialHour={panelHour}
+          initialTask={editTask}
+          onClose={() => setPanelOpen(false)}
+          onSave={handleSaveTask}
+          onDelete={handleDeleteTask}
+        />
+      </>
+    );
+  }
+
   return (
     <>
-      <div style={{ position: "fixed", inset: 0, paddingLeft: "var(--sb-width, 220px)", display: "flex", background: "var(--background)", fontFamily: "var(--font-sans)", zIndex: 1, transition: "padding-left var(--dur, 200ms) var(--ease-std)" }}>
+      <div style={{ position: "var(--cal-pos, fixed)" as any, inset: "var(--cal-inset, 0)", paddingLeft: "var(--cal-padding-left, var(--sb-width, 220px))", display: "flex", background: "var(--background)", fontFamily: "var(--font-sans)", zIndex: 1, transition: "padding-left var(--dur, 200ms) var(--ease-std)" }}>
 
         {/* ── Left: Calendar Workspace ── */}
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--card)", margin: 16, borderRadius: 16, boxShadow: "0 4px 20px rgba(0,0,0,0.03)", border: "1px solid var(--border)" }}>
