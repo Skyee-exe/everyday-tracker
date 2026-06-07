@@ -29,7 +29,6 @@ export default function Navbar({ userId }: NavbarProps) {
   const navLinks = [
     { name: "Features", href: "#features" },
     { name: "How It Works", href: "#how-it-works" },
-    { name: "Showcase", href: "#showcase" },
     { name: "Use Cases", href: "#use-cases" },
     { name: "Pricing", href: "#pricing" },
     { name: "FAQ", href: "#faq" },
@@ -43,9 +42,9 @@ export default function Navbar({ userId }: NavbarProps) {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? isDark
-            ? "bg-[#050816]/80 backdrop-blur-xl border-b border-slate-900/60 shadow-lg py-3"
-            : "bg-white/85 backdrop-blur-xl border-b border-slate-200/60 shadow-sm py-3"
-          : "bg-transparent py-5"
+            ? "bg-[#050816]/80 backdrop-blur-xl border-b border-slate-900/60 shadow-lg py-2.5 md:py-3"
+            : "bg-white/85 backdrop-blur-xl border-b border-slate-200/60 shadow-sm py-2.5 md:py-3"
+          : "bg-transparent py-3.5 md:py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -167,18 +166,19 @@ export default function Navbar({ userId }: NavbarProps) {
             {/* Mobile Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+              className={`h-11 w-11 flex items-center justify-center rounded-xl border transition-colors cursor-pointer ${
                 isDark 
-                  ? "bg-slate-900/40 border-slate-800 text-slate-400" 
-                  : "bg-slate-100 border-slate-200 text-slate-600"
+                  ? "bg-slate-900/40 border-slate-800 text-slate-400 hover:text-white" 
+                  : "bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-950"
               }`}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 focus:outline-none transition-colors duration-255"
+              className="inline-flex items-center justify-center h-11 w-11 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/60 focus:outline-none transition-all"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -193,41 +193,45 @@ export default function Navbar({ userId }: NavbarProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={`md:hidden border-b overflow-hidden ${
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className={`md:hidden border-b overflow-hidden shadow-xl ${
               isDark 
-                ? "border-slate-800/80 bg-[#090d16]/95 backdrop-blur-xl" 
-                : "border-slate-200/80 bg-white/95 backdrop-blur-xl"
+                ? "border-slate-900 bg-[#050816]/95 backdrop-blur-2xl" 
+                : "border-slate-200/80 bg-white/95 backdrop-blur-2xl"
             }`}
           >
-            <div className="px-4 pt-2 pb-6 space-y-2">
-              {navLinks.map((link) => (
-                <a
+            <div className="px-4 pt-3 pb-6 space-y-1">
+              {navLinks.map((link, idx) => (
+                <motion.a
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.04 }}
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                     isDark 
-                      ? "text-slate-400 hover:text-white hover:bg-slate-900/60" 
+                      ? "text-slate-300 hover:text-white hover:bg-slate-900/60" 
                       : "text-slate-600 hover:text-slate-950 hover:bg-slate-100"
                   }`}
                 >
-                  {link.name}
-                </a>
+                  <span>{link.name}</span>
+                  <span className="text-xs opacity-50">→</span>
+                </motion.a>
               ))}
-              <div className={`pt-4 border-t flex flex-col gap-3 px-4 ${
-                isDark ? "border-slate-800/80" : "border-slate-200/80"
+              <div className={`pt-4 mt-2 border-t flex flex-col gap-3 px-4 ${
+                isDark ? "border-slate-900" : "border-slate-200/80"
               }`}>
                 {userId ? (
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-3">
                     <Link
                       href="/dashboard"
                       onClick={() => setIsOpen(false)}
-                      className="w-full text-center px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-950 text-xs font-bold transition-all duration-200"
+                      className="flex-1 text-center py-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-955 text-xs font-bold transition-all duration-200 shadow-sm"
                     >
                       Go to Dashboard
                     </Link>
-                    <div className="ml-4">
+                    <div className="shrink-0">
                       <UserButton />
                     </div>
                   </div>
@@ -238,8 +242,8 @@ export default function Navbar({ userId }: NavbarProps) {
                         onClick={() => setIsOpen(false)}
                         className={`w-full py-3 rounded-xl border text-xs font-bold transition-colors cursor-pointer font-sans ${
                           isDark 
-                            ? "border-slate-800 text-slate-400 hover:text-white" 
-                            : "border-slate-200 text-slate-600 hover:text-slate-900"
+                            ? "border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900/40" 
+                            : "border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                         }`}
                       >
                         Sign In
@@ -248,9 +252,9 @@ export default function Navbar({ userId }: NavbarProps) {
                     <SignUpButton mode="modal">
                       <button
                         onClick={() => setIsOpen(false)}
-                        className={`w-full py-3 rounded-xl text-xs font-bold transition-all cursor-pointer font-sans ${
+                        className={`w-full py-3 rounded-xl text-xs font-bold transition-all cursor-pointer font-sans shadow-sm ${
                           isDark 
-                            ? "bg-slate-100 hover:bg-white text-slate-950" 
+                            ? "bg-slate-100 hover:bg-white text-slate-955" 
                             : "bg-slate-900 hover:bg-slate-800 text-white"
                         }`}
                       >

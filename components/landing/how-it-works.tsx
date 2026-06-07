@@ -3,12 +3,8 @@
 import React from "react";
 import { Folder, Terminal, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useTheme } from "./theme-context";
 
 export default function HowItWorks() {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-
   const steps = [
     {
       number: "01",
@@ -93,12 +89,12 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
+    <section id="how-it-works" className="py-12 md:py-28 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-24">
+        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-24">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -122,8 +118,8 @@ export default function HowItWorks() {
         {/* ── TIMELINE Visual Journey ── */}
         <div className="relative max-w-5xl mx-auto">
           
-          {/* Vertical Connecting Line (Desktop Only) */}
-          <div className="absolute left-1/2 top-8 bottom-8 w-0.5 bg-slate-200 dark:bg-slate-800 -translate-x-1/2 z-0 hidden md:block"></div>
+          {/* Vertical Connecting Line */}
+          <div className="absolute left-6 md:left-1/2 top-8 bottom-8 w-0.5 bg-slate-200 dark:bg-slate-800 md:-translate-x-1/2 z-0"></div>
 
           {/* Timeline Steps */}
           <div className="flex flex-col gap-24 md:gap-32">
@@ -137,10 +133,10 @@ export default function HowItWorks() {
                 className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center"
               >
                 
-                {/* Timeline node dot (Desktop Only) */}
-                <div className="absolute left-1/2 top-4 -translate-x-1/2 z-20 hidden md:flex items-center justify-center">
-                  <div className="h-10 w-10 rounded-full bg-white dark:bg-slate-950 border-2 border-slate-205 dark:border-slate-800 flex items-center justify-center shadow-md">
-                    <span className={`h-3 w-3 rounded-full ${step.accent}`}></span>
+                {/* Timeline node dot */}
+                <div className="absolute left-6 md:left-1/2 top-4 -translate-x-1/2 z-20 flex items-center justify-center">
+                  <div className="h-[22px] w-[22px] md:h-10 md:w-10 rounded-full bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center shadow-md">
+                    <span className={`h-2 md:h-3 w-2 md:w-3 rounded-full ${step.accent}`}></span>
                   </div>
                 </div>
 
@@ -148,22 +144,22 @@ export default function HowItWorks() {
                 {step.align === "left" ? (
                   <>
                     {/* Text Column */}
-                    <div className="flex flex-col gap-4 text-left">
+                    <div className="flex flex-col gap-4 text-left pl-12 md:pl-0">
                       <div className="flex items-center justify-between md:justify-start gap-4">
-                        <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+                        <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs shrink-0">
                           {step.icon}
                         </div>
-                        <span className="font-display text-5xl font-bold text-slate-150 dark:text-slate-850">
-                          {step.number}
+                        <span className="font-display text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/40">
+                          Step {parseInt(step.number)}
                         </span>
                       </div>
-                      <h3 className="font-display text-2xl font-bold text-slate-850 dark:text-slate-100">{step.title}</h3>
+                      <h3 className="font-display text-2xl font-bold text-slate-855 dark:text-slate-100">{step.title}</h3>
                       <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-md">{step.description}</p>
                     </div>
 
                     {/* Visual Mockup Column */}
-                    <div className="relative group">
-                      <div className="relative border border-slate-205 dark:border-slate-850 rounded-2xl bg-white dark:bg-[#0F172A]/40 overflow-hidden p-2 shadow-xs">
+                    <div className="relative group pl-12 md:pl-0">
+                      <div className="relative border border-slate-200 dark:border-slate-850 rounded-2xl bg-white dark:bg-[#0F172A]/40 overflow-hidden p-2 shadow-xs">
                         {step.visual}
                       </div>
                     </div>
@@ -171,23 +167,23 @@ export default function HowItWorks() {
                 ) : (
                   <>
                     {/* Visual Mockup Column (Alternated on Left for Desktop) */}
-                    <div className="order-2 md:order-1 relative group">
-                      <div className="relative border border-slate-205 dark:border-slate-850 rounded-2xl bg-white dark:bg-[#0F172A]/40 overflow-hidden p-2 shadow-xs">
+                    <div className="order-2 md:order-1 relative group pl-12 md:pl-0">
+                      <div className="relative border border-slate-200 dark:border-slate-850 rounded-2xl bg-white dark:bg-[#0F172A]/40 overflow-hidden p-2 shadow-xs">
                         {step.visual}
                       </div>
                     </div>
 
                     {/* Text Column (Alternated on Right for Desktop) */}
-                    <div className="order-1 md:order-2 flex flex-col gap-4 text-left md:pl-10">
+                    <div className="order-1 md:order-2 flex flex-col gap-4 text-left md:pl-10 pl-12">
                       <div className="flex items-center justify-between md:justify-start gap-4">
-                        <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+                        <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs shrink-0">
                           {step.icon}
                         </div>
-                        <span className="font-display text-5xl font-bold text-slate-150 dark:text-slate-850">
-                          {step.number}
+                        <span className="font-display text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/40">
+                          Step {parseInt(step.number)}
                         </span>
                       </div>
-                      <h3 className="font-display text-2xl font-bold text-slate-850 dark:text-slate-100">{step.title}</h3>
+                      <h3 className="font-display text-2xl font-bold text-slate-855 dark:text-slate-100">{step.title}</h3>
                       <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-md">{step.description}</p>
                     </div>
                   </>

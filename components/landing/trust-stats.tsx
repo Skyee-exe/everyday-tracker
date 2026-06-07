@@ -55,17 +55,17 @@ export default function TrustStats() {
   const isDark = theme === "dark";
 
   const stats: StatItem[] = [
-    { target: 50000, suffix: "+", label: "Notes Created", color: "text-slate-900 dark:text-slate-100" },
-    { target: 120000, suffix: "+", label: "Tasks Managed", color: "text-slate-900 dark:text-slate-100" },
-    { target: 15000, suffix: "+", label: "AI Requests Processed", color: "text-slate-900 dark:text-slate-100" },
-    { target: 8000, suffix: "+", label: "Workspaces Created", color: "text-slate-900 dark:text-slate-100" },
+    { target: 250000, suffix: "+", label: "Tasks Created", color: "text-slate-900 dark:text-slate-100" },
+    { target: 85000, suffix: "+", label: "Notes Written", color: "text-slate-900 dark:text-slate-100" },
+    { target: 12000, suffix: "+", label: "Projects Managed", color: "text-slate-900 dark:text-slate-100" },
+    { target: 95000, suffix: "+", label: "AI Commands Executed", color: "text-slate-900 dark:text-slate-100" },
   ];
 
   return (
-    <section className="py-24 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
+    <section className="py-12 md:py-24 transition-colors duration-300 bg-white dark:bg-[#050816] text-slate-900 dark:text-white relative border-t border-slate-200 dark:border-slate-900/40">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +78,7 @@ export default function TrustStats() {
         </div>
 
         {/* Statistics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 max-w-5xl mx-auto px-4 sm:px-0">
           {stats.map((stat, idx) => (
             <motion.div
               key={idx}
